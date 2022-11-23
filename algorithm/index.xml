@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithms on 张海余的主页</title>
+    <link>https://fishwin.github.io/algorithm/</link>
+    <description>Recent content in Algorithms on 张海余的主页</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 23 Nov 2022 21:23:32 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Algorithm</title>
+      <link>https://fishwin.github.io/algorithm/algorithm/</link>
+      <pubDate>Wed, 23 Nov 2022 21:23:32 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/algorithm/algorithm/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

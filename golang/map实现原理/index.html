@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Map实现原理 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.9e9c6027c30f5aa9423b581bd9cddd1ddc66088adb9c2604f89eb5828efea5a1.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Map实现原理"/>
+<meta name="twitter:description" content="hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法
+  哈希冲突（哈希碰撞）
+ 开放寻址  如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
+ 拉链法（golang map使用拉链法解决hash冲突）
+链表的数组
+  如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
+ 再hash法
+当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。
+    golang map数据结构
+golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
+type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容"/>
+
+    <meta property="og:title" content="Map实现原理" />
+<meta property="og:description" content="hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法
+  哈希冲突（哈希碰撞）
+ 开放寻址  如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
+ 拉链法（golang map使用拉链法解决hash冲突）
+链表的数组
+  如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
+ 再hash法
+当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。
+    golang map数据结构
+golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
+type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/golang/map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" /><meta property="article:section" content="golang" />
+<meta property="article:published_time" content="2022-11-23T21:37:28+08:00" />
+<meta property="article:modified_time" content="2022-11-23T21:37:28+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertechs/">其他技术</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+            --
+          
+          <a class="app-header-menu-item" href="/something/">谈古论今</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Map实现原理</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 23, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法</p>
+<ul>
+<li>
+<p>哈希冲突（哈希碰撞）</p>
+<ol>
+<li>开放寻址</li>
+</ol>
+<p><img src="../images/kfxz.png" alt=""></p>
+<p>如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。</p>
+<ol start="2">
+<li>
+<p>拉链法（golang map使用拉链法解决hash冲突）</p>
+<p>链表的数组</p>
+</li>
+</ol>
+<p><img src="../images/lalianfa.png" alt=""></p>
+<p>如上图，key11经过hash函数命中2的位置，然后依次<strong>遍历此桶中的链表</strong>，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。</p>
+<ol start="3">
+<li>
+<p>再hash法</p>
+<p>当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>golang map数据结构</p>
+<p>golang map的底层实现是哈希表，并采用拉链法解决哈希冲突</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">hmap</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">count</span>     <span style="color:#66d9ef">int</span>  <span style="color:#75715e">// 记录当前hash表元素数量
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">flags</span>     <span style="color:#66d9ef">uint8</span>
+          <span style="color:#a6e22e">B</span>         <span style="color:#66d9ef">uint8</span> <span style="color:#75715e">// 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets)
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">noverflow</span> <span style="color:#66d9ef">uint16</span>
+	<span style="color:#a6e22e">hash0</span>     <span style="color:#66d9ef">uint32</span>  <span style="color:#75715e">// 传入hash函数，hash计算时使用
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">buckets</span>    <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>
+	<span style="color:#a6e22e">oldbuckets</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 用于hash扩容时，保存之前的buckets
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">nevacuate</span>  <span style="color:#66d9ef">uintptr</span>
+
+          <span style="color:#a6e22e">extra</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">mapextra</span> <span style="color:#75715e">// 保存溢出数据的桶，数量是2 ^ (B-4)
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p><img src="/images/hmap.png" alt=""></p>
+</li>
+<li>
+<p>hash表扩容</p>
+<p>当hash表中的元素越来越多时，hash冲突的概率就会越来越高，hash表中桶的链表会越来越长，导致遍历链表耗时变长，这时就需要hash表扩容，一般每次扩容两倍。</p>
+<ul>
+<li>
+<p>渐进式rehash</p>
+<p>map在rehash时，和redis一样采用渐进式rehash，使用oldbuckets字段保存旧的hash表，不一次性迁移完所有的buckets，而是把key的迁移分摊到每次的插入和删除操作中，在全部迁移完成后，释放oldbuckets。</p>
+</li>
+<li>
+<p>读取数据</p>
+<p>在扩容期间会发生读oldbuckets的情况，如果oldbuckets还未迁移完成则读oldbuckets</p>
+</li>
+<li>
+<p>触发扩容时机</p>
+<ol>
+<li>装载因子大于6.5（即每个桶平均存储6.5个key，通常每个桶最大为8）（装载因子：元素数量/桶数量）</li>
+<li>哈希使用了太多的溢出桶（当hash冲突数超过桶最大数量时，会存储在溢出桶中，并形成一个链表）</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://juejin.im/entry/6844903793927143438">https://juejin.im/entry/6844903793927143438</a></p>
+<p><a href="https://juejin.im/post/6844903940866179079#heading-3">https://juejin.im/post/6844903940866179079#heading-3</a></p>
+<p><a href="https://juejin.im/post/6844904078636482574#heading-15">https://juejin.im/post/6844904078636482574#heading-15</a></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

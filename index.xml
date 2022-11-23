@@ -5,27 +5,53 @@
     <link>https://fishwin.github.io/</link>
     <description>Recent content on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 23 Nov 2022 16:25:47 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 23 Nov 2022 21:37:28 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Golang</title>
-      <link>https://fishwin.github.io/golang/golang/</link>
-      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      <title>Map实现原理</title>
+      <link>https://fishwin.github.io/golang/map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 23 Nov 2022 21:37:28 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/golang/golang/</guid>
-      <description>1. 同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？  同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  2. GC（垃圾回收）及运行原理 使用算法：三色标记+混合写屏障+辅助gc
-触发时机：
- 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
- gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
-写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
-A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
-写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
-流程图如下：
-参考：
-https://juejin.im/post/6844903793855987719
-https://www.jianshu.com/p/e20aaa039229
-http://yangxikun.github.io/golang/2019/12/22/golang-gc.html
-3. Go调度器原理   GPM模型
+      <guid>https://fishwin.github.io/golang/map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法
+  哈希冲突（哈希碰撞）
+ 开放寻址  如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
+ 拉链法（golang map使用拉链法解决hash冲突）
+链表的数组
+  如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
+ 再hash法
+当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。
+    golang map数据结构
+golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
+type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容</description>
+    </item>
+    
+    <item>
+      <title>Slice底层数据结构及实现原理</title>
+      <link>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 23 Nov 2022 21:36:33 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
+切片长度是切片引用的元素数目
+  切片容量
+容量是底层数组的长度
+  slice作为参数传递
+当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
+func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
+当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
+  nil 切片
+var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
+  空切片</description>
+    </item>
+    
+    <item>
+      <title>Go调度器原理</title>
+      <link>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 23 Nov 2022 21:35:41 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</guid>
+      <description>GPM模型
 一个G对应一个goroutine
 一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
 一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
@@ -38,7 +64,119 @@ go运行时会维护一个G的全局运行队列，p会在一定条件下，来�
   netpoll（网络轮询器）
 比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
   调度过程
-p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。</description>
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
+  sysmon
+go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
+ 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
+基于协作的抢占式调度器 - 1.2 ~ 1.13
+基于信号的抢占式调度器 - 1.14 ~ 至今
+  channel
+试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
+  总结
+goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
+  参考：</description>
+    </item>
+    
+    <item>
+      <title>垃圾回收机制及运行原理</title>
+      <link>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 23 Nov 2022 21:34:39 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</guid>
+      <description>使用算法：三色标记+混合写屏障+辅助gc
+触发时机：
+ 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
+ gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
+A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
+写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
+流程图如下：
+参考：
+https://juejin.im/post/6844903793855987719
+https://www.jianshu.com/p/e20aaa039229
+http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
+    </item>
+    
+    <item>
+      <title>Something</title>
+      <link>https://fishwin.github.io/something/something/</link>
+      <pubDate>Wed, 23 Nov 2022 21:25:16 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/something/something/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://fishwin.github.io/about/about/</link>
+      <pubDate>Wed, 23 Nov 2022 21:24:40 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/about/about/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Othertechs</title>
+      <link>https://fishwin.github.io/othertechs/othertechs/</link>
+      <pubDate>Wed, 23 Nov 2022 21:24:24 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/othertechs/othertechs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Middleware</title>
+      <link>https://fishwin.github.io/middleware/middleware/</link>
+      <pubDate>Wed, 23 Nov 2022 21:24:03 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/middleware/middleware/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Db</title>
+      <link>https://fishwin.github.io/db/db/</link>
+      <pubDate>Wed, 23 Nov 2022 21:23:43 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/db/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Algorithm</title>
+      <link>https://fishwin.github.io/algorithm/algorithm/</link>
+      <pubDate>Wed, 23 Nov 2022 21:23:32 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/algorithm/algorithm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Sysdesign</title>
+      <link>https://fishwin.github.io/sysdesign/sysdesign/</link>
+      <pubDate>Wed, 23 Nov 2022 21:23:05 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/sysdesign/sysdesign/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Distribution</title>
+      <link>https://fishwin.github.io/distributiton/distribution/</link>
+      <pubDate>Wed, 23 Nov 2022 21:22:46 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/distribution/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Net</title>
+      <link>https://fishwin.github.io/net/net/</link>
+      <pubDate>Wed, 23 Nov 2022 21:21:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/net/</guid>
+      <description></description>
     </item>
     
     <item>
@@ -49,15 +187,6 @@ p首先检查本地运行队列，如果本地运行队列为空，首先会去�
       <guid>https://fishwin.github.io/os/os/</guid>
       <description>1. 并行与并发  并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  2. 进程、线程、协程  进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    3. 父进程与子进程之间的关系是怎样的   fork函数
 #include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系</description>
-    </item>
-    
-    <item>
-      <title>算法题</title>
-      <link>https://fishwin.github.io/posts/blog/</link>
-      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/posts/blog/</guid>
-      <description>hello weekly-coding  每人以个人名创建文件夹 在个人目录下，以周数_每题名称创建单个文件，文件后缀不限，建议以所用语言为后缀；如 w6_142_环形链表.go 不要求单个文件内容能编译；  2022Q4 第一周 20221014-20221016  主题：栈 第一题：71. 简化路径 https://leetcode.cn/problems/simplify-path/ 第二题：20. 有效的括号 https://leetcode.cn/problems/valid-parentheses/ 第三题：42. 接雨水 https://leetcode.cn/problems/trapping-rain-water/  第二周 20221017-20221023  主题：树 第一题：107. 二叉树的层序遍历 II https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/ 第二题：450. 删除二叉搜索树中的节点 https://leetcode.cn/problems/delete-node-in-a-bst/ 第三题：124. 二叉树中的最大路径和 https://leetcode.cn/problems/binary-tree-maximum-path-sum/  第三周 20221024-20221031  主题：动态规划 第一题：97. 交错字符串 https://leetcode.cn/problems/interleaving-string/ 第二题：337. 打家劫舍 III https://leetcode.cn/problems/house-robber-iii/ 第三题：1125. 最小的必要团队 https://leetcode.cn/problems/smallest-sufficient-team/  第四周 20221101-20221107  主题：滑动窗口 第一题：187. 重复的DNA序列 https://leetcode.cn/problems/repeated-dna-sequences/ 第二题：930. 和相同的二元子数组 https://leetcode.cn/problems/binary-subarrays-with-sum/ 第三题：220. 存在重复元素 III https://leetcode.cn/problems/contains-duplicate-iii/  第五周 20221110-20221114  主题：回溯 第一题：79.</description>
     </item>
     
   </channel>

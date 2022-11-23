@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Othertechs on 张海余的主页</title>
+    <link>https://fishwin.github.io/othertechs/</link>
+    <description>Recent content in Othertechs on 张海余的主页</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 23 Nov 2022 21:24:24 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/othertechs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Othertechs</title>
+      <link>https://fishwin.github.io/othertechs/othertechs/</link>
+      <pubDate>Wed, 23 Nov 2022 21:24:24 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/othertechs/othertechs/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
