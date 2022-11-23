@@ -234,7 +234,7 @@
 <li>
 <p>异步I/O</p>
 <p>用户调用aio_read系统调用之后，无论内核是否准备好数据，都直接返回，当内核数据准备好之后，内核直接将数据拷贝到用户空间。</p>
-<p><img src="../images/asycio.png" alt=""></p>
+<p><img src="/images/asycio.png" alt=""></p>
 <p>执行过程：</p>
 <p>1. 用户进程调用aio_read系统调用
 2. 内核无论是否准备好数据直接返回
@@ -467,7 +467,7 @@
 </li>
 <li>
 <p>传统文件传输过程</p>
-<p><img src="../images/traditional_transfer.png" alt=""></p>
+<p><img src="/images/traditional_transfer.png" alt=""></p>
 <ol>
 <li>应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令</li>
 <li>内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间</li>
@@ -488,7 +488,7 @@
 </li>
 <li>
 <p>使用mmap+write实现零拷贝</p>
-<p><img src="../images/mmap_write.png" alt=""></p>
+<p><img src="/images/mmap_write.png" alt=""></p>
 <ol>
 <li>应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令</li>
 <li>内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中</li>
@@ -548,7 +548,7 @@
 <p>执行过程</p>
 </li>
 </ul>
-<p><img src="../images/sendfile2.png" alt=""></p>
+<p><img src="/images/sendfile2.png" alt=""></p>
 <ol>
 <li>应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令</li>
 <li>内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中</li>
@@ -696,7 +696,7 @@
 <p>页表</p>
 <p>建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射</p>
 <p>每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</p>
-<p><img src="../images/yebiao.png" alt=""></p>
+<p><img src="/images/yebiao.png" alt=""></p>
 </li>
 <li>
 <p>缺页</p>
@@ -712,7 +712,7 @@
 <li>然后去查看页表，查看当前页是否在物理内存中，如果在的话，则去物理内存中拿数据</li>
 <li>如果不在物理内存，那么就会发生缺页异常，这时需要将磁盘中的数据交换到物理内存中，并更新页表</li>
 </ol>
-<p><img src="../images/vm.png" alt=""></p>
+<p><img src="/images/vm.png" alt=""></p>
 <ul>
 <li>
 <p>一句话简述</p>
