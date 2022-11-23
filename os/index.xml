@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Os on 张海余的主页</title>
+    <link>https://fishwin.github.io/os/</link>
+    <description>Recent content in Os on 张海余的主页</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Nov 2022 16:25:47 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/os/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>操作系统</title>
+      <link>https://fishwin.github.io/os/os/</link>
+      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/os/</guid>
+      <description>1. 并行与并发  并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  2. 进程、线程、协程  进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    3. 父进程与子进程之间的关系是怎样的   fork函数
+#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系</description>
+    </item>
+    
+  </channel>
+</rss>

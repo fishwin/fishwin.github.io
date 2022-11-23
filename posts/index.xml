@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on 张海余的主页</title>
+    <link>https://fishwin.github.io/posts/</link>
+    <description>Recent content in Posts on 张海余的主页</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Nov 2022 16:25:47 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>算法题</title>
+      <link>https://fishwin.github.io/posts/blog/</link>
+      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/posts/blog/</guid>
+      <description>hello weekly-coding  每人以个人名创建文件夹 在个人目录下，以周数_每题名称创建单个文件，文件后缀不限，建议以所用语言为后缀；如 w6_142_环形链表.go 不要求单个文件内容能编译；  2022Q4 第一周 20221014-20221016  主题：栈 第一题：71. 简化路径 https://leetcode.cn/problems/simplify-path/ 第二题：20. 有效的括号 https://leetcode.cn/problems/valid-parentheses/ 第三题：42. 接雨水 https://leetcode.cn/problems/trapping-rain-water/  第二周 20221017-20221023  主题：树 第一题：107. 二叉树的层序遍历 II https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/ 第二题：450. 删除二叉搜索树中的节点 https://leetcode.cn/problems/delete-node-in-a-bst/ 第三题：124. 二叉树中的最大路径和 https://leetcode.cn/problems/binary-tree-maximum-path-sum/  第三周 20221024-20221031  主题：动态规划 第一题：97. 交错字符串 https://leetcode.cn/problems/interleaving-string/ 第二题：337. 打家劫舍 III https://leetcode.cn/problems/house-robber-iii/ 第三题：1125. 最小的必要团队 https://leetcode.cn/problems/smallest-sufficient-team/  第四周 20221101-20221107  主题：滑动窗口 第一题：187. 重复的DNA序列 https://leetcode.cn/problems/repeated-dna-sequences/ 第二题：930. 和相同的二元子数组 https://leetcode.cn/problems/binary-subarrays-with-sum/ 第三题：220. 存在重复元素 III https://leetcode.cn/problems/contains-duplicate-iii/  第五周 20221110-20221114  主题：回溯 第一题：79.</description>
+    </item>
+    
+  </channel>
+</rss>

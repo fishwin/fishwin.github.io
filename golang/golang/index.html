@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Golang // 张海余的主页</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.9e9c6027c30f5aa9423b581bd9cddd1ddc66088adb9c2604f89eb5828efea5a1.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang"/>
+<meta name="twitter:description" content="1. 同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？  同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  2. GC（垃圾回收）及运行原理 使用算法：三色标记&#43;混合写屏障&#43;辅助gc
+触发时机：
+ 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
+ gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
+A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
+写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
+流程图如下：
+参考：
+https://juejin.im/post/6844903793855987719
+https://www.jianshu.com/p/e20aaa039229
+http://yangxikun.github.io/golang/2019/12/22/golang-gc.html
+3. Go调度器原理   GPM模型
+一个G对应一个goroutine
+一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
+一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
+gorutine 与 内核线程 N:M映射
+  全局运行队列
+go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
+全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
+  本地运行队列
+每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
+  netpoll（网络轮询器）
+比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
+  调度过程
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。"/>
+
+    <meta property="og:title" content="Golang" />
+<meta property="og:description" content="1. 同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？  同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  2. GC（垃圾回收）及运行原理 使用算法：三色标记&#43;混合写屏障&#43;辅助gc
+触发时机：
+ 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
+ gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
+A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
+写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
+流程图如下：
+参考：
+https://juejin.im/post/6844903793855987719
+https://www.jianshu.com/p/e20aaa039229
+http://yangxikun.github.io/golang/2019/12/22/golang-gc.html
+3. Go调度器原理   GPM模型
+一个G对应一个goroutine
+一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
+一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
+gorutine 与 内核线程 N:M映射
+  全局运行队列
+go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
+全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
+  本地运行队列
+每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
+  netpoll（网络轮询器）
+比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
+  调度过程
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/golang/golang/" /><meta property="article:section" content="golang" />
+<meta property="article:published_time" content="2022-11-23T16:25:47+08:00" />
+<meta property="article:modified_time" content="2022-11-23T16:25:47+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Golang</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 23, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h3 id="1-同一个struct的两个实例可否用比较不同struct的两个实例可否用比较struct类型可否作为map的key">1. 同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？</h3>
+<ul>
+<li>同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较</li>
+<li>不同struct类型的两个实例不能用==比较，因为编译报错</li>
+<li>如果struct类型中只包含可比较类型则可以用作map的key，否则不行</li>
+</ul>
+<h3 id="2-gc垃圾回收及运行原理">2. GC（垃圾回收）及运行原理</h3>
+<p>使用算法：三色标记+混合写屏障+辅助gc</p>
+<p>触发时机：</p>
+<ul>
+<li>定时触发（每2分钟内未执行过gc）</li>
+<li>分配内存时触发（当前内存是上一次gc执行完内存的两倍）</li>
+<li>手动触发（runtime.GC()）</li>
+</ul>
+<p>执行流程：</p>
+<ul>
+<li>gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw）</li>
+<li>标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行）</li>
+<li>标记结束：关闭写屏障和辅助GC（需要stw）</li>
+<li>清理：清理白色节点（此阶段与用户代码并行）</li>
+</ul>
+<p>辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。</p>
+<p>写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：</p>
+<p>A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。</p>
+<p>写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。</p>
+<p>流程图如下：</p>
+<p><img src="/images/gc.png" alt="gc"></p>
+<p>参考：</p>
+<p><a href="https://juejin.im/post/6844903793855987719">https://juejin.im/post/6844903793855987719</a></p>
+<p><a href="https://www.jianshu.com/p/e20aaa039229">https://www.jianshu.com/p/e20aaa039229</a></p>
+<p><a href="http://yangxikun.github.io/golang/2019/12/22/golang-gc.html">http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</a></p>
+<h3 id="3-go调度器原理">3. Go调度器原理</h3>
+<ul>
+<li>
+<p>GPM模型</p>
+<p>一个G对应一个goroutine</p>
+<p>一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数</p>
+<p>一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.</p>
+<p>gorutine 与 内核线程 N:M映射</p>
+</li>
+<li>
+<p>全局运行队列</p>
+<p>go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。</p>
+<p>全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。</p>
+</li>
+<li>
+<p>本地运行队列</p>
+<p>每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 <code>go</code> 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。</p>
+</li>
+<li>
+<p>netpoll（网络轮询器）</p>
+<p>比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。</p>
+</li>
+<li>
+<p>调度过程</p>
+<p>p首先检查<strong>本地运行队列</strong>，如果本地运行队列为空，首先会去检查<strong>全局运行队列</strong>（需要加锁），如果全局运行队列也为空，然后去检查<strong>网络轮询器</strong>(network poller)中是否有IO事件被触发，如果还没有，这时会进行”<strong>窃取</strong>“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。</p>
+</li>
+<li>
+<p>sysmon</p>
+<p>go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：</p>
+<ul>
+<li>释放闲置超过5分钟的span物理内存；</li>
+<li>如果超过2分钟没有<strong>垃圾回收</strong>，强制执行；</li>
+<li>将长时间未处理的netpoll结果添加到任务队列；</li>
+<li>向长时间运行的G任务发出<strong>抢占调度</strong>；</li>
+<li>收回因syscall长时间阻塞的P；</li>
+</ul>
+</li>
+<li>
+<p>抢占式调度</p>
+<p>当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。</p>
+<p>基于协作的抢占式调度器 - 1.2 ~ 1.13</p>
+<p>基于信号的抢占式调度器 - 1.14 ~ 至今</p>
+</li>
+<li>
+<p>channel</p>
+<p>试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中</p>
+</li>
+<li>
+<p>总结</p>
+<p>goroutine的调度不需要让 CPU <strong>在用户态和内核态之间切换</strong>，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多</p>
+</li>
+</ul>
+<p><img src="/images/goroutine.png" alt=""></p>
+<p>参考：</p>
+<p><a href="https://tonybai.com/2020/03/21/illustrated-tales-of-go-runtime-scheduler/">https://tonybai.com/2020/03/21/illustrated-tales-of-go-runtime-scheduler/</a></p>
+<p><a href="https://tonybai.com/2017/06/23/an-intro-about-goroutine-scheduler/">https://tonybai.com/2017/06/23/an-intro-about-goroutine-scheduler/</a></p>
+<p><a href="https://wudaijun.com/2018/01/go-scheduler/">https://wudaijun.com/2018/01/go-scheduler/</a></p>
+<h3 id="4-slice底层结构及实现原理">4. Slice底层结构及实现原理</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// runtime/slice.go
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">slice</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">array</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 元素指针（底层数组）
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">len</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 长度 
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cap</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 容量
+</span><span style="color:#75715e"></span>}
+</code></pre></div><ul>
+<li>
+<p>切片长度</p>
+<p>切片长度是切片引用的元素数目</p>
+</li>
+<li>
+<p>切片容量</p>
+<p>容量是底层数组的长度</p>
+</li>
+<li>
+<p>slice作为参数传递</p>
+<p>当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendSlice</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">int</span>) {
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">++</span> {
+		<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span> = append(<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">i</span>)
+	}
+}
+</code></pre></div></li>
+<li>
+<p>扩容机制</p>
+<p>当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。</p>
+</li>
+<li>
+<p>nil 切片</p>
+<p>var slice1 []int   slice1 与 nil 比较结果为true，json.Marshal结果为null</p>
+</li>
+<li>
+<p>空切片</p>
+<p>slice2 := make([]int,0)   slice2 与 nil比较结果为false，json.Marshal结果为[]</p>
+</li>
+<li>
+<p>切片的切片操作</p>
+<p>切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span> []<span style="color:#66d9ef">int</span>) {
+	<span style="color:#a6e22e">_</span> = append(<span style="color:#a6e22e">a</span>, <span style="color:#ae81ff">0</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">9</span>}
+	<span style="color:#a6e22e">s2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">5</span>]
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5 6 7 8 9]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [3 4 5]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">1</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">2</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 88 88 88 6 7 8 9]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [88 88 88]
+</span><span style="color:#75715e"></span>    
+	<span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
+	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 未指定容量，由于切片操作复用原底层数组，所以append操作会直接修改原底层数组上的值
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// 输出 [1 2 0 4 5]
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>}
+	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">b</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 指定容量，在append时，发现容量不足，则需要扩容，不会修改原底层数组上的值
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">b</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5]
+</span><span style="color:#75715e"></span>}
+</code></pre></div><ul>
+<li>
+<p>copy 函数 func copy(dst, src []Type) int</p>
+<p>copy函数是值拷贝，新的拷贝切片修改不会影响旧切片</p>
+<p>copy函数返回值是拷贝的字节数，等于min(len(src),len(dst))，如果dst拷贝前有值则被覆盖。</p>
+</li>
+<li>
+<p>slice常用操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//删除
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">remove</span>(<span style="color:#a6e22e">slice</span> []<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">interface</span>{} {
+    <span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">slice</span>[:<span style="color:#a6e22e">i</span>], <span style="color:#a6e22e">slice</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:]<span style="color:#f92672">...</span>)
+}
+
+<span style="color:#75715e">//插入
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">insert</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">value</span> <span style="color:#66d9ef">interface</span>{}) {
+    <span style="color:#a6e22e">rear</span> <span style="color:#f92672">:=</span> append([]<span style="color:#66d9ef">interface</span>{}{}, (<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[<span style="color:#a6e22e">index</span>:]<span style="color:#f92672">...</span>)
+    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append(append((<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[:<span style="color:#a6e22e">index</span>], <span style="color:#a6e22e">value</span>), <span style="color:#a6e22e">rear</span><span style="color:#f92672">...</span>)
+}
+
+<span style="color:#75715e">//清空slice
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">empty</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}) {
+    <span style="color:#75715e">//    *slice = nil
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append([]<span style="color:#66d9ef">interface</span>{}{})
+}
+</code></pre></div></li>
+<li>
+<p>range</p>
+<p>使用range遍历切片，拿到的value时切片元素的值拷贝</p>
+</li>
+<li>
+<p>在循环中可使用s[0:0]复用切片，而不需要每次循环重新申请新的切片</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> []<span style="color:#66d9ef">int</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span> ;<span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">s</span> = <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">0</span>] <span style="color:#75715e">// 这里可以复用切片，否则就需要每一次循环都需要重新申请一个新的slice
+</span><span style="color:#75715e"></span>		}
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">i</span>; <span style="color:#a6e22e">j</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">j</span> <span style="color:#f92672">++</span> {
+			<span style="color:#a6e22e">s</span> = append(<span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">j</span>)
+		}
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)
+	}
+}
+</code></pre></div></li>
+</ul>
+<h3 id="5-map-实现原理">5. Map 实现原理</h3>
+<p>hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法</p>
+<ul>
+<li>
+<p>哈希冲突（哈希碰撞）</p>
+<ol>
+<li>开放寻址</li>
+</ol>
+<p><img src="/images/kfxz.png" alt=""></p>
+<p>如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。</p>
+<ol start="2">
+<li>
+<p>拉链法（golang map使用拉链法解决hash冲突）</p>
+<p>链表的数组</p>
+</li>
+</ol>
+<p><img src="/images/lalianfa.png" alt=""></p>
+<p>如上图，key11经过hash函数命中2的位置，然后依次<strong>遍历此桶中的链表</strong>，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。</p>
+<ol start="3">
+<li>
+<p>再hash法</p>
+<p>当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>golang map数据结构</p>
+<p>golang map的底层实现是哈希表，并采用拉链法解决哈希冲突</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">hmap</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">count</span>     <span style="color:#66d9ef">int</span>  <span style="color:#75715e">// 记录当前hash表元素数量
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">flags</span>     <span style="color:#66d9ef">uint8</span>
+          <span style="color:#a6e22e">B</span>         <span style="color:#66d9ef">uint8</span> <span style="color:#75715e">// 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets)
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">noverflow</span> <span style="color:#66d9ef">uint16</span>
+	<span style="color:#a6e22e">hash0</span>     <span style="color:#66d9ef">uint32</span>  <span style="color:#75715e">// 传入hash函数，hash计算时使用
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">buckets</span>    <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>
+	<span style="color:#a6e22e">oldbuckets</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 用于hash扩容时，保存之前的buckets
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">nevacuate</span>  <span style="color:#66d9ef">uintptr</span>
+
+          <span style="color:#a6e22e">extra</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">mapextra</span> <span style="color:#75715e">// 保存溢出数据的桶，数量是2 ^ (B-4)
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p><img src="/images/hmap.png" alt=""></p>
+</li>
+<li>
+<p>hash表扩容</p>
+<p>当hash表中的元素越来越多时，hash冲突的概率就会越来越高，hash表中桶的链表会越来越长，导致遍历链表耗时变长，这时就需要hash表扩容，一般每次扩容两倍。</p>
+<ul>
+<li>
+<p>渐进式rehash</p>
+<p>map在rehash时，和redis一样采用渐进式rehash，使用oldbuckets字段保存旧的hash表，不一次性迁移完所有的buckets，而是把key的迁移分摊到每次的插入和删除操作中，在全部迁移完成后，释放oldbuckets。</p>
+</li>
+<li>
+<p>读取数据</p>
+<p>在扩容期间会发生读oldbuckets的情况，如果oldbuckets还未迁移完成则读oldbuckets</p>
+</li>
+<li>
+<p>触发扩容时机</p>
+<ol>
+<li>装载因子大于6.5（即每个桶平均存储6.5个key，通常每个桶最大为8）（装载因子：元素数量/桶数量）</li>
+<li>哈希使用了太多的溢出桶（当hash冲突数超过桶最大数量时，会存储在溢出桶中，并形成一个链表）</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://juejin.im/entry/6844903793927143438">https://juejin.im/entry/6844903793927143438</a></p>
+<p><a href="https://juejin.im/post/6844903940866179079#heading-3">https://juejin.im/post/6844903940866179079#heading-3</a></p>
+<p><a href="https://juejin.im/post/6844904078636482574#heading-15">https://juejin.im/post/6844904078636482574#heading-15</a></p>
+<h3 id="6-init-函数执行顺序">6. init 函数执行顺序</h3>
+<ul>
+<li>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法</li>
+<li>在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行<code>按照文件名先后</code>执行各个文件中的init方法</li>
+<li>对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()</li>
+</ul>
+<p>下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</p>
+<p><img src="/images/run_order.png" alt=""></p>
+<h3 id="7-new和make区别">7. new和make区别</h3>
+<ul>
+<li>new(T)返回T类型的指针，make(T)返回T类型</li>
+<li>new只分配内存，make分配内存并初始化</li>
+<li>new可用于任意类型，make仅用于slice、channel、map</li>
+</ul>
+<h3 id="8-nil可与哪些类型比较">8. nil可与哪些类型比较？</h3>
+<ul>
+<li>引用类型：channel、slice、map、接口、函数、指针</li>
+</ul>
+<p>只有引用类型才可以与nil进行比较</p>
+<h3 id="9-syncmap-实现原理">9. Sync.Map 实现原理</h3>
+<p>数据结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Map</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">//互斥锁，用于锁定dirty map
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mu</span> <span style="color:#a6e22e">Mutex</span>    
+    
+    <span style="color:#75715e">//优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">read</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">Value</span> 
+    
+    <span style="color:#75715e">// dirty是一个当前最新的map，允许读写
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">dirty</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span> 
+    
+    <span style="color:#75715e">// 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">misses</span> <span style="color:#66d9ef">int</span> 
+}
+
+<span style="color:#75715e">// readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">readOnly</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// read的map, 用于存储所有read数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">m</span>       <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>
+    
+    <span style="color:#75715e">// 如果数据在dirty中但没有在read中，该值为true,作为修改标识
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">amended</span> <span style="color:#66d9ef">bool</span> 
+}
+
+<span style="color:#75715e">// entry 为 Map.dirty 的具体map值
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">entry</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//  其他: 表示存着真正的数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">p</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// *interface{}
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>逻辑流程图</p>
+<p><img src="/images/sync_map.jpeg" alt=""></p>
+<p><code>sync.Map</code> 的实现原理可概括为：</p>
+<ul>
+<li>两个map一个read一个dirty</li>
+<li>读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。</li>
+<li>写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap</li>
+<li>注意read map也会有写操作（不会加锁），并不是只读。</li>
+<li>如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。</li>
+<li>对于删除数据则直接通过标记来延迟删除</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://juejin.im/post/6844904100287496206">https://juejin.im/post/6844904100287496206</a></p>
+<h3 id="10-chanel-底层原理">10. Chanel 底层原理</h3>
+<ul>
+<li>
+<p>数据结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">hchan</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">qcount</span>   <span style="color:#66d9ef">uint</span>           <span style="color:#75715e">// 循环队列中的元素数量
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">dataqsiz</span> <span style="color:#66d9ef">uint</span>           <span style="color:#75715e">// 循环队列的长度
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">buf</span>      <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 指向循环队列（循环数组）的指针，只针对有缓冲的channel
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">elemsize</span> <span style="color:#66d9ef">uint16</span>     <span style="color:#75715e">// 元素大小
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">closed</span>   <span style="color:#66d9ef">uint32</span>       <span style="color:#75715e">// channel是否关闭的标志
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">elemtype</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">_type</span> <span style="color:#75715e">// 元素类型
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">sendx</span>    <span style="color:#66d9ef">uint</span>   <span style="color:#75715e">// 记录循环队列中发送操作处理到的位置（索引）
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">recvx</span>    <span style="color:#66d9ef">uint</span>   <span style="color:#75715e">// 记录循环队列中接收操作处理到的位置（索引）
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">recvq</span>    <span style="color:#a6e22e">waitq</span>  <span style="color:#75715e">// 存储了当前channel读阻塞的goroutine列表（双向链表）
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">sendq</span>    <span style="color:#a6e22e">waitq</span>  <span style="color:#75715e">// 存储了当前channel写阻塞的goroutine列表（双向链表）
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">lock</span> <span style="color:#a6e22e">mutex</span>  <span style="color:#75715e">// 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">waitq</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">first</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span>  <span style="color:#75715e">// 指向双向链表第一个节点
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">last</span>  <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span> <span style="color:#75715e">// 指向双向链表最后一个节点
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">//  sudog代表一个在等待队列中的goroutine
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">sudog</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">g</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">g</span>
+
+	<span style="color:#a6e22e">next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span>  <span style="color:#75715e">// 双向链表后指针
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">prev</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span> <span style="color:#75715e">// 双向链表前指针
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">elem</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// data element (may point to stack)
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">acquiretime</span> <span style="color:#66d9ef">int64</span>
+	<span style="color:#a6e22e">releasetime</span> <span style="color:#66d9ef">int64</span>
+	<span style="color:#a6e22e">ticket</span>      <span style="color:#66d9ef">uint32</span>
+
+	<span style="color:#a6e22e">isSelect</span> <span style="color:#66d9ef">bool</span>
+
+	<span style="color:#a6e22e">parent</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span> <span style="color:#75715e">// semaRoot binary tree
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">waitlink</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span> <span style="color:#75715e">// g.waiting list or semaRoot
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">waittail</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sudog</span> <span style="color:#75715e">// semaRoot
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">c</span>        <span style="color:#f92672">*</span><span style="color:#a6e22e">hchan</span> <span style="color:#75715e">// channel
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>循环队列（数组）+ 双向链表（读阻塞）+双向链表（写阻塞）</p>
+</li>
+<li>
+<p>为什么channel是引用类型</p>
+<p>在编译阶段，make(chan int, 10)中的make函数会被转换为runtime.makechan或runtime.makechan64函数，同时，返回一个hchan结构体的指针。</p>
+</li>
+<li>
+<p>写channel或者读channel为什么是线程安全的</p>
+<p>在写channel或读channel时，都会使用hchan结构体中的lock进行并发控制（加锁）</p>
+</li>
+<li>
+<p>写channel过程</p>
+<ol>
+<li>首先使用hchan.lock对结构体加锁</li>
+<li>将数据从goroutine拷贝到hchan.buf即循环队列中</li>
+<li>释放锁</li>
+</ol>
+</li>
+<li>
+<p>读channel过程</p>
+<ol>
+<li>首先使用hchan.lock对结构体加锁</li>
+<li>将数据hchan.buf中的头元素，拷贝到goroutine中</li>
+<li>释放锁</li>
+</ol>
+</li>
+<li>
+<p>G1写一个缓冲区为3的channel过程中，缓冲区被写满之后，再次写入发生了什么</p>
+<ol>
+<li>channel调用go调度器(gopark函数)，让G1等待，并且G1让出M，让其他goroutine运行。</li>
+<li>同时G1会被抽象为sudog结构体保存到channel中的sendq队列中，等待被唤醒</li>
+<li>当有其他goroutine读channel时，这时channel就会将sendq中的G1推出，调用go调度器（goready函数），将G1放入到P的运行队列中，等待被调度运行。</li>
+</ol>
+</li>
+<li>
+<p>G2读一个缓冲区为3的channel时，缓冲区无数据，是如何进入阻塞和被唤醒的</p>
+<ol>
+<li>当G2读取channel时，发现channel中无数据，channel会调用go调度器(gopark函数)，使G2等待，G2让出M，让其他goroutine运行</li>
+<li>同时G2会被抽象为sudog结构体并保存在channel中的recvq队列中，等待被唤醒</li>
+<li>当有其他goroutine向channel写入数据后，此时channel会将G2从recvq中推出G2，并调用go调度器（goready函数），将G2放到P的运行队列中，等待被调度运行。</li>
+</ol>
+</li>
+<li>
+<p>注意</p>
+<ol>
+<li>向已经关闭的channel写入数据，会panic</li>
+<li>关闭已经关闭的channel会panic</li>
+<li>range channel时，如果channel不被close，会一直阻塞</li>
+</ol>
+</li>
+<li>
+<p>判断channel关闭</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//  一般用法
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ch</span>
+<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">ok</span> {
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;closed 1&#34;</span>)
+}
+
+<span style="color:#75715e">// 通过偏移
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">isChanClosed</span>(<span style="color:#a6e22e">ch</span> <span style="color:#66d9ef">interface</span>{}) <span style="color:#66d9ef">bool</span> {
+	<span style="color:#a6e22e">cptr</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">*</span>(<span style="color:#f92672">*</span><span style="color:#66d9ef">uintptr</span>)(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(
+		<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(uintptr(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ch</span>)) <span style="color:#f92672">+</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(uint(<span style="color:#ae81ff">0</span>))),
+	))
+
+	<span style="color:#a6e22e">cptr</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(uint(<span style="color:#ae81ff">0</span>))<span style="color:#f92672">*</span><span style="color:#ae81ff">2</span>
+	<span style="color:#a6e22e">cptr</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(uintptr(<span style="color:#ae81ff">0</span>)))
+	<span style="color:#a6e22e">cptr</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(uint16(<span style="color:#ae81ff">0</span>))
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(<span style="color:#f92672">*</span><span style="color:#66d9ef">uint32</span>)(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#a6e22e">cptr</span>)) &gt; <span style="color:#ae81ff">0</span>
+}
+</code></pre></div></li>
+</ul>
+<p>参考：</p>
+<p><a href="https://juejin.im/post/6844903821349502990">https://juejin.im/post/6844903821349502990</a></p>
+<p><a href="https://learnku.com/articles/32142">https://learnku.com/articles/32142</a></p>
+<p><a href="https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-channel/">https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-channel/</a></p>
+<h3 id="11-defer">11. defer</h3>
+<ul>
+<li>
+<p>数据结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_defer</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">siz</span>     <span style="color:#66d9ef">int32</span>
+	<span style="color:#a6e22e">started</span> <span style="color:#66d9ef">bool</span>
+	<span style="color:#a6e22e">sp</span>      <span style="color:#66d9ef">uintptr</span>
+	<span style="color:#a6e22e">pc</span>      <span style="color:#66d9ef">uintptr</span>
+	<span style="color:#a6e22e">fn</span>      <span style="color:#f92672">*</span><span style="color:#a6e22e">funcval</span>
+	<span style="color:#a6e22e">_panic</span>  <span style="color:#f92672">*</span><span style="color:#a6e22e">_panic</span>
+	<span style="color:#a6e22e">link</span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">_defer</span>  <span style="color:#75715e">// 链表指针
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>多个defer会形成一个链表，后面声明的defer会放到链表的头部,运行时，从前向后运行。</p>
+</li>
+</ul>
+<p><img src="/home/baldwin/workdir/go/src/mstk/images/defer.png" alt=""></p>
+<ul>
+<li>defer 一般用于资源释放，如下</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">f</span>,<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">filename</span>)
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+    panic(<span style="color:#a6e22e">err</span>)
+}
+<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</code></pre></div><ul>
+<li>
+<p>多个defer，执行顺序类似于栈（后进先出），下面的先执行</p>
+</li>
+<li>
+<p>defer 与 return的执行顺序</p>
+<ol>
+<li>返回值=x</li>
+<li>执行defer语句</li>
+<li>空的return</li>
+</ol>
+<p>如以下几个例子</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// 例1
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">result</span> <span style="color:#66d9ef">int</span>) {
+    <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+        <span style="color:#a6e22e">result</span><span style="color:#f92672">++</span>
+    }()
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+}
+
+<span style="color:#75715e">// 可改写为
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">result</span> <span style="color:#66d9ef">int</span>) {
+    <span style="color:#a6e22e">result</span> = <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+        <span style="color:#a6e22e">result</span><span style="color:#f92672">++</span>
+    }()
+    <span style="color:#66d9ef">return</span>
+}
+<span style="color:#75715e">// 所以例1返回1
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//============================================================
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 例2
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+     <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">5</span>
+     <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+       <span style="color:#a6e22e">t</span> = <span style="color:#a6e22e">t</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span>
+     }()
+     <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">t</span>
+}
+<span style="color:#75715e">// 可改写为
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+     <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">5</span>
+     <span style="color:#a6e22e">r</span> = <span style="color:#a6e22e">t</span>
+     <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+       <span style="color:#a6e22e">t</span> = <span style="color:#a6e22e">t</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span>
+     }()
+     <span style="color:#66d9ef">return</span>
+}
+<span style="color:#75715e">// 因为t赋值给r后，defer语句中并不会改变r的值，所以返回5
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//============================================================
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 例3
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+    <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+          <span style="color:#a6e22e">r</span> = <span style="color:#a6e22e">r</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span>
+    }(<span style="color:#a6e22e">r</span>)
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+}
+<span style="color:#75715e">// 可改写为
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() (<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+    <span style="color:#a6e22e">r</span> = <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">r</span> <span style="color:#66d9ef">int</span>) {
+          <span style="color:#a6e22e">r</span> = <span style="color:#a6e22e">r</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span>
+    }(<span style="color:#a6e22e">r</span>)
+    <span style="color:#66d9ef">return</span>
+}
+<span style="color:#75715e">// 因为r被赋值为1后，defer语句是用的是r的拷贝（值传递），所以r的值不会发生变化，返回值为1
+</span><span style="color:#75715e"></span>
+</code></pre></div></li>
+<li>
+<p>被deferred的函数的参数在defer时确定</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// 以下函数目的是计算函数执行时间，但是这么写达不到目的
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
+	<span style="color:#a6e22e">t0</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Sub</span>(<span style="color:#a6e22e">t0</span>))
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+	}
+}
+
+<span style="color:#75715e">// 可改为
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
+	<span style="color:#a6e22e">t0</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Sub</span>(<span style="color:#a6e22e">t0</span>))
+	}()
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+	}
+}
+<span style="color:#75715e">// =====================================================================
+</span><span style="color:#75715e">// 以下函数输出0，而不是1，因为defer时已经确定参数i=0，后面不会发生改变
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">a</span>() {
+    <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">i</span>)
+    <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>
+    <span style="color:#66d9ef">return</span>
+}
+</code></pre></div></li>
+<li>
+<p>defer不是退出代码块时执行，而是当前函数return之前运行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+    {
+        <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;defer runs&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;block ends&#34;</span>)
+    }
+
+    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;main ends&#34;</span>)
+}
+
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e">// block ends
+</span><span style="color:#75715e">// main ends
+</span><span style="color:#75715e">// defer runs
+</span></code></pre></div></li>
+</ul>
+<p>参考：</p>
+<p><a href="https://tiancaiamao.gitbooks.io/go-internals/content/zh/03.4.html">https://tiancaiamao.gitbooks.io/go-internals/content/zh/03.4.html</a></p>
+<p><a href="https://sanyuesha.com/2017/07/23/go-defer/">https://sanyuesha.com/2017/07/23/go-defer/</a></p>
+<p><a href="https://draveness.me/golang/docs/part2-foundation/ch05-keyword/golang-defer/">https://draveness.me/golang/docs/part2-foundation/ch05-keyword/golang-defer/</a></p>
+<h3 id="12-selectselect是随机的还是顺序的">12. select，select是随机的还是顺序的？</h3>
+<ul>
+<li>select中每个case必须是一个channel操作（读或写）</li>
+<li>当select中不含有任何case时，会阻塞当前goroutine</li>
+<li>当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会<strong>随机选取</strong>一个case执行，其他的不执行。</li>
+<li>当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。</li>
+<li>如果select中含有读取nil channel的case，则永远不会走这个case。</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://wudaijun.com/2017/10/go-select/">https://wudaijun.com/2017/10/go-select/</a></p>
+<h3 id="10-context">10. context</h3>
+<h3 id="11-map-如何顺序读取">11. Map 如何顺序读取</h3>
+<h3 id="12-golang内存泄漏线上如果出现如何排查解决">12. Golang内存泄漏，线上如果出现如何排查解决</h3>
+<h3 id="13-slice常见坑lencap扩容等">13. Slice常见坑，len，cap，扩容等</h3>
+<h3 id="14-反射">14. 反射</h3>
+<h3 id="15-syncpool用过吗为什么使用对象池避免频繁分配对象gc有关那里面的对象是固定的吗">15. sync.Pool用过吗，为什么使用，对象池，避免频繁分配对象（GC有关），那里面的对象是固定的吗？</h3>
+<h3 id="16--goroutine泄漏有没有处理">16.  goroutine泄漏有没有处理</h3>
+<h3 id="17-go使用踩过什么坑">17. go使用踩过什么坑</h3>
+<h3 id="18-go优缺点">18. go优缺点</h3>
+<h3 id="19-go的值传递和引用">19. go的值传递和引用</h3>
+<h3 id="20-go的锁如何实现用了什么cpu指令">20. go的锁如何实现，用了什么cpu指令</h3>
+<h3 id="21-go的runtime如何实现">21. go的runtime如何实现</h3>
+<h3 id="22-go什么情况下会发生内存泄漏">22. go什么情况下会发生内存泄漏？</h3>
+<h3 id="23-怎么实现协程完美退出">23. 怎么实现协程完美退出？</h3>
+<h3 id="24-用channel实现定时器">24. 用channel实现定时器？</h3>
+<h3 id="25-怎么理解go的interface">25. 怎么理解go的interface</h3>
+<h3 id="26-c-和-go对比">26. c++ 和 go对比</h3>
+<h3 id="28-go怎么从源码编译到二进制文件">28. go怎么从源码编译到二进制文件</h3>
+<h3 id="29-go函数中返回值未命名发生了panic但是在函数内recover了函数返回什么值">29. go函数中，返回值未命名，发生了panic，但是在函数内recover了。函数返回什么值？</h3>
+<h3 id="30-go语言局部变量分配在栈还是堆">30. <em>Go语言局部变量分配在栈还是堆？</em></h3>
+<h3 id="31-syncmutex实现原理">31. sync.Mutex实现原理</h3>
+<h3 id="32-go逃逸分析">32. go逃逸分析</h3>
+<ul>
+<li>
+<p>定义</p>
+<p>逃逸分析就是由编译器决定内存分配的位置，栈还是堆，在编译阶段完成。</p>
+</li>
+<li>
+<p>栈与堆的区别</p>
+<ul>
+<li>栈上分配内存效率更高</li>
+<li>栈上分配的内存不需要GC处理，堆上的内存使用完毕后需要GC处理</li>
+</ul>
+</li>
+<li>
+<p>逃逸场景</p>
+<ul>
+<li>返回局部变量的指针</li>
+<li>栈空间不足（空间开辟过大）</li>
+<li>动态类型逃逸比如interface</li>
+<li>闭包引用对象逃逸</li>
+</ul>
+</li>
+<li>
+<p>函数传递指针真的比传值效率高吗</p>
+<p>不一定，因为指针传递会产生逃逸，会给GC带来压力。</p>
+</li>
+</ul>
+<h3 id="33-effective-golang">33. effective golang</h3>
+<p><a href="http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/index.html">http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/index.html</a></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

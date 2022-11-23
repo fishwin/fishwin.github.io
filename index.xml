@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>张海余的主页</title>
+    <link>https://fishwin.github.io/</link>
+    <description>Recent content on 张海余的主页</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Nov 2022 16:25:47 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang</title>
+      <link>https://fishwin.github.io/golang/golang/</link>
+      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/golang/</guid>
+      <description>1. 同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？  同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  2. GC（垃圾回收）及运行原理 使用算法：三色标记+混合写屏障+辅助gc
+触发时机：
+ 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
+ gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
+A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
+写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
+流程图如下：
+参考：
+https://juejin.im/post/6844903793855987719
+https://www.jianshu.com/p/e20aaa039229
+http://yangxikun.github.io/golang/2019/12/22/golang-gc.html
+3. Go调度器原理   GPM模型
+一个G对应一个goroutine
+一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
+一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
+gorutine 与 内核线程 N:M映射
+  全局运行队列
+go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
+全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
+  本地运行队列
+每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
+  netpoll（网络轮询器）
+比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
+  调度过程
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。</description>
+    </item>
+    
+    <item>
+      <title>操作系统</title>
+      <link>https://fishwin.github.io/os/os/</link>
+      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/os/</guid>
+      <description>1. 并行与并发  并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  2. 进程、线程、协程  进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    3. 父进程与子进程之间的关系是怎样的   fork函数
+#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系</description>
+    </item>
+    
+    <item>
+      <title>算法题</title>
+      <link>https://fishwin.github.io/posts/blog/</link>
+      <pubDate>Wed, 23 Nov 2022 16:25:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/posts/blog/</guid>
+      <description>hello weekly-coding  每人以个人名创建文件夹 在个人目录下，以周数_每题名称创建单个文件，文件后缀不限，建议以所用语言为后缀；如 w6_142_环形链表.go 不要求单个文件内容能编译；  2022Q4 第一周 20221014-20221016  主题：栈 第一题：71. 简化路径 https://leetcode.cn/problems/simplify-path/ 第二题：20. 有效的括号 https://leetcode.cn/problems/valid-parentheses/ 第三题：42. 接雨水 https://leetcode.cn/problems/trapping-rain-water/  第二周 20221017-20221023  主题：树 第一题：107. 二叉树的层序遍历 II https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/ 第二题：450. 删除二叉搜索树中的节点 https://leetcode.cn/problems/delete-node-in-a-bst/ 第三题：124. 二叉树中的最大路径和 https://leetcode.cn/problems/binary-tree-maximum-path-sum/  第三周 20221024-20221031  主题：动态规划 第一题：97. 交错字符串 https://leetcode.cn/problems/interleaving-string/ 第二题：337. 打家劫舍 III https://leetcode.cn/problems/house-robber-iii/ 第三题：1125. 最小的必要团队 https://leetcode.cn/problems/smallest-sufficient-team/  第四周 20221101-20221107  主题：滑动窗口 第一题：187. 重复的DNA序列 https://leetcode.cn/problems/repeated-dna-sequences/ 第二题：930. 和相同的二元子数组 https://leetcode.cn/problems/binary-subarrays-with-sum/ 第三题：220. 存在重复元素 III https://leetcode.cn/problems/contains-duplicate-iii/  第五周 20221110-20221114  主题：回溯 第一题：79.</description>
+    </item>
+    
+  </channel>
+</rss>
