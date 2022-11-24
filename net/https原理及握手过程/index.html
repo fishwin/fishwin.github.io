@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Https原理及握手过程 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Https原理及握手过程"/>
+<meta name="twitter:description" content="  原理
+https本质是在原http与tcp之间加入了SSL/TLS协议
+https = http &#43; ssl/tls
+  https七次握手过程
+ 客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN&#43;ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输  注意：主密钥由双方产生的随机数和预主密钥生成
+master_secret = PRF(pre_master_secret,&#34;master secret&#34;,ClientHello.random&#43;ServerHello.random)   参考
+https://draveness.me/whys-the-design-https-latency/
+https://razeencheng.com/post/ssl-handshake-detail
+https://segmentfault.com/a/1190000021494676
+  "/>
+
+    <meta property="og:title" content="Https原理及握手过程" />
+<meta property="og:description" content="  原理
+https本质是在原http与tcp之间加入了SSL/TLS协议
+https = http &#43; ssl/tls
+  https七次握手过程
+ 客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN&#43;ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输  注意：主密钥由双方产生的随机数和预主密钥生成
+master_secret = PRF(pre_master_secret,&#34;master secret&#34;,ClientHello.random&#43;ServerHello.random)   参考
+https://draveness.me/whys-the-design-https-latency/
+https://razeencheng.com/post/ssl-handshake-detail
+https://segmentfault.com/a/1190000021494676
+  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/net/https%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B/" /><meta property="article:section" content="net" />
+<meta property="article:published_time" content="2022-11-24T17:33:44+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:33:44+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Https原理及握手过程</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>
+<p>原理</p>
+<p><img src="/images/https.png" alt=""></p>
+<p>https本质是在原http与tcp之间加入了SSL/TLS协议</p>
+<p>https = http + ssl/tls</p>
+</li>
+<li>
+<p>https七次握手过程</p>
+<ol>
+<li>客户端向服务端发送SYN消息，并进入SYN_SENT状态</li>
+<li>服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态</li>
+<li>客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接</li>
+<li>客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、<strong>随机数</strong>（32位）等信息。</li>
+<li>服务端收到之后，向客户端发送Server Hello消息，并携带<strong>证书</strong>（包含公钥等信息）、服务端生成的<strong>随机数</strong>、会话ID、协议版本等信息。</li>
+<li>客户端收到服务端消息后，验证证书，向服务端发送<strong>Client key exchange</strong>消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为<strong>预主密钥</strong>（pre master key），并通知服务端之后加密传输，并发送<strong>finished消息</strong>。</li>
+<li>服务端收到消息之后，回复<strong>finished消息</strong>，并通知客户端之后数据加密传输</li>
+</ol>
+<p><img src="/images/tls.png" alt=""></p>
+<p>注意：主密钥由双方产生的随机数和预主密钥生成</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">master_secret <span style="color:#f92672">=</span> PRF(pre_master_secret,<span style="color:#e6db74">&#34;master secret&#34;</span>,ClientHello.random<span style="color:#f92672">+</span>ServerHello.random)
+</code></pre></div></li>
+<li>
+<p>参考</p>
+<p><a href="https://draveness.me/whys-the-design-https-latency/">https://draveness.me/whys-the-design-https-latency/</a></p>
+<p><a href="https://razeencheng.com/post/ssl-handshake-detail">https://razeencheng.com/post/ssl-handshake-detail</a></p>
+<p><a href="https://segmentfault.com/a/1190000021494676">https://segmentfault.com/a/1190000021494676</a></p>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

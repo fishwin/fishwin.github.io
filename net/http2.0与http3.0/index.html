@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Http2.0与http3.0 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Http2.0与http3.0"/>
+<meta name="twitter:description" content="http1.0
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。"/>
+
+    <meta property="og:title" content="Http2.0与http3.0" />
+<meta property="og:description" content="http1.0
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/" /><meta property="article:section" content="net" />
+<meta property="article:published_time" content="2022-11-24T17:35:04+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:35:04+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Http2.0与http3.0</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>
+<p>http1.0</p>
+<ul>
+<li><strong>连接无法复用</strong>：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接</li>
+<li>由于tcp慢启动机制，大文件请求效率低</li>
+<li><strong>队头阻塞</strong>：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞</li>
+<li><strong>无状态</strong>：导致每次都需要传递重复的header，协议开销大</li>
+<li><strong>明文传输</strong></li>
+</ul>
+</li>
+<li>
+<p>http1.1</p>
+<ul>
+<li>
+<p><strong>连接复用</strong>：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接</p>
+</li>
+<li>
+<p><strong>pipeline</strong>：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3
+</code></pre></div></li>
+<li>
+<p><strong>明文传输</strong></p>
+</li>
+<li>
+<p><strong>无状态</strong>：导致每次都需要传递重复的header，协议开销大</p>
+</li>
+</ul>
+</li>
+<li>
+<p>http2.0</p>
+<ul>
+<li><strong>二进制分帧</strong>：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。<strong>多个帧可以乱序发送，根据帧首部的流标识可以重新组装</strong></li>
+<li><strong>多路复用</strong>：多个请求公用一个tcp连接，可<strong>并行交错</strong>的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。</li>
+<li><strong>头部压缩</strong>：采用HPACK算法，不发送重复的header，减少协议开销</li>
+<li><strong>server push</strong>：服务端可主动推送消息给客户端</li>
+</ul>
+</li>
+<li>
+<p>http3.0</p>
+<ul>
+<li>基于QUIC协议（QUIC协议基于UDP实现）
+<ul>
+<li>实现了类似TCP的流量控制、传输可靠性的功能</li>
+<li>快速握手：基于udp，可实现0-rtt或1-rtt建立连接</li>
+<li>集成tls</li>
+<li>多路复用：彻底解决队头阻塞问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别</p>
+<p>http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。</p>
+</li>
+<li>
+<p>为什么说http2.0没有彻底解决队头阻塞的问题</p>
+<p>由于多个请求复用一个tcp连接，当网络不稳定出现<strong>丢包</strong>时，tcp的<strong>重传</strong>机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</p>
+</li>
+<li>
+<p>参考</p>
+<p><a href="https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ">https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ</a></p>
+<p><a href="https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7">https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7</a></p>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

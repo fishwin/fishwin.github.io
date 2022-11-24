@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Http 常见错误码 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Http 常见错误码"/>
+<meta name="twitter:description" content="1xx
+​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
+  2xx
+​	2xx类状态码表示服务器成功处理了客户端的请求
+  200 ok
+表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
+  204 no content
+与200基本基本相同，但响应头没有body数据
+  206 partial content
+一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
+    3xx
+​	3xx表示重定向
+  301 moved permanently
+永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
+  302 found
+临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
+  304 not modified
+不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
+    4xx
+​	4xx表示客户端发送的报文有误，服务端无法处理
+  400 bad request
+表示客户端请求的报文有错误,是一个笼统的错误
+  401 Unauthorized
+请求未经授权
+  403 forbidden"/>
+
+    <meta property="og:title" content="Http 常见错误码" />
+<meta property="og:description" content="1xx
+​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
+  2xx
+​	2xx类状态码表示服务器成功处理了客户端的请求
+  200 ok
+表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
+  204 no content
+与200基本基本相同，但响应头没有body数据
+  206 partial content
+一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
+    3xx
+​	3xx表示重定向
+  301 moved permanently
+永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
+  302 found
+临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
+  304 not modified
+不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
+    4xx
+​	4xx表示客户端发送的报文有误，服务端无法处理
+  400 bad request
+表示客户端请求的报文有错误,是一个笼统的错误
+  401 Unauthorized
+请求未经授权
+  403 forbidden" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/net/http%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%A0%81/" /><meta property="article:section" content="net" />
+<meta property="article:published_time" content="2022-11-24T17:31:48+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:31:48+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Http 常见错误码</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p><img src="/images/Lark20201016145929.png" alt=""></p>
+<ul>
+<li>
+<p>1xx</p>
+<p>​	1xx类状态码属于<strong>提示消息</strong>，是协议处理的一种<strong>中间状态</strong>，实际用到的比较少。</p>
+</li>
+<li>
+<p>2xx</p>
+<p>​	2xx类状态码表示服务器<strong>成功处理</strong>了客户端的请求</p>
+<ul>
+<li>
+<p>200 ok</p>
+<p>表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据</p>
+</li>
+<li>
+<p>204 no content</p>
+<p>与200基本基本相同，但<strong>响应头没有body数据</strong></p>
+</li>
+<li>
+<p>206 partial content</p>
+<p>一般应用于<strong>http分块下载或断点续传</strong>，表示响应返回的body中并不是全部数据，而是一部分。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>3xx</p>
+<p>​	3xx表示重定向</p>
+<ul>
+<li>
+<p>301 moved permanently</p>
+<p><strong>永久重定向</strong>，表示请求的资源不存在了，需要使用另一个url进行访问</p>
+</li>
+<li>
+<p>302 found</p>
+<p><strong>临时重定向</strong>，表示请求的资源还在，但是暂时需要另一个url来访问</p>
+</li>
+<li>
+<p>304 not modified</p>
+<p>不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称<strong>缓存重定向</strong>，用于缓存控制。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>4xx</p>
+<p>​	4xx表示客户端发送的报文有误，服务端无法处理</p>
+<ul>
+<li>
+<p>400 bad request</p>
+<p>表示客户端请求的报文有错误,是一个笼统的错误</p>
+</li>
+<li>
+<p>401 Unauthorized</p>
+<p>请求未经授权</p>
+</li>
+<li>
+<p>403 forbidden</p>
+<p>服务器禁止客户端访问相应的资源</p>
+</li>
+<li>
+<p>404 not found</p>
+<p>请求的资源不存在</p>
+</li>
+</ul>
+</li>
+<li>
+<p>5xx</p>
+<p>​	5xx表示服务端错误</p>
+<ul>
+<li>
+<p>500 internal server error</p>
+<p>服务器内部错误，和400一样是一个笼统的错误</p>
+</li>
+<li>
+<p>501 not implemented</p>
+<p>表示客户端的请求服务端还不支持</p>
+</li>
+<li>
+<p>502 bad gateway</p>
+<p>一般是服务端进程异常或挂掉</p>
+</li>
+<li>
+<p>503 service unavailable</p>
+<p>表示服务器当前繁忙，无法响应</p>
+</li>
+</ul>
+</li>
+<li>
+<p>参考</p>
+<p><a href="https://www.cnblogs.com/xiaolincoding/p/12442435.html">https://www.cnblogs.com/xiaolincoding/p/12442435.html</a></p>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

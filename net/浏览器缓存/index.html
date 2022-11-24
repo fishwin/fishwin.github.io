@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>浏览器缓存 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="浏览器缓存"/>
+<meta name="twitter:description" content="强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
+  相关header
+  Expires（http1.0）
+设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
+  Cache-Control（http1.1，优先级高于Expires）
+ max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
+ 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+  相关header
+  Last-Modified
+服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
+  If-Modified-Since
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
+  Etag
+服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
+  If-None-Match
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
+  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+ Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较"/>
+
+    <meta property="og:title" content="浏览器缓存" />
+<meta property="og:description" content="强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
+  相关header
+  Expires（http1.0）
+设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
+  Cache-Control（http1.1，优先级高于Expires）
+ max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
+ 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+  相关header
+  Last-Modified
+服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
+  If-Modified-Since
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
+  Etag
+服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
+  If-None-Match
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
+  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+ Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/" /><meta property="article:section" content="net" />
+<meta property="article:published_time" content="2022-11-24T17:34:30+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:34:30+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">浏览器缓存</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>
+<p>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互</p>
+<ul>
+<li>
+<p>相关header</p>
+<ul>
+<li>
+<p>Expires（http1.0）</p>
+<p>设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）</p>
+</li>
+<li>
+<p>Cache-Control（http1.1，优先级高于Expires）</p>
+<ul>
+<li>max-age：设置缓存过期时间，单位秒，例如max-age=300</li>
+<li>no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用）</li>
+<li>no-store：禁止缓存</li>
+<li>等等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>状态码</p>
+<ul>
+<li>200 OK (from disk cache)</li>
+<li>200 OK (from memory cache)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程</p>
+<ul>
+<li>
+<p>相关header</p>
+<ul>
+<li>
+<p>Last-Modified</p>
+<p>服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间</p>
+</li>
+<li>
+<p>If-Modified-Since</p>
+<p>在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源</p>
+</li>
+<li>
+<p>Etag</p>
+<p>服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识</p>
+</li>
+<li>
+<p>If-None-Match</p>
+<p>在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。</p>
+</li>
+<li>
+<p>Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用</p>
+</li>
+</ul>
+</li>
+<li>
+<p>为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？</p>
+<ul>
+<li><strong>Last-Modified与If-Modified-Since不够灵敏</strong>：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>比较</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>获取资源形式</th>
+<th>状态码</th>
+<th>与服务器交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>强缓存</td>
+<td>读缓存</td>
+<td>200（from memory cache/from disk cache）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>协商缓存</td>
+<td>读缓存</td>
+<td>304（not modified）</td>
+<td>是，需要向服务器确认缓存是否可用</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>流程图</p>
+<p><img src="/images/browser_cahce.png" alt=""></p>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

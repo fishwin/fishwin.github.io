@@ -6,14 +6,300 @@
     <description>Recent content in Nets on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 23 Nov 2022 21:21:48 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/net/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Nov 2022 17:48:11 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/net/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Net</title>
-      <link>https://fishwin.github.io/net/net/</link>
-      <pubDate>Wed, 23 Nov 2022 21:21:48 +0800</pubDate>
+      <title>IP头部</title>
+      <link>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</link>
+      <pubDate>Thu, 24 Nov 2022 17:48:11 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/net/net/</guid>
-      <description></description>
+      <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
+      <description>示意图    代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+https://blog.csdn.net/mrwangwang/article/details/8537775</description>
+    </item>
+    
+    <item>
+      <title>TCP四元组</title>
+      <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E5%85%83%E7%BB%84/</link>
+      <pubDate>Thu, 24 Nov 2022 17:46:25 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E5%9B%9B%E5%85%83%E7%BB%84/</guid>
+      <description>TCP四元组包括源地址、源端口、目的地址、目的端口
+源地址和目标地址的字段在IP头部
+源端口和目标端口的字段在TCP头部</description>
+    </item>
+    
+    <item>
+      <title>服务器最大连接数</title>
+      <link>https://fishwin.github.io/net/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9C%80%E5%A4%A7%E8%BF%9E%E6%8E%A5%E6%95%B0/</link>
+      <pubDate>Thu, 24 Nov 2022 17:46:00 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9C%80%E5%A4%A7%E8%BF%9E%E6%8E%A5%E6%95%B0/</guid>
+      <description>多个客户端连接到服务器只消耗服务器一个端口，即监听的端口。同一个客户端向服务器建立多个连接，会消耗客户端所在机器多个随机端口。
+理论上服务器最大连接数非常大，但是每一个TCP连接会占用内存，服务器的内存有限，每个socket还会消耗一个文件描述符，也是有上限的。</description>
+    </item>
+    
+    <item>
+      <title>网络分层</title>
+      <link>https://fishwin.github.io/net/%E7%BD%91%E7%BB%9C%E5%88%86%E5%B1%82/</link>
+      <pubDate>Thu, 24 Nov 2022 17:45:26 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E7%BD%91%E7%BB%9C%E5%88%86%E5%B1%82/</guid>
+      <description>ARP协议 通过IP地址获取物理地址
+ARQ协议 Automatic Repeat-reQuest
+自动重传请求，通过确认和超时机制
+连续ARQ协议采用流水线传输，一次性发送多个分组，而不用等待每个分组的确认，提高信道利用率，通常结合滑动窗口协议实现。
+OSI七层网络协议 应用层、表示层、会话层、传输层、网络层、数据链路层、物理层
+TCP/IP协议 应用层、传输层、网络层、网络接口层</description>
+    </item>
+    
+    <item>
+      <title>Tcp 滑动窗口、流量控制和拥塞控制</title>
+      <link>https://fishwin.github.io/net/tcp%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E5%92%8C%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/</link>
+      <pubDate>Thu, 24 Nov 2022 17:44:14 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E5%92%8C%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/</guid>
+      <description>滑动窗口
+ 为了解决发送一个分组必须等待确认才能发送下一个分组的性能不高的问题 引入窗口的概念，一次可发送多个数组，累计确认，提高通信效率 窗口大小由接收端决定，接收端通过tcp头部的window字段告知发送端还有多大缓冲区可以接收数据 发送方和接收方都有窗口，并且不断向前滑动    流量控制
+  接收方通过TCP头部的window字段，来不断告知还可以接收的数据量，来控制发送数据量，这期间发送窗口的大小会随接收窗口大小不断变化
+  窗口关闭问题
+窗口关闭问题即发送窗口为0，这时发送窗口不会再发送数据，但是当接收窗口变大可接收数据时，发送方并不知道，为解决这一问题，发送方会定时进行窗口探测，接收方在收到探测报文之后，会告知自己的窗口大小。
+    拥塞控制
+ 避免大数量数据传输导致网络拥堵，进而导致数据报丢失 拥塞窗口：为了实现拥塞控制，在发送端设置的窗口，发送窗口大小=min(拥塞窗口大小，接收窗口大小) 如果发送方在规定时间内没有收到接收方的确认消息，就认为网络拥堵 控制算法  慢启动：tcp刚建立连接时，发送方每收到一个ack，拥塞窗口就乘2，直到增加到ssthresh（慢启动门限）&amp;mdash;-指数增长 拥塞避免算法：当拥塞窗口大小超过ssthresh（慢启动门限）时，就会进入拥塞避免，即每当收到一个ack，拥塞窗口大小增加1/拥塞窗口大小&amp;mdash;-线性增长，窗口大小增速减缓 拥塞发生&amp;mdash;变化拥塞窗口大小  发生超时重传的拥塞发生算法：慢启动门限设置为拥塞窗口的一半，拥塞窗口大小设置为1 发生快速重传的拥塞发生算法：拥塞窗口大小减半，慢启动门限设置为原拥塞窗口大小，快速恢复算法   快速恢复：当发送端连续收到三个连续确认，执行快速重传，并进入快速恢复阶段，慢启动门限和拥塞窗口大小都减为当前拥塞窗口的一半。      流量控制与拥塞控制比较
+ 流量控制是发送方根据接收方窗口大小来变化发送窗口大小 拥塞控制是针对整个网络拥堵情况，进行调整拥塞窗口的大小    参考
+https://www.cnblogs.com/xiaolincoding/p/12732052.html
+  TCP 累计确认 ack=n表示n之前的数据已经正确收到
+TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这个时候就会重发这个序列号之后的数据，不需要等待超时，提高效率</description>
+    </item>
+    
+    <item>
+      <title>Tcp为什么是可靠的传输</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</link>
+      <pubDate>Thu, 24 Nov 2022 17:42:07 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
+      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
+    </item>
+    
+    <item>
+      <title>TCP与UDP头部</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/</link>
+      <pubDate>Thu, 24 Nov 2022 17:41:15 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/</guid>
+      <description>UDP头部   示意图
+  数据字典
+ 目标和源端口：标识进程 包长度：UDP头部和数据的长度之和 校验和：提供可靠的UDP头部和数据(相当于对数据进行签名，发送端计算一个校验和，再接收端再计算一次，并与头部的校验和进行比对)    代码定义
+/*UDP头定义，共8个字节*/ typedef struct _UDP_HEADER { unsigned short m_usSourPort; // 源端口号16bit  unsigned short m_usDestPort; // 目的端口号16bit  unsigned short m_usLength; // 数据包长度16bit  unsigned short m_usCheckSum; // 校验和16bit }__attribute__((packed))UDP_HEADER, *PUDP_HEADER;     TCP头部   示意图
+  词典
+ 序列号：随机生成，用来解决包重复、乱序、重传等问题 确认应答号：解决不丢包的问题 控制位  ACK：确认应答，该位为1时，确认应答号字段有效 RST：该位为1时，表示TCP连接异常必须强制断开连接 SYN：该位为1时，表示希望建立连接，并完成序列号的初始化 FIN：该位为1时，表示希望断开连接      校验和：类似于对数据进行签名，在接收端进行校验</description>
+    </item>
+    
+    <item>
+      <title>滑动窗口</title>
+      <link>https://fishwin.github.io/net/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
+      <pubDate>Thu, 24 Nov 2022 17:40:27 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
+      <description>https://www.cnblogs.com/xiaolincoding/p/12732052.html</description>
+    </item>
+    
+    <item>
+      <title>停等协议</title>
+      <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Thu, 24 Nov 2022 17:40:08 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
+      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
+    </item>
+    
+    <item>
+      <title>TCP四次挥手</title>
+      <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</link>
+      <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</guid>
+      <description>TCP四次挥手过程   执行流程图
+ 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+https://blog.csdn.net/qzcsu/article/details/72861891
+为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
+TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
+线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
+      <pubDate>Thu, 24 Nov 2022 17:37:02 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
+      <description>TCP 三次握手过程及中间状态   执行流程图
+ 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
+  初始化并交换序列号
+序列号发挥着非常重要的作用
+ 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+https://segmentfault.com/a/1190000020610336
+TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+    </item>
+    
+    <item>
+      <title>Tcp</title>
+      <link>https://fishwin.github.io/net/tcp/</link>
+      <pubDate>Thu, 24 Nov 2022 17:36:10 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp/</guid>
+      <description>1. TCP定义 TCP是面向连接的、可靠的、基于字节流的传输层通信协议 。
+2. 什么是TCP连接 用于保证可靠性和流量控制的某些状态信息的组合，包括socket、序列号、窗口大小等
+3. TCP与UDP区别，UDP优点，适用场景   区别
+  连接
+TCP是面向连接的传输层协议，通信之前需要建立连接
+UDP传输时不需要建立连接
+  服务对象
+TCP只能一对一通信
+UDP支持一对一、一对多、多对多
+  可靠性
+TCP保证数据传输的可靠性
+UDP不保证传输的可靠性
+  拥塞控制、流量控制
+TCP有拥塞控制和流量控制的机制
+UDP没有
+  首部开销
+TCP首部20个字节（不使用选项字段20字节、使用时更长），UDP首部只有8个字节，长度固定
+    应用案例
+ TCP  FTP文件传输 HTTP/HTTPS   UDP  DNS 视频、音频等多媒体通信      参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+4. Linux查看TCP连接状态   命令
+netstat -napt
+  图
+  </description>
+    </item>
+    
+    <item>
+      <title>Http2.0与http3.0</title>
+      <link>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</link>
+      <pubDate>Thu, 24 Nov 2022 17:35:04 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
+      <description>http1.0
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
+    </item>
+    
+    <item>
+      <title>浏览器缓存</title>
+      <link>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Thu, 24 Nov 2022 17:34:30 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
+      <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
+  相关header
+  Expires（http1.0）
+设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
+  Cache-Control（http1.1，优先级高于Expires）
+ max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
+ 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+  相关header
+  Last-Modified
+服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
+  If-Modified-Since
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
+  Etag
+服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
+  If-None-Match
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
+  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+ Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
+    </item>
+    
+    <item>
+      <title>Https原理及握手过程</title>
+      <link>https://fishwin.github.io/net/https%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Thu, 24 Nov 2022 17:33:44 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/https%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B/</guid>
+      <description>  原理
+https本质是在原http与tcp之间加入了SSL/TLS协议
+https = http + ssl/tls
+  https七次握手过程
+ 客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输  注意：主密钥由双方产生的随机数和预主密钥生成
+master_secret = PRF(pre_master_secret,&amp;#34;master secret&amp;#34;,ClientHello.random+ServerHello.random)   参考
+https://draveness.me/whys-the-design-https-latency/
+https://razeencheng.com/post/ssl-handshake-detail
+https://segmentfault.com/a/1190000021494676
+  </description>
+    </item>
+    
+    <item>
+      <title>常见http header</title>
+      <link>https://fishwin.github.io/net/%E5%B8%B8%E8%A7%81httpheader/</link>
+      <pubDate>Thu, 24 Nov 2022 17:33:08 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E5%B8%B8%E8%A7%81httpheader/</guid>
+      <description>常见的http请求头
+   协议头 说明 示例     Accept 可接受的响应内容类型（Content-Types） Accept:text/plain   Accept-Charset 可接受的字符集 Accept-Charset:utf-8   Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate   Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US   Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==   Cache-Control 是否使用缓存机制 Cache-Control: no-cache   Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade   Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new;   Content-Length 以8进制表示的请求体的长度 Content-Length: 348   Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded   Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT   Host 服务器域名 Host: www.</description>
+    </item>
+    
+    <item>
+      <title>Http请求与响应协议格式</title>
+      <link>https://fishwin.github.io/net/http%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F/</link>
+      <pubDate>Thu, 24 Nov 2022 17:32:33 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/http%E8%AF%B7%E6%B1%82%E4%B8%8E%E5%93%8D%E5%BA%94%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F/</guid>
+      <description>HTTP请求（Request）格式
+请求行
+请求头
+空行
+请求体
+ get请求示例  GET请求： GET /562f25980001b1b106000338.jpg HTTP/1.1 Host img.mukewang.com User-Agent Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 Accept image/webp,image/*,*/*;q=0.8 Referer http://www.imooc.com/ Accept-Encoding gzip, deflate, sdch Accept-Language zh-CN,zh;q=0.8   post请求示例
+POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022) Content-Type:application/x-www-form-urlencoded Content-Length:40 Connection: Keep-Alive name=Professional%20Ajax&amp;amp;publisher=Wiley     HTTP响应（Response）格式</description>
+    </item>
+    
+    <item>
+      <title>Http 常见错误码</title>
+      <link>https://fishwin.github.io/net/http%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%A0%81/</link>
+      <pubDate>Thu, 24 Nov 2022 17:31:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/http%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%A0%81/</guid>
+      <description>1xx
+​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
+  2xx
+​	2xx类状态码表示服务器成功处理了客户端的请求
+  200 ok
+表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
+  204 no content
+与200基本基本相同，但响应头没有body数据
+  206 partial content
+一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
+    3xx
+​	3xx表示重定向
+  301 moved permanently
+永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
+  302 found
+临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
+  304 not modified
+不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
+    4xx
+​	4xx表示客户端发送的报文有误，服务端无法处理
+  400 bad request
+表示客户端请求的报文有错误,是一个笼统的错误
+  401 Unauthorized
+请求未经授权
+  403 forbidden</description>
     </item>
     
   </channel>

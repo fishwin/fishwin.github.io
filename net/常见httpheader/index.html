@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>常见http header // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="常见http header"/>
+<meta name="twitter:description" content="常见的http请求头
+   协议头 说明 示例     Accept 可接受的响应内容类型（Content-Types） Accept:text/plain   Accept-Charset 可接受的字符集 Accept-Charset:utf-8   Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate   Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US   Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==   Cache-Control 是否使用缓存机制 Cache-Control: no-cache   Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade   Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new;   Content-Length 以8进制表示的请求体的长度 Content-Length: 348   Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded   Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT   Host 服务器域名 Host: www."/>
+
+    <meta property="og:title" content="常见http header" />
+<meta property="og:description" content="常见的http请求头
+   协议头 说明 示例     Accept 可接受的响应内容类型（Content-Types） Accept:text/plain   Accept-Charset 可接受的字符集 Accept-Charset:utf-8   Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate   Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US   Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==   Cache-Control 是否使用缓存机制 Cache-Control: no-cache   Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade   Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new;   Content-Length 以8进制表示的请求体的长度 Content-Length: 348   Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded   Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT   Host 服务器域名 Host: www." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/net/%E5%B8%B8%E8%A7%81httpheader/" /><meta property="article:section" content="net" />
+<meta property="article:published_time" content="2022-11-24T17:33:08+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:33:08+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">常见http header</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>
+<p>常见的http请求头</p>
+<table>
+<thead>
+<tr>
+<th>协议头</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accept</td>
+<td>可接受的响应内容类型（Content-Types）</td>
+<td>Accept:text/plain</td>
+</tr>
+<tr>
+<td>Accept-Charset</td>
+<td>可接受的字符集</td>
+<td>Accept-Charset:utf-8</td>
+</tr>
+<tr>
+<td>Accept-Encoding</td>
+<td>可接受的响应内容编码方式</td>
+<td>Accept-Encoding: gzip, deflate</td>
+</tr>
+<tr>
+<td>Accept-Language</td>
+<td>可接受的响应内容的语言列表</td>
+<td>Accept-Language: en-US</td>
+</tr>
+<tr>
+<td>Authorization</td>
+<td>认证信息</td>
+<td>Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==</td>
+</tr>
+<tr>
+<td>Cache-Control</td>
+<td>是否使用缓存机制</td>
+<td>Cache-Control: no-cache</td>
+</tr>
+<tr>
+<td>Connection</td>
+<td>客户端（浏览器）想要优先使用的连接类型</td>
+<td>Connection: keep-alive Connection: Upgrade</td>
+</tr>
+<tr>
+<td>Cookie</td>
+<td>由之前服务器设置的一个Cookie</td>
+<td>Cookie: $Version=1; Skin=new;</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>以8进制表示的请求体的长度</td>
+<td>Content-Length: 348</td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>请求体的MIME类型，用于POST和PUT</td>
+<td>Content-Type: application/x-www-form-urlencoded</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>日期时间</td>
+<td>Date: Dec, 26 Dec 2015 17:30:00 GMT</td>
+</tr>
+<tr>
+<td>Host</td>
+<td>服务器域名</td>
+<td>Host: <a href="http://www.itbilu.com">www.itbilu.com</a>:80 Host: <a href="http://www.itbilu.com">www.itbilu.com</a></td>
+</tr>
+<tr>
+<td>Origin</td>
+<td>发起一个针对<a href="http://itbilu.com/javascript/js/VkiXuUcC.html">跨域资源共享</a>的请求</td>
+<td>Origin: <a href="http://www.itbilu.com">http://www.itbilu.com</a></td>
+</tr>
+<tr>
+<td>Referer</td>
+<td>表示浏览器所访问的前一个页面</td>
+<td>Referer: <a href="http://itbilu.com/nodejs">http://itbilu.com/nodejs</a></td>
+</tr>
+<tr>
+<td>User-Agent</td>
+<td>浏览器的身份标识字符串</td>
+<td>User-Agent: Mozilla/……</td>
+</tr>
+<tr>
+<td>Upgrade</td>
+<td>要求服务器升级到一个高版本协议。</td>
+<td>Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>常见的http响应头</p>
+<table>
+<thead>
+<tr>
+<th>响应头</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access-Control-Allow-Origin</td>
+<td>指定哪些网站可以跨域源资源共享</td>
+<td>Access-Control-Allow-Origin: *</td>
+</tr>
+<tr>
+<td>Age</td>
+<td>响应对象在代理缓存中存在的时间，以秒为单位</td>
+<td>Age: 12</td>
+</tr>
+<tr>
+<td>Allow</td>
+<td>对于特定资源的有效动作;</td>
+<td>Allow: GET, HEAD</td>
+</tr>
+<tr>
+<td>Cache-Control</td>
+<td>缓存相关</td>
+<td>Cache-Control: max-age=3600</td>
+</tr>
+<tr>
+<td>Connection</td>
+<td>针对该连接所预期的选项</td>
+<td>Connection: close</td>
+</tr>
+<tr>
+<td>Content-Encoding</td>
+<td>响应资源所使用的编码类型</td>
+<td>Content-Encoding: gzip</td>
+</tr>
+<tr>
+<td>Content-Language</td>
+<td>响就内容所使用的语言</td>
+<td>Content-Language: zh-cn</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>响应消息体的长度，用8进制字节表示</td>
+<td>Content-Length: 348</td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>当前内容的<code>MIME</code>类型</td>
+<td>Content-Type: text/html; charset=utf-8</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>此条消息被发送时的日期和时间</td>
+<td>Date: Tue, 15 Nov 1994 08:12:31 GMT</td>
+</tr>
+<tr>
+<td>Last-Modified</td>
+<td>所请求的对象的最后修改日期</td>
+<td>Last-Modified: Dec, 26 Dec 2015 17:30:00 GMT</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>用于在进行重定向，或在创建了某个新资源时使用。</td>
+<td>Location: <a href="http://www.itbilu.com/nodejs">http://www.itbilu.com/nodejs</a></td>
+</tr>
+<tr>
+<td>Server</td>
+<td>服务器的名称</td>
+<td>Server: nginx/1.6.3</td>
+</tr>
+<tr>
+<td><strong>Set-Cookie</strong></td>
+<td>设置cookie</td>
+<td>Set-Cookie: UserID=itbilu; Max-Age=3600; Version=1</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>通用网关接口的响应头字段，用来说明当前HTTP连接的响应状态。</td>
+<td>Status: 200 OK</td>
+</tr>
+<tr>
+<td>Transfer-Encoding</td>
+<td>表示实体传输给用户的编码形式。包括：<code>chunked</code>、<code>compress</code>、 <code>deflate</code>、<code>gzip</code>、<code>identity</code>。</td>
+<td>Transfer-Encoding: chunked</td>
+</tr>
+<tr>
+<td>Upgrade</td>
+<td>要求客户端升级到另一个高版本协议。</td>
+<td>Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11</td>
+</tr>
+<tr>
+<td>WWW-Authenticate</td>
+<td>表示在请求获取这个实体时应当使用的认证模式。</td>
+<td>WWW-Authenticate: Basic</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
