@@ -6,14 +6,120 @@
     <description>Recent content in Dbs on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 23 Nov 2022 21:23:43 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/db/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Nov 2022 19:43:23 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/db/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Db</title>
-      <link>https://fishwin.github.io/db/db/</link>
-      <pubDate>Wed, 23 Nov 2022 21:23:43 +0800</pubDate>
+      <title>简述数据库中的 ACID 分别是什么？</title>
+      <link>https://fishwin.github.io/db/acid/</link>
+      <pubDate>Thu, 24 Nov 2022 19:43:23 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/db/db/</guid>
-      <description></description>
+      <guid>https://fishwin.github.io/db/acid/</guid>
+      <description>ACID
+ 原子性  定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。   一致性  定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。   隔离性  定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离   持久性  定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。      实现原理
+  redo log
+  定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
+  流程图
+  作用
+ 当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性    什么时候开始写redolog？什么时候释放redolog？
+ 当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。    既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
+ 直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分      undo log</description>
+    </item>
+    
+    <item>
+      <title>聚簇索引和非聚簇索引有什么区别？什么情况用聚集索引？</title>
+      <link>https://fishwin.github.io/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Thu, 24 Nov 2022 19:42:15 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
+      <description>MyISAM索引实现
+  使用B+树
+  叶子节点的data域存储数据记录的地址（非聚簇索引）
+  主键索引与普通索引结构一样
+  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+  图示
+    InnoDB的索引实现
+  使用B+树
+  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+  普通索引叶子节点data域保存着主键值（非聚簇索引）
+  每个表只能有一个聚簇索引
+  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+  图示
+  主键索引
+  辅助索引
+    聚簇索引与非聚簇索引定义
+叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
+  什么是回表
+通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
+  什么是索引覆盖
+ 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</description>
+    </item>
+    
+    <item>
+      <title>数据库的事务隔离级别有哪些？各有哪些优缺点？</title>
+      <link>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
+      <pubDate>Thu, 24 Nov 2022 19:41:37 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
+      <description>事务隔离级别主要有四种
+ 读未提交 (READ UNCOMMITED)  定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题  脏读 不可重复读 幻读     读已提交 (READ COMMITED)  定义：一个事务只能读取另一个事务已经提交的数据 存在的问题  不可重复读 幻读     可重复读 (REPEATABLE READ)（Mysql 默认隔离级别）  定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题  幻读     串行 (SERIALIZABLE)  定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题      释义
+ 脏读  定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据   不可重复读  定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致   幻读  定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。      优缺点</description>
+    </item>
+    
+    <item>
+      <title>如何创建索引</title>
+      <link>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Thu, 24 Nov 2022 19:34:55 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</guid>
+      <description>  (a,b)联合索引会触发filesort
+  (a,b,c)联合索引会触发filesort
+  (a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
+  所以结论是：建立(a,c)联合索引为最优解
+  </description>
+    </item>
+    
+    <item>
+      <title>MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？</title>
+      <link>https://fishwin.github.io/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Thu, 24 Nov 2022 19:34:15 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description>B树（平衡多路搜索树）
+  图示
+  特征
+ 每个节点可有多棵子树 每个非叶子节点有n个key，并有n+1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &amp;gt; key) return BTree_Search(point[i]-&amp;gt;node); } return BTree_Search(point[i+1]-&amp;gt;node); } data = BTree_Search(root, my_key);   时间复杂度
+O(log n)
+    B+树
+  图示
+  特征
+ 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度</description>
+    </item>
+    
+    <item>
+      <title>为什么数据库生产环境最好不要使用外键</title>
+      <link>https://fishwin.github.io/db/%E5%A4%96%E9%94%AE/</link>
+      <pubDate>Thu, 24 Nov 2022 19:32:59 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E5%A4%96%E9%94%AE/</guid>
+      <description>常用的外键类型：
+  RESTRICT：会触发一致性检查
+例如： cities表中字段有id、name两个字段
+​	buildings表有id、name、city_id三个字段。
+​ 这时city_id就是关联到cities表的RESTRICT外键。
+​	当向buildings表中新插入一条记录（88, &amp;ldquo;故宫&amp;rdquo;, 9）时，就需要去cities表中检测是否有id=9的城市，如果没有则会报错。
+​ 当修噶buildings表中city_id的值时，需要检查cities表中是否存在这个id，如果没有则会报错。
+​	当删除cities表中的id=7的城市时，需要检测buildings表中是否有引用city_id=7的记录，如果有则会报错。
+  CASCADE：会触发级联操作
+例如：
+​	cities表中字段有id、name两个字段
+​	buildings表有id、name、city_id三个字段。
+​ 这时city_id就是关联到cities表的CASCADE外键。
+​	当删除cities表中的id=7的城市，那么会去检查buildings表中是否有引用city_id=7的记录，如果有则会将他们也删除。
+​	当修改cities表中的id=8的城市，将它的id修改为11时，buildings表中引用city_id=8的记录，也会被修改为11
+  总结
+  使用外键：
+ 可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。    不使用外键：
+ 对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负    </description>
     </item>
     
   </channel>

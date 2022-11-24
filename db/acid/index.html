@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>简述数据库中的 ACID 分别是什么？ // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="简述数据库中的 ACID 分别是什么？"/>
+<meta name="twitter:description" content="ACID
+ 原子性  定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。   一致性  定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。   隔离性  定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离   持久性  定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。      实现原理
+  redo log
+  定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
+  流程图
+  作用
+ 当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性    什么时候开始写redolog？什么时候释放redolog？
+ 当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。    既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
+ 直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分      undo log"/>
+
+    <meta property="og:title" content="简述数据库中的 ACID 分别是什么？" />
+<meta property="og:description" content="ACID
+ 原子性  定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。   一致性  定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。   隔离性  定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离   持久性  定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。      实现原理
+  redo log
+  定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
+  流程图
+  作用
+ 当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性    什么时候开始写redolog？什么时候释放redolog？
+ 当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。    既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
+ 直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分      undo log" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/db/acid/" /><meta property="article:section" content="db" />
+<meta property="article:published_time" content="2022-11-24T19:43:23+08:00" />
+<meta property="article:modified_time" content="2022-11-24T19:43:23+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distributiton/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">简述数据库中的 ACID 分别是什么？</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>
+<p>ACID</p>
+<ul>
+<li>原子性
+<ul>
+<li>定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用<strong>undo log</strong>实现回滚。</li>
+</ul>
+</li>
+<li>一致性
+<ul>
+<li>定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。</li>
+</ul>
+</li>
+<li>隔离性
+<ul>
+<li>定义：各个事务之间相互隔离，互不干扰。通过<strong>锁和MVCC</strong>实现隔离</li>
+</ul>
+</li>
+<li>持久性
+<ul>
+<li>定义：事务一旦提交，数据会永久的存储在数据库中。使用<strong>redo log</strong>实现故障恢复。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>实现原理</p>
+<ul>
+<li>
+<p>redo log</p>
+<ul>
+<li>
+<p>定义： 包含redo log buffer（内存）和redo log file（磁盘），<strong>记录事务执行过程中数据修改后物理数据页面的信息</strong>。后台线程会将buffer中的数据同步到磁盘。</p>
+</li>
+<li>
+<p>流程图</p>
+<p><img src="../images/redolog.png" alt=""></p>
+</li>
+<li>
+<p>作用</p>
+<ul>
+<li>当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。</li>
+<li>确保事务的<strong>持久性</strong></li>
+</ul>
+</li>
+<li>
+<p>什么时候开始写redolog？什么时候释放redolog？</p>
+<ul>
+<li>当事务开始时就会写redolog</li>
+<li>当buffer中的数据页同步到磁盘后，redolog就会被释放重用。</li>
+</ul>
+</li>
+<li>
+<p>既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？</p>
+<ul>
+<li>直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。</li>
+<li>因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>undo log</p>
+<ul>
+<li>定义：记录数据被修改前的信息（记录<strong>逆操作</strong>），用于回滚操作</li>
+<li>作用
+<ul>
+<li>用于回滚事务的操作</li>
+<li>保证事务的<strong>原子性</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>读写锁</p>
+<ul>
+<li>读锁（共享锁）
+<ul>
+<li>定义：多个事务可以并发的读同一条数据，但不能同时写同一条数据</li>
+</ul>
+</li>
+<li>写锁（排它锁）
+<ul>
+<li>定义：一个事务拿到写锁之后，其他事务不能读也不能写这条数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>MVCC（Multi-Version Concurrency Control）多版本并发控制</p>
+<ul>
+<li>
+<p>隐藏字段（mysql在创建表时，会为每张表创建几个隐藏字段）</p>
+<ul>
+<li>row_id：行记录的唯一标志</li>
+<li>transaction_id：事务id</li>
+<li>roll_pointer：回滚指针，指向对应的undo log，用于回滚。</li>
+</ul>
+</li>
+<li>
+<p>作用</p>
+<ul>
+<li>提高并发性能，不需要加锁，处理读写冲突，利于读多写少的场景</li>
+</ul>
+</li>
+<li>
+<p>原理</p>
+<ul>
+<li>同一份数据为每个事务生成一个版本（由隐藏字段实现），每个事务只能读特定版本的数据（类似快照）</li>
+<li>不需要使用锁</li>
+<li>读与读之间不影响</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

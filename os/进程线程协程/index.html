@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>进程线程协程 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="进程线程协程"/>
+<meta name="twitter:description" content=" 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    "/>
+
+    <meta property="og:title" content="进程线程协程" />
+<meta property="og:description" content=" 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/" /><meta property="article:section" content="os" />
+<meta property="article:published_time" content="2022-11-24T19:24:11+08:00" />
+<meta property="article:modified_time" content="2022-11-24T19:24:11+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distributiton/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">进程线程协程</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li>进程
+<ul>
+<li>操作系统进行资源分配和调度的基本单位</li>
+<li>有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间）</li>
+<li>进程间切换开销大</li>
+<li>进程间是隔离的</li>
+<li>进程之间使用IPC通信</li>
+</ul>
+</li>
+<li>线程
+<ul>
+<li>CPU调度的基本单元，一个进程至少包含一个线程</li>
+<li>与同一进程的其他线程共享进程地址空间和资源</li>
+<li>拥有自己的堆栈，寄存器和局部变量等</li>
+<li>线程切换相对进程开销较小</li>
+<li>线程间通过共享内存通信</li>
+</ul>
+</li>
+<li>协程
+<ul>
+<li>用户态的轻量级线程</li>
+<li>调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

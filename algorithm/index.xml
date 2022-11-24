@@ -6,14 +6,50 @@
     <description>Recent content in Algorithms on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 23 Nov 2022 21:23:32 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Nov 2022 18:37:48 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/algorithm/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Algorithm</title>
-      <link>https://fishwin.github.io/algorithm/algorithm/</link>
-      <pubDate>Wed, 23 Nov 2022 21:23:32 +0800</pubDate>
+      <title>大数据查找</title>
+      <link>https://fishwin.github.io/algorithm/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Thu, 24 Nov 2022 18:37:48 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/algorithm/algorithm/</guid>
-      <description></description>
+      <guid>https://fishwin.github.io/algorithm/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE/</guid>
+      <description>在2.5亿个整数中找出不重复的整数，注，内存不足以容纳这2.5亿个整数 参考：
+https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.html
+给40亿个不重复的unsigned int的整数，没排过序的，然后再给一个数，如何快速判断这个数是否在那40亿个数当中？ 参考：
+https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.html</description>
+    </item>
+    
+    <item>
+      <title>几种基本排序算法，空间及时间复杂度？</title>
+      <link>https://fishwin.github.io/algorithm/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Thu, 24 Nov 2022 18:36:03 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/algorithm/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
+      <description>冒泡排序
+  思路
+设对长度为n的数组进行排序，则需要进行n-1次循环，并且每次循环两两比较相邻的两个数字，将较大的数字移动到后面。
+  算法复杂度
+  优缺点
+    选择排序
+  思路
+设对长度为n的数组进行排序，首先在所有元素中选择一个最小的元素，交换到最前面，然后在剩下的元素中选出一个最小的，交换到第二位，依次类推，所有元素有序
+  算法复杂度
+  优缺点
+    插入排序
+  思路
+设对长度为n的数组进行排序，初始时将整个数组划分为两块，第一个元素为有序序列，第二个元素为无序序列。然后遍历无序序列，并将其插入到有序序列的合适位置
+  算法复杂度
+  优缺点
+    希尔排序
+  思路
+设对长度为n的数组进行排序，初始设置gap=n/2，并依据gap将所有元素分组，并对每个组进行插入排序。然后gap=gap/2，
+再分组，再插入排序，直到gap=1，进行最后一次插入排序即可。
+  算法复杂度
+  优缺点
+    归并排序
+  思路
+设对长度为n的数组进行排序，递归每次将数组分成等长的两部分，并每次合并两个有序的序列
+  算法复杂度</description>
     </item>
     
   </channel>

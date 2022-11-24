@@ -6,14 +6,67 @@
     <description>Recent content in Distributitons on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 23 Nov 2022 21:22:46 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/distributiton/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Nov 2022 19:39:37 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/distributiton/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Distribution</title>
-      <link>https://fishwin.github.io/distributiton/distribution/</link>
-      <pubDate>Wed, 23 Nov 2022 21:22:46 +0800</pubDate>
+      <title>为什么不能将写入MQ与数据库操作放在一起实现分布式事务？</title>
+      <link>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/</link>
+      <pubDate>Thu, 24 Nov 2022 19:39:37 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/distributiton/distribution/</guid>
-      <description></description>
+      <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/</guid>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] }  如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚  </description>
+    </item>
+    
+    <item>
+      <title>为什么不能将rpc调用与数据库操作放在一起实现分布式事务？</title>
+      <link>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/</link>
+      <pubDate>Thu, 24 Nov 2022 19:38:37 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/</guid>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] }  整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </description>
+    </item>
+    
+    <item>
+      <title>一致性hash算法原理</title>
+      <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Thu, 24 Nov 2022 18:36:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
+      <description>  应用场景
+分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
+  原理：
+首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
+如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
+    数据倾斜问题（数据在各个redis节点上分布不均匀）
+  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
+  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
+    参考
+https://blog.codinglabs.org/articles/consistent-hashing.html
+  </description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://fishwin.github.io/distributiton/docker/</link>
+      <pubDate>Thu, 24 Nov 2022 18:34:38 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/docker/</guid>
+      <description>1. 什么是docker docker是一个容器化平台，docker以容器的形式将应用程序以及所有的依赖项打包到一起，以确保应用程序可以在任意环境下运行。
+2. docker 镜像 docker镜像是docker容器的静态模板，用于创建容器。
+3. docker 容器 docker 容器包含应用程序及其所有的依赖项，与其他容器共享宿主机内核，在用户空间容器以独立的进程运行。docker容器不依赖任何基础架构，可在任何操作系统、任何云平台运行。
+4. docker 仓库 docker 仓库就是存放docker镜像文件的场所。
+5. docker 与虚拟机的区别   docker容器间共享宿主机内核、硬件、操作系统等资源，各容器在用户空间是以分离的进程进行运行； 虚拟机需要模拟一个完整的用户操作系统，包含应用、系统库、依赖项、硬件驱动等。
+  虚拟机有hypervisor层和guestOS层，而容器没有，这样容器就避免了hypervisor和guestOS带来的性能损耗。
+  虚拟机所采用的传统虚拟化技术是对硬件和操作系统的虚拟，而容器化技术是对进程的虚拟。
+  docker隔离性更弱，docker是进程之间的隔离，而虚拟机是系统级别的隔离。
+  docker启动秒级，虚拟机启动分钟级。
+  6. docker容器有几种状态 运行、已停止、重新启动、停止
+7. dockerfile 常见的指令   FROM：指定基础镜像
+  LABEL：为镜像指定标签
+  RUN：运行指定的指令（编译镜像时）
+  CMD：容器启动要执行的命令（容器启动时）
+  8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
+9. docker常用命令   docker pull 从docker仓库拉取镜像
+  docker push 推送本地镜像到docker仓库</description>
     </item>
     
   </channel>
