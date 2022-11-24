@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Sync.Map 实现原理 // 张海余的主页</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="张海余" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.4e1ed185f0488299cad4146a639371a20f6acead17adf3b7069862be9228ef05.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Sync.Map 实现原理"/>
+<meta name="twitter:description" content="数据结构
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe."/>
+
+    <meta property="og:title" content="Sync.Map 实现原理" />
+<meta property="og:description" content="数据结构
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/golang/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" /><meta property="article:section" content="golang" />
+<meta property="article:published_time" content="2022-11-24T17:07:00+08:00" />
+<meta property="article:modified_time" content="2022-11-24T17:07:00+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fishwin.github.io/"><img class="app-header-avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" alt="张海余" /></a>
+      <span class="app-header-title">张海余的主页</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">首页</a>
+            --
+          
+          <a class="app-header-menu-item" href="/golang/">Go</a>
+            --
+          
+          <a class="app-header-menu-item" href="/os/">操作系统</a>
+            --
+          
+          <a class="app-header-menu-item" href="/net/">网络协议</a>
+            --
+          
+          <a class="app-header-menu-item" href="/distribution/">分布式</a>
+            --
+          
+          <a class="app-header-menu-item" href="/sysdesign/">系统设计</a>
+            --
+          
+          <a class="app-header-menu-item" href="/algorithm/">算法</a>
+            --
+          
+          <a class="app-header-menu-item" href="/db/">数据库</a>
+            --
+          
+          <a class="app-header-menu-item" href="/middleware/">中间件</a>
+            --
+          
+          <a class="app-header-menu-item" href="/othertech/">谈古论今</a>
+            --
+          
+          <a class="app-header-menu-item" href="/about/">关于</a>
+      </nav>
+      <p>张海余的个人博客，好记性不如烂笔头，互联网老兵</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fishwin" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Sync.Map 实现原理</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 24, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>数据结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Map</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">//互斥锁，用于锁定dirty map
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mu</span> <span style="color:#a6e22e">Mutex</span>    
+    
+    <span style="color:#75715e">//优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">read</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">Value</span> 
+    
+    <span style="color:#75715e">// dirty是一个当前最新的map，允许读写
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">dirty</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span> 
+    
+    <span style="color:#75715e">// 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">misses</span> <span style="color:#66d9ef">int</span> 
+}
+
+<span style="color:#75715e">// readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">readOnly</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// read的map, 用于存储所有read数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">m</span>       <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>
+    
+    <span style="color:#75715e">// 如果数据在dirty中但没有在read中，该值为true,作为修改标识
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">amended</span> <span style="color:#66d9ef">bool</span> 
+}
+
+<span style="color:#75715e">// entry 为 Map.dirty 的具体map值
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">entry</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//  其他: 表示存着真正的数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">p</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// *interface{}
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>逻辑流程图</p>
+<p><img src="/images/sync_map.jpeg" alt=""></p>
+<p><code>sync.Map</code> 的实现原理可概括为：</p>
+<ul>
+<li>两个map一个read一个dirty</li>
+<li>读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。</li>
+<li>写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap</li>
+<li>注意read map也会有写操作（不会加锁），并不是只读。</li>
+<li>如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。</li>
+<li>对于删除数据则直接通过标记来延迟删除</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://juejin.im/post/6844904100287496206">https://juejin.im/post/6844904100287496206</a></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
