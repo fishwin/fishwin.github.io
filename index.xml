@@ -54,17 +54,6 @@
     </item>
     
     <item>
-      <title>数据库的事务隔离级别有哪些？各有哪些优缺点？</title>
-      <link>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
-      <pubDate>Thu, 24 Nov 2022 19:41:37 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
-      <description>事务隔离级别主要有四种
- 读未提交 (READ UNCOMMITED)  定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题  脏读 不可重复读 幻读     读已提交 (READ COMMITED)  定义：一个事务只能读取另一个事务已经提交的数据 存在的问题  不可重复读 幻读     可重复读 (REPEATABLE READ)（Mysql 默认隔离级别）  定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题  幻读     串行 (SERIALIZABLE)  定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题      释义
- 脏读  定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据   不可重复读  定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致   幻读  定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。      优缺点</description>
-    </item>
-    
-    <item>
       <title>为什么不能将写入MQ与数据库操作放在一起实现分布式事务？</title>
       <link>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/</link>
       <pubDate>Thu, 24 Nov 2022 19:39:37 +0800</pubDate>
@@ -80,19 +69,6 @@
       
       <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/</guid>
       <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] }  整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </description>
-    </item>
-    
-    <item>
-      <title>如何创建索引</title>
-      <link>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</link>
-      <pubDate>Thu, 24 Nov 2022 19:34:55 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</guid>
-      <description>  (a,b)联合索引会触发filesort
-  (a,b,c)联合索引会触发filesort
-  (a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
-  所以结论是：建立(a,c)联合索引为最优解
-  </description>
     </item>
     
     <item>
@@ -138,35 +114,6 @@ O(log n)
   使用外键：
  可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。    不使用外键：
  对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负    </description>
-    </item>
-    
-    <item>
-      <title>虚拟内存</title>
-      <link>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
-      <pubDate>Thu, 24 Nov 2022 19:31:49 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
-      <description>个人理解
-  执行过程
-在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
-  如果保证进程地址空间隔离
-逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
-  内存存储方式
- 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
-  定义
-由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
-  解决方案
- 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
-系统公用函数可在物理内存中只存储一份，供多个进程使用
-    进程逻辑地址空间划分
-一般1/4是内核地址空间，3/4是用户地址空间
-  虚拟内存解决了什么问题？
-可以使每个进程有独立的内存空间，相互隔离
-  进程地址空间划分
-一般1/4是内核地址空间，3/4是用户地址空间
-  页表
-建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
-每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
     </item>
     
     <item>
@@ -223,41 +170,6 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
-      <title>IO模型</title>
-      <link>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</link>
-      <pubDate>Thu, 24 Nov 2022 19:25:48 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</guid>
-      <description>阻塞I/O
-读写文件，网络I/O。当发生读写文件或网络I/O读写时，操作会阻塞当前线程，直到完成I/O操作，才能继续向下执行。
-一般采用多进程或多线程的方式来解决此类问题，但是由于过多的进程或过多的线程都会造成大量的资源浪费，并且多线程上下文切换，也会带来很大的开销
-执行流程：
-1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
-总结：
-​	上述整个过程，当前用户线程是阻塞等待的。
-  非阻塞I/O
-当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
-执行过程：
-  应用程序发起系统调用，进入到内核空间
-  如果内核空间数据还没准备好，则直接返回error。
-  应用程序会定时轮询，数据是否准备好了
-  数据准备好之后，则将数据从内核空间拷贝到用户空间
-  应用程序拿到数据之后，进行后续处理
-总结：
-不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
-    IO多路复用
-一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
-执行过程：
-1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
-总结：
-​	多路复用本质也是同步I/O
-  信号驱动I/O
-用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
-执行过程：
-1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</description>
-    </item>
-    
-    <item>
       <title>父进程与子进程之间的关系</title>
       <link>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</link>
       <pubDate>Thu, 24 Nov 2022 19:24:35 +0800</pubDate>
@@ -278,15 +190,6 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
-      <title>并行与并发</title>
-      <link>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</link>
-      <pubDate>Thu, 24 Nov 2022 19:23:36 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</guid>
-      <description> 并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  </description>
-    </item>
-    
-    <item>
       <title>大数据查找</title>
       <link>https://fishwin.github.io/algorithm/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE/</link>
       <pubDate>Thu, 24 Nov 2022 18:37:48 +0800</pubDate>
@@ -296,25 +199,6 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
 https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.html
 给40亿个不重复的unsigned int的整数，没排过序的，然后再给一个数，如何快速判断这个数是否在那40亿个数当中？ 参考：
 https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.html</description>
-    </item>
-    
-    <item>
-      <title>一致性hash算法原理</title>
-      <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Thu, 24 Nov 2022 18:36:47 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
-      <description>  应用场景
-分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
-  原理：
-首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
-如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
-    数据倾斜问题（数据在各个redis节点上分布不均匀）
-  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
-  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
-    参考
-https://blog.codinglabs.org/articles/consistent-hashing.html
-  </description>
     </item>
     
     <item>
@@ -376,17 +260,6 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
     </item>
     
     <item>
-      <title>IP头部</title>
-      <link>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</link>
-      <pubDate>Thu, 24 Nov 2022 17:48:11 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
-      <description>示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
-https://blog.csdn.net/mrwangwang/article/details/8537775</description>
-    </item>
-    
-    <item>
       <title>TCP四元组</title>
       <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E5%85%83%E7%BB%84/</link>
       <pubDate>Thu, 24 Nov 2022 17:46:25 +0800</pubDate>
@@ -441,15 +314,6 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
     </item>
     
     <item>
-      <title>Tcp为什么是可靠的传输</title>
-      <link>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</link>
-      <pubDate>Thu, 24 Nov 2022 17:42:07 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
-      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
-    </item>
-    
-    <item>
       <title>TCP与UDP头部</title>
       <link>https://fishwin.github.io/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/</link>
       <pubDate>Thu, 24 Nov 2022 17:41:15 +0800</pubDate>
@@ -473,15 +337,6 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
     </item>
     
     <item>
-      <title>停等协议</title>
-      <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
-      <pubDate>Thu, 24 Nov 2022 17:40:08 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
-      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
-    </item>
-    
-    <item>
       <title>TCP四次挥手</title>
       <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</link>
       <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
@@ -493,26 +348,6 @@ https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
 线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
-    </item>
-    
-    <item>
-      <title>TCP三次握手</title>
-      <link>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
-      <pubDate>Thu, 24 Nov 2022 17:37:02 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
-      <description>TCP 三次握手过程及中间状态   执行流程图
- 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
-https://www.cnblogs.com/xiaolincoding/p/12638546.html
-TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
-比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
-  初始化并交换序列号
-序列号发挥着非常重要的作用
- 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
-https://www.cnblogs.com/xiaolincoding/p/12638546.html
-https://segmentfault.com/a/1190000020610336
-TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
-SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
     </item>
     
     <item>
@@ -545,53 +380,6 @@ https://www.cnblogs.com/xiaolincoding/p/12638546.html
 netstat -napt
   图
   </description>
-    </item>
-    
-    <item>
-      <title>Http2.0与http3.0</title>
-      <link>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</link>
-      <pubDate>Thu, 24 Nov 2022 17:35:04 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
-      <description>http1.0
- 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
-  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
-  无状态：导致每次都需要传递重复的header，协议开销大
-    http2.0
- 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
- 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
-http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-  为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
-    </item>
-    
-    <item>
-      <title>浏览器缓存</title>
-      <link>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</link>
-      <pubDate>Thu, 24 Nov 2022 17:34:30 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
-      <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
-  相关header
-  Expires（http1.0）
-设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
-  Cache-Control（http1.1，优先级高于Expires）
- max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
- 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
-  相关header
-  Last-Modified
-服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
-  If-Modified-Since
-在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
-  Etag
-服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
-  If-None-Match
-在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
-  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
-    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
- Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
     </item>
     
     <item>
@@ -739,33 +527,6 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
     </item>
     
     <item>
-      <title>nil可与哪些类型比较?</title>
-      <link>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</link>
-      <pubDate>Thu, 24 Nov 2022 17:06:14 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</guid>
-      <description>引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</description>
-    </item>
-    
-    <item>
-      <title>New和make的区别</title>
-      <link>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
-      <pubDate>Thu, 24 Nov 2022 17:05:42 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
-      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </description>
-    </item>
-    
-    <item>
-      <title>Init函数执行顺序</title>
-      <link>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</link>
-      <pubDate>Thu, 24 Nov 2022 17:04:48 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</guid>
-      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
-    </item>
-    
-    <item>
       <title>同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？</title>
       <link>https://fishwin.github.io/golang/%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstruct/</link>
       <pubDate>Thu, 24 Nov 2022 17:02:53 +0800</pubDate>
@@ -791,78 +552,6 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
     golang map数据结构
 golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
 type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容</description>
-    </item>
-    
-    <item>
-      <title>Slice底层数据结构及实现原理</title>
-      <link>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:36:33 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
-      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
-切片长度是切片引用的元素数目
-  切片容量
-容量是底层数组的长度
-  slice作为参数传递
-当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
-当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-  nil 切片
-var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-  空切片</description>
-    </item>
-    
-    <item>
-      <title>Go调度器原理</title>
-      <link>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:35:41 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</guid>
-      <description>GPM模型
-一个G对应一个goroutine
-一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
-一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
-gorutine 与 内核线程 N:M映射
-  全局运行队列
-go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
-全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
-  本地运行队列
-每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
-  netpoll（网络轮询器）
-比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
-  调度过程
-p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
-  sysmon
-go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
- 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
-当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
-基于协作的抢占式调度器 - 1.2 ~ 1.13
-基于信号的抢占式调度器 - 1.14 ~ 至今
-  channel
-试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
-  总结
-goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
-  参考：</description>
-    </item>
-    
-    <item>
-      <title>垃圾回收机制及运行原理</title>
-      <link>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:34:39 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</guid>
-      <description>使用算法：三色标记+混合写屏障+辅助gc
-触发时机：
- 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
- gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
-写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
-A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
-写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
-流程图如下：
-参考：
-https://juejin.im/post/6844903793855987719
-https://www.jianshu.com/p/e20aaa039229
-http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
     </item>
     
     <item>
@@ -908,6 +597,317 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
       
       <guid>https://fishwin.github.io/sysdesign/sysdesign/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>IP头部</title>
+      <link>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</link>
+      <pubDate>Mon, 24 Oct 2022 17:48:11 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
+      <description>示意图    代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+https://blog.csdn.net/mrwangwang/article/details/8537775</description>
+    </item>
+    
+    <item>
+      <title>如何创建索引</title>
+      <link>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Wed, 24 Nov 2021 19:34:55 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</guid>
+      <description>  (a,b)联合索引会触发filesort
+  (a,b,c)联合索引会触发filesort
+  (a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
+  所以结论是：建立(a,c)联合索引为最优解
+  </description>
+    </item>
+    
+    <item>
+      <title>IO模型</title>
+      <link>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Wed, 24 Nov 2021 19:25:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</guid>
+      <description>阻塞I/O
+读写文件，网络I/O。当发生读写文件或网络I/O读写时，操作会阻塞当前线程，直到完成I/O操作，才能继续向下执行。
+一般采用多进程或多线程的方式来解决此类问题，但是由于过多的进程或过多的线程都会造成大量的资源浪费，并且多线程上下文切换，也会带来很大的开销
+执行流程：
+1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
+总结：
+​	上述整个过程，当前用户线程是阻塞等待的。
+  非阻塞I/O
+当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
+执行过程：
+  应用程序发起系统调用，进入到内核空间
+  如果内核空间数据还没准备好，则直接返回error。
+  应用程序会定时轮询，数据是否准备好了
+  数据准备好之后，则将数据从内核空间拷贝到用户空间
+  应用程序拿到数据之后，进行后续处理
+总结：
+不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
+    IO多路复用
+一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
+执行过程：
+1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
+总结：
+​	多路复用本质也是同步I/O
+  信号驱动I/O
+用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
+执行过程：
+1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</description>
+    </item>
+    
+    <item>
+      <title>一致性hash算法原理</title>
+      <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 24 Nov 2021 18:36:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
+      <description>  应用场景
+分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
+  原理：
+首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
+如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
+    数据倾斜问题（数据在各个redis节点上分布不均匀）
+  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
+  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
+    参考
+https://blog.codinglabs.org/articles/consistent-hashing.html
+  </description>
+    </item>
+    
+    <item>
+      <title>Tcp为什么是可靠的传输</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</link>
+      <pubDate>Wed, 24 Nov 2021 17:42:07 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
+      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
+    </item>
+    
+    <item>
+      <title>nil可与哪些类型比较?</title>
+      <link>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</link>
+      <pubDate>Wed, 24 Nov 2021 17:06:14 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</guid>
+      <description>引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</description>
+    </item>
+    
+    <item>
+      <title>Go调度器原理</title>
+      <link>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Tue, 23 Nov 2021 21:35:41 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</guid>
+      <description>GPM模型
+一个G对应一个goroutine
+一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
+一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
+gorutine 与 内核线程 N:M映射
+  全局运行队列
+go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
+全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
+  本地运行队列
+每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
+  netpoll（网络轮询器）
+比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
+  调度过程
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
+  sysmon
+go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
+ 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
+基于协作的抢占式调度器 - 1.2 ~ 1.13
+基于信号的抢占式调度器 - 1.14 ~ 至今
+  channel
+试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
+  总结
+goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
+  参考：</description>
+    </item>
+    
+    <item>
+      <title>数据库的事务隔离级别有哪些？各有哪些优缺点？</title>
+      <link>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
+      <pubDate>Tue, 24 Nov 2020 19:41:37 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
+      <description>事务隔离级别主要有四种
+ 读未提交 (READ UNCOMMITED)  定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题  脏读 不可重复读 幻读     读已提交 (READ COMMITED)  定义：一个事务只能读取另一个事务已经提交的数据 存在的问题  不可重复读 幻读     可重复读 (REPEATABLE READ)（Mysql 默认隔离级别）  定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题  幻读     串行 (SERIALIZABLE)  定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题      释义
+ 脏读  定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据   不可重复读  定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致   幻读  定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。      优缺点</description>
+    </item>
+    
+    <item>
+      <title>虚拟内存</title>
+      <link>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
+      <pubDate>Tue, 24 Nov 2020 19:31:49 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
+      <description>个人理解
+  执行过程
+在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
+  如果保证进程地址空间隔离
+逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
+  内存存储方式
+ 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
+  定义
+由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
+  解决方案
+ 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
+系统公用函数可在物理内存中只存储一份，供多个进程使用
+    进程逻辑地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  虚拟内存解决了什么问题？
+可以使每个进程有独立的内存空间，相互隔离
+  进程地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  页表
+建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
+每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
+    </item>
+    
+    <item>
+      <title>停等协议</title>
+      <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Tue, 24 Nov 2020 17:40:08 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
+      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
+      <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
+      <description>TCP 三次握手过程及中间状态   执行流程图
+ 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
+  初始化并交换序列号
+序列号发挥着非常重要的作用
+ 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+https://segmentfault.com/a/1190000020610336
+TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+    </item>
+    
+    <item>
+      <title>Init函数执行顺序</title>
+      <link>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</link>
+      <pubDate>Tue, 24 Nov 2020 17:04:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</guid>
+      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
+    </item>
+    
+    <item>
+      <title>垃圾回收机制及运行原理</title>
+      <link>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Mon, 23 Nov 2020 21:34:39 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</guid>
+      <description>使用算法：三色标记+混合写屏障+辅助gc
+触发时机：
+ 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
+ gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
+A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
+写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
+流程图如下：
+参考：
+https://juejin.im/post/6844903793855987719
+https://www.jianshu.com/p/e20aaa039229
+http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
+    </item>
+    
+    <item>
+      <title>并行与并发</title>
+      <link>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</link>
+      <pubDate>Sun, 24 Nov 2019 19:23:36 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</guid>
+      <description> 并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  </description>
+    </item>
+    
+    <item>
+      <title>浏览器缓存</title>
+      <link>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Sun, 24 Nov 2019 17:34:30 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
+      <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
+  相关header
+  Expires（http1.0）
+设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
+  Cache-Control（http1.1，优先级高于Expires）
+ max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
+ 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+  相关header
+  Last-Modified
+服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
+  If-Modified-Since
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
+  Etag
+服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
+  If-None-Match
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
+  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+ Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
+    </item>
+    
+    <item>
+      <title>New和make的区别</title>
+      <link>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Sun, 24 Nov 2019 17:05:42 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
+      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </description>
+    </item>
+    
+    <item>
+      <title>Slice底层数据结构及实现原理</title>
+      <link>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sat, 23 Nov 2019 21:36:33 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
+切片长度是切片引用的元素数目
+  切片容量
+容量是底层数组的长度
+  slice作为参数传递
+当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
+func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
+当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
+  nil 切片
+var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
+  空切片</description>
+    </item>
+    
+    <item>
+      <title>Http2.0与http3.0</title>
+      <link>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</link>
+      <pubDate>Thu, 24 Oct 2019 17:35:04 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
+      <description>http1.0
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
     </item>
     
   </channel>

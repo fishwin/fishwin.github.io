@@ -76,33 +76,6 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
     </item>
     
     <item>
-      <title>nil可与哪些类型比较?</title>
-      <link>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</link>
-      <pubDate>Thu, 24 Nov 2022 17:06:14 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</guid>
-      <description>引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</description>
-    </item>
-    
-    <item>
-      <title>New和make的区别</title>
-      <link>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
-      <pubDate>Thu, 24 Nov 2022 17:05:42 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
-      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </description>
-    </item>
-    
-    <item>
-      <title>Init函数执行顺序</title>
-      <link>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</link>
-      <pubDate>Thu, 24 Nov 2022 17:04:48 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</guid>
-      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
-    </item>
-    
-    <item>
       <title>同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？</title>
       <link>https://fishwin.github.io/golang/%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstruct/</link>
       <pubDate>Thu, 24 Nov 2022 17:02:53 +0800</pubDate>
@@ -131,28 +104,18 @@ type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B u
     </item>
     
     <item>
-      <title>Slice底层数据结构及实现原理</title>
-      <link>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:36:33 +0800</pubDate>
+      <title>nil可与哪些类型比较?</title>
+      <link>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</link>
+      <pubDate>Wed, 24 Nov 2021 17:06:14 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
-      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
-切片长度是切片引用的元素数目
-  切片容量
-容量是底层数组的长度
-  slice作为参数传递
-当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
-当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-  nil 切片
-var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-  空切片</description>
+      <guid>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</guid>
+      <description>引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</description>
     </item>
     
     <item>
       <title>Go调度器原理</title>
       <link>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:35:41 +0800</pubDate>
+      <pubDate>Tue, 23 Nov 2021 21:35:41 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</guid>
       <description>GPM模型
@@ -183,9 +146,18 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
     </item>
     
     <item>
+      <title>Init函数执行顺序</title>
+      <link>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</link>
+      <pubDate>Tue, 24 Nov 2020 17:04:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</guid>
+      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
+    </item>
+    
+    <item>
       <title>垃圾回收机制及运行原理</title>
       <link>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Wed, 23 Nov 2022 21:34:39 +0800</pubDate>
+      <pubDate>Mon, 23 Nov 2020 21:34:39 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</guid>
       <description>使用算法：三色标记+混合写屏障+辅助gc
@@ -200,6 +172,34 @@ A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将�
 https://juejin.im/post/6844903793855987719
 https://www.jianshu.com/p/e20aaa039229
 http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
+    </item>
+    
+    <item>
+      <title>New和make的区别</title>
+      <link>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Sun, 24 Nov 2019 17:05:42 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
+      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </description>
+    </item>
+    
+    <item>
+      <title>Slice底层数据结构及实现原理</title>
+      <link>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Sat, 23 Nov 2019 21:36:33 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
+切片长度是切片引用的元素数目
+  切片容量
+容量是底层数组的长度
+  slice作为参数传递
+当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
+func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
+当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
+  nil 切片
+var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
+  空切片</description>
     </item>
     
   </channel>

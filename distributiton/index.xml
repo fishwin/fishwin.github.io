@@ -26,25 +26,6 @@
     </item>
     
     <item>
-      <title>一致性hash算法原理</title>
-      <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
-      <pubDate>Thu, 24 Nov 2022 18:36:47 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
-      <description>  应用场景
-分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
-  原理：
-首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
-如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
-    数据倾斜问题（数据在各个redis节点上分布不均匀）
-  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
-  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
-    参考
-https://blog.codinglabs.org/articles/consistent-hashing.html
-  </description>
-    </item>
-    
-    <item>
       <title>Docker</title>
       <link>https://fishwin.github.io/distributiton/docker/</link>
       <pubDate>Thu, 24 Nov 2022 18:34:38 +0800</pubDate>
@@ -67,6 +48,25 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
   8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
 9. docker常用命令   docker pull 从docker仓库拉取镜像
   docker push 推送本地镜像到docker仓库</description>
+    </item>
+    
+    <item>
+      <title>一致性hash算法原理</title>
+      <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 24 Nov 2021 18:36:47 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
+      <description>  应用场景
+分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
+  原理：
+首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
+如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
+    数据倾斜问题（数据在各个redis节点上分布不均匀）
+  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
+  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
+    参考
+https://blog.codinglabs.org/articles/consistent-hashing.html
+  </description>
     </item>
     
   </channel>

@@ -6,18 +6,7 @@
     <description>Recent content in Nets on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 24 Nov 2022 17:48:11 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/net/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>IP头部</title>
-      <link>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</link>
-      <pubDate>Thu, 24 Nov 2022 17:48:11 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
-      <description>示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
-https://blog.csdn.net/mrwangwang/article/details/8537775</description>
-    </item>
-    
+    <lastBuildDate>Thu, 24 Nov 2022 17:46:25 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/net/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TCP四元组</title>
       <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E5%85%83%E7%BB%84/</link>
@@ -73,15 +62,6 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
     </item>
     
     <item>
-      <title>Tcp为什么是可靠的传输</title>
-      <link>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</link>
-      <pubDate>Thu, 24 Nov 2022 17:42:07 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
-      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
-    </item>
-    
-    <item>
       <title>TCP与UDP头部</title>
       <link>https://fishwin.github.io/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/</link>
       <pubDate>Thu, 24 Nov 2022 17:41:15 +0800</pubDate>
@@ -105,15 +85,6 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
     </item>
     
     <item>
-      <title>停等协议</title>
-      <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
-      <pubDate>Thu, 24 Nov 2022 17:40:08 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
-      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
-    </item>
-    
-    <item>
       <title>TCP四次挥手</title>
       <link>https://fishwin.github.io/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</link>
       <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
@@ -125,26 +96,6 @@ https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
 线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
-    </item>
-    
-    <item>
-      <title>TCP三次握手</title>
-      <link>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
-      <pubDate>Thu, 24 Nov 2022 17:37:02 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
-      <description>TCP 三次握手过程及中间状态   执行流程图
- 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
-https://www.cnblogs.com/xiaolincoding/p/12638546.html
-TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
-比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
-  初始化并交换序列号
-序列号发挥着非常重要的作用
- 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
-https://www.cnblogs.com/xiaolincoding/p/12638546.html
-https://segmentfault.com/a/1190000020610336
-TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
-SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
     </item>
     
     <item>
@@ -177,53 +128,6 @@ https://www.cnblogs.com/xiaolincoding/p/12638546.html
 netstat -napt
   图
   </description>
-    </item>
-    
-    <item>
-      <title>Http2.0与http3.0</title>
-      <link>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</link>
-      <pubDate>Thu, 24 Nov 2022 17:35:04 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
-      <description>http1.0
- 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
-  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
-  无状态：导致每次都需要传递重复的header，协议开销大
-    http2.0
- 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
- 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
-http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-  为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
-    </item>
-    
-    <item>
-      <title>浏览器缓存</title>
-      <link>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</link>
-      <pubDate>Thu, 24 Nov 2022 17:34:30 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
-      <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
-  相关header
-  Expires（http1.0）
-设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
-  Cache-Control（http1.1，优先级高于Expires）
- max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
- 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
-  相关header
-  Last-Modified
-服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
-  If-Modified-Since
-在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
-  Etag
-服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
-  If-None-Match
-在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
-  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
-    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
- Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
     </item>
     
     <item>
@@ -300,6 +204,102 @@ POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatibl
   401 Unauthorized
 请求未经授权
   403 forbidden</description>
+    </item>
+    
+    <item>
+      <title>IP头部</title>
+      <link>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</link>
+      <pubDate>Mon, 24 Oct 2022 17:48:11 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
+      <description>示意图    代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+https://blog.csdn.net/mrwangwang/article/details/8537775</description>
+    </item>
+    
+    <item>
+      <title>Tcp为什么是可靠的传输</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</link>
+      <pubDate>Wed, 24 Nov 2021 17:42:07 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
+      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
+    </item>
+    
+    <item>
+      <title>停等协议</title>
+      <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Tue, 24 Nov 2020 17:40:08 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
+      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手</title>
+      <link>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
+      <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
+      <description>TCP 三次握手过程及中间状态   执行流程图
+ 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
+  初始化并交换序列号
+序列号发挥着非常重要的作用
+ 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+https://segmentfault.com/a/1190000020610336
+TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+    </item>
+    
+    <item>
+      <title>浏览器缓存</title>
+      <link>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Sun, 24 Nov 2019 17:34:30 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
+      <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
+  相关header
+  Expires（http1.0）
+设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
+  Cache-Control（http1.1，优先级高于Expires）
+ max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
+ 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+  相关header
+  Last-Modified
+服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
+  If-Modified-Since
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
+  Etag
+服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
+  If-None-Match
+在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
+  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+ Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
+    </item>
+    
+    <item>
+      <title>Http2.0与http3.0</title>
+      <link>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</link>
+      <pubDate>Thu, 24 Oct 2019 17:35:04 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
+      <description>http1.0
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
     </item>
     
   </channel>

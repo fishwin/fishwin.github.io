@@ -6,36 +6,7 @@
     <description>Recent content in Os on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 24 Nov 2022 19:31:49 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/os/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>虚拟内存</title>
-      <link>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
-      <pubDate>Thu, 24 Nov 2022 19:31:49 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
-      <description>个人理解
-  执行过程
-在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
-  如果保证进程地址空间隔离
-逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
-  内存存储方式
- 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
-  定义
-由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
-  解决方案
- 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
-系统公用函数可在物理内存中只存储一份，供多个进程使用
-    进程逻辑地址空间划分
-一般1/4是内核地址空间，3/4是用户地址空间
-  虚拟内存解决了什么问题？
-可以使每个进程有独立的内存空间，相互隔离
-  进程地址空间划分
-一般1/4是内核地址空间，3/4是用户地址空间
-  页表
-建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
-每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
-    </item>
-    
+    <lastBuildDate>Thu, 24 Nov 2022 19:31:18 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/os/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>IO密集型与CPU密集型区别</title>
       <link>https://fishwin.github.io/os/io%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8Ecpu%E5%AF%86%E9%9B%86%E5%9E%8B%E5%8C%BA%E5%88%AB/</link>
@@ -90,9 +61,29 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
+      <title>父进程与子进程之间的关系</title>
+      <link>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</link>
+      <pubDate>Thu, 24 Nov 2022 19:24:35 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</guid>
+      <description>  fork函数
+#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系
+ 子进程是父进程的副本，子进程获得父进程数据空间、堆栈的副本（注意，这里是副本，与父进程不共享） 父子进程都有自己独立的地址空间，两进程独立运行。 子进程继承父进程的属性（几乎继承了所有）  环境变量 堆栈 当前工作目录 根目录 打开的文件描述符 用户和用户组 进程组 资源限制 等等   子进程独有  进程pid 父进程pid 记录锁 等等      孤儿进程，僵尸进程  孤儿进程  父进程执行结束后先退出，子进程仍然运行，这类子进程就被称为孤儿进程（父亲死了，但是儿子还在，自然称为孤儿） 对系统没有危害 孤儿进程会被init进程接管，进行资源回收，善后等操作（init可以理解为是孤儿院）   僵尸进程  子进程退出（exit或者异常等）父进程没有对其进行资源回收，改子进程仍然占据系统进程表，这类子进程称为僵尸进程（儿子死了，父亲不给他收尸） 因为其占据系统进程表，无法回收，一旦僵尸进程数量巨大，则系统无法创建新进程，所以对系统有危害 杀死父进程，该僵尸进程会被init进程接管，变为孤儿进程，init进程可对其进行资源回收善后    </description>
+    </item>
+    
+    <item>
+      <title>进程线程协程</title>
+      <link>https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/</link>
+      <pubDate>Thu, 24 Nov 2022 19:24:11 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/</guid>
+      <description> 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    </description>
+    </item>
+    
+    <item>
       <title>IO模型</title>
       <link>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</link>
-      <pubDate>Thu, 24 Nov 2022 19:25:48 +0800</pubDate>
+      <pubDate>Wed, 24 Nov 2021 19:25:48 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/io%E6%A8%A1%E5%9E%8B/</guid>
       <description>阻塞I/O
@@ -125,29 +116,38 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
-      <title>父进程与子进程之间的关系</title>
-      <link>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</link>
-      <pubDate>Thu, 24 Nov 2022 19:24:35 +0800</pubDate>
+      <title>虚拟内存</title>
+      <link>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
+      <pubDate>Tue, 24 Nov 2020 19:31:49 +0800</pubDate>
       
-      <guid>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</guid>
-      <description>  fork函数
-#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系
- 子进程是父进程的副本，子进程获得父进程数据空间、堆栈的副本（注意，这里是副本，与父进程不共享） 父子进程都有自己独立的地址空间，两进程独立运行。 子进程继承父进程的属性（几乎继承了所有）  环境变量 堆栈 当前工作目录 根目录 打开的文件描述符 用户和用户组 进程组 资源限制 等等   子进程独有  进程pid 父进程pid 记录锁 等等      孤儿进程，僵尸进程  孤儿进程  父进程执行结束后先退出，子进程仍然运行，这类子进程就被称为孤儿进程（父亲死了，但是儿子还在，自然称为孤儿） 对系统没有危害 孤儿进程会被init进程接管，进行资源回收，善后等操作（init可以理解为是孤儿院）   僵尸进程  子进程退出（exit或者异常等）父进程没有对其进行资源回收，改子进程仍然占据系统进程表，这类子进程称为僵尸进程（儿子死了，父亲不给他收尸） 因为其占据系统进程表，无法回收，一旦僵尸进程数量巨大，则系统无法创建新进程，所以对系统有危害 杀死父进程，该僵尸进程会被init进程接管，变为孤儿进程，init进程可对其进行资源回收善后    </description>
-    </item>
-    
-    <item>
-      <title>进程线程协程</title>
-      <link>https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/</link>
-      <pubDate>Thu, 24 Nov 2022 19:24:11 +0800</pubDate>
-      
-      <guid>https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/</guid>
-      <description> 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    </description>
+      <guid>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
+      <description>个人理解
+  执行过程
+在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
+  如果保证进程地址空间隔离
+逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
+  内存存储方式
+ 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
+  定义
+由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
+  解决方案
+ 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
+系统公用函数可在物理内存中只存储一份，供多个进程使用
+    进程逻辑地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  虚拟内存解决了什么问题？
+可以使每个进程有独立的内存空间，相互隔离
+  进程地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  页表
+建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
+每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
     </item>
     
     <item>
       <title>并行与并发</title>
       <link>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</link>
-      <pubDate>Thu, 24 Nov 2022 19:23:36 +0800</pubDate>
+      <pubDate>Sun, 24 Nov 2019 19:23:36 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</guid>
       <description> 并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  </description>
