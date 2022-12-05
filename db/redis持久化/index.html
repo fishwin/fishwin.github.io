@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>Redis持久化 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="Redis持久化" />
+<meta property="og:description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
+RDB 概念  Redis默认采用的是RDB持久化方式。
+按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB持久化过程分为手动触发和自动触发。
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+ 配置 满足任一条件都会触发rdb持久化
+# Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/" /><meta property="article:section" content="db" />
+<meta property="article:published_time" content="2022-12-03T17:02:57+08:00" />
+<meta property="article:modified_time" content="2022-12-03T17:02:57+08:00" />
+
+
+		<meta itemprop="name" content="Redis持久化">
+<meta itemprop="description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
+RDB 概念  Redis默认采用的是RDB持久化方式。
+按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB持久化过程分为手动触发和自动触发。
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+ 配置 满足任一条件都会触发rdb持久化
+# Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."><meta itemprop="datePublished" content="2022-12-03T17:02:57+08:00" />
+<meta itemprop="dateModified" content="2022-12-03T17:02:57+08:00" />
+<meta itemprop="wordCount" content="354">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis持久化"/>
+<meta name="twitter:description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
+RDB 概念  Redis默认采用的是RDB持久化方式。
+按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB持久化过程分为手动触发和自动触发。
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+ 配置 满足任一条件都会触发rdb持久化
+# Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/db/">Dbs</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">Redis持久化</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2022-12-03T17:02:57&#43;08:00">2022年12月03日</time>
+	</div>
+				<h1 class="entry__title">Redis持久化</h1>
+				<div class="entry__content"><h1 id="redis为什么需要持久化">redis为什么需要持久化？</h1>
+<p>redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。<br>
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。<br>
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。</p>
+<h1 id="rdb">RDB</h1>
+<h3 id="概念">概念</h3>
+<blockquote>
+<p>Redis默认采用的是RDB持久化方式。<br>
+按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。<br>
+RDB持久化过程分为手动触发和自动触发。<br>
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。</p>
+</blockquote>
+<h3 id="配置">配置</h3>
+<p>满足任一条件都会触发rdb持久化</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e"># Unless specified otherwise, by default Redis will save the DB:</span>
+<span style="color:#75715e">#   * After 3600 seconds (an hour) if at least 1 change was performed</span>
+<span style="color:#75715e">#   * After 300 seconds (5 minutes) if at least 100 changes were performed</span>
+<span style="color:#75715e">#   * After 60 seconds if at least 10000 changes were performed</span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># You can set these explicitly by uncommenting the following line.</span>
+<span style="color:#75715e">#</span>
+<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">3600</span> <span style="color:#ae81ff">1</span> 
+<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">300</span> <span style="color:#ae81ff">100</span> 
+<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">60</span> <span style="color:#ae81ff">10000</span>
+
+<span style="color:#75715e"># Compress string objects using LZF when dump .rdb databases?</span>
+<span style="color:#75715e"># By default compression is enabled as it&#39;s almost always a win.</span>
+<span style="color:#75715e"># If you want to save some CPU in the saving child set it to &#39;no&#39; but</span>
+<span style="color:#75715e"># the dataset will likely be bigger if you have compressible values or keys.</span>
+<span style="color:#a6e22e">rdbcompression</span> <span style="color:#a6e22e">yes</span>
+</code></pre></div><h3 id="手动触发">手动触发</h3>
+<p>手动触发的命令有save和bgsave</p>
+<ul>
+<li>save：该命令会阻塞Redis服务器，直到RDB的过程完成。</li>
+<li>bgsave：每次进行RDB过程都会fork一个子进程，由子进程完成RDB的操作，因此阻塞只会发生在fork阶段，一般时间很短。
+<table>
+<thead>
+<tr>
+<th></th>
+<th>save</th>
+<th>bgsave</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IO类型</td>
+<td>同步</td>
+<td>异步</td>
+</tr>
+<tr>
+<td>是否阻塞其他命令</td>
+<td>是</td>
+<td>否（fork子进程时会右短暂阻塞）</td>
+</tr>
+<tr>
+<td>复杂度</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>不会消耗额外内存</td>
+<td>不阻塞其他命令</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>阻塞客户端其他命令</td>
+<td>需要fork子进程，有额外的资源消耗</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h3 id="自动触发">自动触发</h3>
+<blockquote>
+<p>自动触发使用的都是bgsave方式。</p>
+</blockquote>
+<p>除了手动触发RDB，Redis服务器内部还有如下几个场景能够自动触发RDB：</p>
+<ul>
+<li>配置规则：根据我们的 save m n 配置规则自动触发。</li>
+<li>全量复制：如果slave节点执行全量复制操作，master节点自动执行bgsave生成RDB文件并发送给slave节点。</li>
+<li>shutdown：默认情况下执行shutdown命令时， 如果没有开启AOF持久化功能则自动执行bgsave。</li>
+</ul>
+<h3 id="rdb执行过程">rdb执行过程</h3>
+<p><img src="/images/rdb.png" alt=""></p>
+<ul>
+<li>当redis触发了快照生成操作时,主进程判断当前是否已经存在正在执行的子进程，如果存在，那么主进程直接返回。</li>
+<li>如果不存在正在执行的子进程，那么就fork一个新的子进程进行持久化数据，fork过程是阻塞的，fork操作完成后主进程即可执行其他操作。</li>
+<li>子进程先将数据写入到临时的rdb文件中，待快照数据写入完成后再原子替换旧的rdb文件；</li>
+<li>同时发送信号给主进程，通知主进程rdb持久化完成，主进程更新相关的统计信息。</li>
+</ul>
+<blockquote>
+<ol>
+<li>父子进程：主线程调用fork方法fork出子线程,在子线程fork出的一瞬间,父线程和子线程共享内存中的数据。</li>
+<li>copy on write：主进程开始fork到fork结束之间，需要copy主进程的内存数据到子进程，在此期间，当主线程接收其他命令对数据进行操作的时候,
+主线程会复制出共享的数据页面,然后进行修改,这样不会对子线程中的内存页造成影响,子线程中的数据页中的数据还是刚从主线程中分离出来的样子,这样就可以保证子线程生成的rdb文件为主线程fork出子线程的一瞬间的快照。</li>
+</ol>
+</blockquote>
+<h3 id="优点">优点</h3>
+<ul>
+<li>占用空间较小：rdb为全量备份,而且是以二进制的格式保存的,所以rdb文件占用空间会比较小,所以非常适合容灾备份。</li>
+<li>恢复速度快：rdb文件中保存的是数据,所以恢复速度也很快。</li>
+<li>非阻塞操作：在执行bgsave的时候是由主线程fork出子线程进行快照生成,所以并不会影响主线程执行其他操作,只会在fork出子线程的时候阻塞。</li>
+</ul>
+<h3 id="缺点">缺点</h3>
+<ul>
+<li>不可读：rdb中保存的是二进制数据所以无法直接查看文件的内容。</li>
+<li>丢数据：rdb并不能实时的保存数据,在rdb文件中会丢失执行快照操作的命令之后的其他写数据操作。</li>
+<li>版本不兼容：RDB文件使用特定二进制格式保存，Redis版本演进过程中有多个格式的RDB版本，存在老版本Redis服务无法兼容新版RDB格式的问题。</li>
+</ul>
+<h1 id="aof">AOF</h1>
+<h3 id="概念-1">概念</h3>
+<blockquote>
+<ol>
+<li>和rdb中保存二进制格式的内存中的数据不同,aof模式保存的是<em><strong>redis执行的写命令</strong></em>,当redis需要恢复数据时,只需要重复执行以下这些命令就可以了。</li>
+<li>Redis 会在收到客户端修改指令后，先进行参数校验，如果没问题，就立即将该指令文本存储到 AOF 日志中，也就是先存到磁盘，然后再执行指令。这样即使遇到突发宕机，已经存储到 AOF 日志的指令进行重放一下就可以恢复到宕机前的状态。</li>
+<li>因为aof日志写入和命令的执行都是主线程完成的,所以开启aof之后不可避免的将影响主线程执行命令的效率。</li>
+<li>当redis将aof日志内容写入aof文件的时候,其实只是写入了一个文件的缓冲区中,具体什么时间将缓冲区中的内容真正写入到磁盘上这个可以选择由redis触发或者由系统决定,这个可以配置。</li>
+</ol>
+</blockquote>
+<h3 id="为什么先写入文件缓冲区">为什么先写入文件缓冲区</h3>
+<blockquote>
+<p>Redis使用单线程响应命令，如果每次写AOF文件命令都直接追加到硬盘， 那么性能完全取决于当前硬盘负载。先写入缓冲区aof_buf中， 还有另一个好处， Redis可以提供多种缓冲区 同步硬盘的策略，在性能和安全性方面做出平衡。</p>
+</blockquote>
+<h3 id="配置-1">配置</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e">#当appendonly为yes时redis启用aof备份</span>
+<span style="color:#a6e22e">appendonly</span>  <span style="color:#a6e22e">yes</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
+
+<span style="color:#75715e">#指定生成的aof文件的名称</span>
+<span style="color:#a6e22e">appendfilename</span> <span style="color:#a6e22e">filename</span>　　
+
+<span style="color:#75715e">#什么时候把aof文件缓冲区的内容写入的磁盘上.因为缓冲区中的内容实际上还没有写入到磁盘,   </span>
+<span style="color:#75715e">#如果这个时候宕机,那么数据也会丢失,所以这个时间不应该设置的太长,redis提供了三种方案.   </span>
+<span style="color:#75715e">#第一种时每秒中写入一次,这个时最常用的,另外一个是每执行一次命令就写入一次,因为fsync命令非常慢所以这个不推荐使用.</span>
+<span style="color:#75715e">#还有一个是不主动写入到磁盘,而是由系统决定什么时候写入,</span>
+<span style="color:#a6e22e">appendfsync</span>  <span style="color:#a6e22e">always</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">everysec</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
+
+<span style="color:#75715e">#aof文件自上一次重写后文件大小增长了100%，则再次触发重写机制，</span>
+<span style="color:#75715e">#比如说，上次AOF文件容量为100M，这次文件已经到200M了，则自动触发重写机制</span>
+<span style="color:#a6e22e">auto-aof-rewrite-percentage</span> <span style="color:#ae81ff">100</span>
+
+<span style="color:#75715e">#aof文件至少要达到64M才会触发自动重写，文件太小，恢复速度很快，重写意义不大</span>
+<span style="color:#a6e22e">auto-aof-rewrite-min-size</span> <span style="color:#ae81ff">64</span><span style="color:#a6e22e">mb</span>
+　
+</code></pre></div><h3 id="重写机制">重写机制</h3>
+<h4 id="为什么要重写">为什么要重写</h4>
+<blockquote>
+<p>随着命令不断写入AOF， 文件会越来越大， 为了解决这个问题， Redis引入AOF重写机制压缩文件体积。 AOF文件重写是把Redis进程内的数据转化为写命令同步到新AOF文件的过程。<br>
+文件重写能够使得AOF文件的体积变得更小，从而使得可以更快的被Redis加载。</p>
+</blockquote>
+<h4 id="触发方式">触发方式</h4>
+<p>手动触发和自动触发</p>
+<ul>
+<li>手动触发：使用bgrewriteaof命令</li>
+<li>自动触发：根据auto-aof-rewrite-min-size和auto-aof-rewrite-percentage参数确定自动触发时机。</li>
+</ul>
+<h4 id="那么文件重写后的aof文件为什么会变小呢">那么文件重写后的AOF文件为什么会变小呢？</h4>
+<ol>
+<li>进程内已经超时的数据将不会再次写入AOF文件中。</li>
+<li>旧的AOF文件含有无效命令，如del key1、 hdel key2等。重写使用进程内数据直接生成，这样新的AOF文件只保留最终数据的写入命令。</li>
+<li>多条写命令可以合并为一个， 如：lpush list a、 lpush list b、lpush listc可以转化为：lpush list a b c。为了防止单条命令过大造成客户端缓冲区溢出，对于list、 set、 hash、 zset等类型操作，以64个元素为界拆分为多条。</li>
+</ol>
+<h4 id="重写流程">重写流程</h4>
+<p><img src="/images/aof_rewrite.jpeg" alt=""></p>
+<ol>
+<li>重写期间，主线程并没有阻塞，而是在执行其他的操作命令，依然会向旧的AOF文件写入数据，这样能够保证备份的最终完整性，如果数据重写失败，也能保证数据不会丢失。</li>
+<li>为了把重写期间响应的写入信息也写入到新的文件中，因此也会为子进程保留一个缓冲区，防止新写的文件丢失数据。</li>
+<li>重写是直接把当前内存的数据生成对应命令，并不需要读取老的AOF文件进行分析、命令合并。</li>
+<li>AOF文件直接采用的文本协议，主要是兼容性好、追加方便、可读性高可认为修改修复。</li>
+<li>无论是RDB还是AOF都是先写入一个临时文件，然后通过重命名完成文件的替换。</li>
+</ol>
+<h3 id="优点-1">优点</h3>
+<ol>
+<li>aof默认的保存策略时每秒一次,所以aof的数据安全性要比rdb高。</li>
+<li>aof中记录的时文本格式的命令,这样查看起来会比较方便。</li>
+<li>而且数据恢复的时候也不受redis版本的限制,所有aof文件都是通用的.</li>
+</ol>
+<h3 id="缺点-1">缺点</h3>
+<ol>
+<li>引文aof中记录的是操作数据的命令,所有aof文件会明显大过rdb文件。</li>
+<li>并且在数据恢复的速度上也明显慢于rdb文件.</li>
+<li>如果redis开启了aof因为aof实在主线程中记录的,所以会影响redis执行命令的效率.</li>
+</ol>
+<h1 id="总结">总结</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RDB</th>
+<th>AOF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据恢复优先级</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>文件体积</td>
+<td>小</td>
+<td>大</td>
+</tr>
+<tr>
+<td>恢复速度</td>
+<td>快</td>
+<td>慢</td>
+</tr>
+<tr>
+<td>数据安全性</td>
+<td>容易丢数据</td>
+<td>根据策略决定</td>
+</tr>
+<tr>
+<td>版本兼容性</td>
+<td>低</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+<h1 id="数据恢复">数据恢复</h1>
+<p><img src="/images/redis_reload.jpeg" alt=""><br>
+上图很清晰的分析了Redis启动恢复数据的流程，先检查AOF文件是否开启，文件是否存在，再检查RDB是否开启，文件是否存在。</p>
+<h1 id="混合化部署">混合化部署</h1>
+<p>RDB持久化方式恢复速度快，文件体积小，但是容易丢数据
+AOF持久化方式恢复速度慢，文件体积大，但是相对不易丢数据
+为了充分利用两者的优点，redis4.0之后提出了混合化部署的形式，aof重写的时候使用rdb方式，将二进制数据写入aof文件中，在此期间如果有其他命令则记录命令到aof文件中，
+这样，aof文件格式就是二进制+命令的形式，在数据恢复时，可以使恢复速度更快，文件也更小。</p>
+<blockquote>
+<p>appendonly.aof</p>
+<blockquote>
+<p>[rdb二进制数据]<br>
+[命令]<br>
+[命令]<br>
+[命令]<br>
+&hellip;&hellip;</p>
+</blockquote>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e"># Redis can create append-only base files in either RDB or AOF formats. Using</span>
+<span style="color:#75715e"># the RDB format is always faster and more efficient, and disabling it is only</span>
+<span style="color:#75715e"># supported for backward compatibility purposes.</span>
+<span style="color:#a6e22e">aof-use-rdb-preamble</span> <span style="color:#a6e22e">yes</span>
+</code></pre></div><h3 id="参考">参考</h3>
+<ul>
+<li><a href="https://www.cnblogs.com/monkeydai/p/16120700.html">redis持久化机制</a></li>
+<li><a href="https://blog.csdn.net/weixin_39851872/article/details/113629782">redis rdb bgsave 内存不足_天天用Redis，持久性优化方案你知道多少？</a></li>
+<li><a href="https://redis.io/docs/management/config-file/">redis config example</a></li>
+</ul>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头，互联网老兵。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2022 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>

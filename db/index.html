@@ -142,7 +142,25 @@
 		</div>
 		<div class="cards">
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
+					<article class="entry card__box block">
+	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/">Redis持久化</a></h1>
+	<div class="entry__content">redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
+RDB 概念  Redis默认采用的是RDB持久化方式。
+按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB持久化过程分为手动触发和自动触发。
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+ 配置 满足任一条件都会触发rdb持久化
+# Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</div>
+	<div class="entry__meta meta mt tar">
+	<time class="entry__meta-published meta-published" datetime="2022-12-03T17:02:57&#43;08:00">2022年12月03日</time>
+	</div>
+</article>
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/acid/">简述数据库中的 ACID 分别是什么？</a></h1>
 	<div class="entry__content">ACID
@@ -160,7 +178,7 @@
 </article>
 				</div>
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/">聚簇索引和非聚簇索引有什么区别？什么情况用聚集索引？</a></h1>
 	<div class="entry__content">MyISAM索引实现
@@ -190,7 +208,7 @@
 </article>
 				</div>
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？</a></h1>
 	<div class="entry__content">B树（平衡多路搜索树）
@@ -209,7 +227,7 @@ O(log n)
 </article>
 				</div>
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/%E5%A4%96%E9%94%AE/">为什么数据库生产环境最好不要使用外键</a></h1>
 	<div class="entry__content">常用的外键类型：
@@ -237,7 +255,7 @@ O(log n)
 </article>
 				</div>
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/">如何创建索引</a></h1>
 	<div class="entry__content">  (a,b)联合索引会触发filesort
@@ -251,7 +269,7 @@ O(log n)
 </article>
 				</div>
 			
-				<div class="card card--2col">
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/">数据库的事务隔离级别有哪些？各有哪些优缺点？</a></h1>
 	<div class="entry__content">事务隔离级别主要有四种
