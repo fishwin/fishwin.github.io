@@ -9,13 +9,13 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="Redis持久化" />
-<meta property="og:description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+<meta property="og:description" content="redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
-RDB 概念  Redis默认采用的是RDB持久化方式。
-按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
-RDB持久化过程分为手动触发和自动触发。
+redis默认采用的使RDB的持久化方式。
+RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+RDB持久化方式分为手动触发和自动触发。
  配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line." />
 <meta property="og:type" content="article" />
@@ -25,27 +25,27 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 
 
 		<meta itemprop="name" content="Redis持久化">
-<meta itemprop="description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+<meta itemprop="description" content="redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
-RDB 概念  Redis默认采用的是RDB持久化方式。
-按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
-RDB持久化过程分为手动触发和自动触发。
+redis默认采用的使RDB的持久化方式。
+RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+RDB持久化方式分为手动触发和自动触发。
  配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."><meta itemprop="datePublished" content="2022-12-03T17:02:57+08:00" />
 <meta itemprop="dateModified" content="2022-12-03T17:02:57+08:00" />
-<meta itemprop="wordCount" content="354">
+<meta itemprop="wordCount" content="349">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis持久化"/>
-<meta name="twitter:description" content="redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+<meta name="twitter:description" content="redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
-RDB 概念  Redis默认采用的是RDB持久化方式。
-按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
-RDB持久化过程分为手动触发和自动触发。
+redis默认采用的使RDB的持久化方式。
+RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+RDB持久化方式分为手动触发和自动触发。
  配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."/>
 
@@ -174,16 +174,16 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 	</div>
 				<h1 class="entry__title">Redis持久化</h1>
 				<div class="entry__content"><h1 id="redis为什么需要持久化">redis为什么需要持久化？</h1>
-<p>redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。<br>
+<p>redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。<br>
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。<br>
-redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。</p>
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。<br>
+redis默认采用的使RDB的持久化方式。</p>
 <h1 id="rdb">RDB</h1>
 <h3 id="概念">概念</h3>
 <blockquote>
-<p>Redis默认采用的是RDB持久化方式。<br>
-按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。<br>
-RDB持久化过程分为手动触发和自动触发。<br>
-Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。</p>
+<p>按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。<br>
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。<br>
+RDB持久化方式分为手动触发和自动触发。</p>
 </blockquote>
 <h3 id="配置">配置</h3>
 <p>满足任一条件都会触发rdb持久化</p>
@@ -207,7 +207,7 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 <p>手动触发的命令有save和bgsave</p>
 <ul>
 <li>save：该命令会阻塞Redis服务器，直到RDB的过程完成。</li>
-<li>bgsave：每次进行RDB过程都会fork一个子进程，由子进程完成RDB的操作，因此阻塞只会发生在fork阶段，一般时间很短。
+<li>bgsave：每次进行RDB过程都会fork一个子进程，由子进程完成RDB的操作，因此阻塞只会发生在fork阶段，需要拷贝内存数据，时间取决于内存数据量。
 <table>
 <thead>
 <tr>
@@ -266,7 +266,7 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 </ul>
 <blockquote>
 <ol>
-<li>父子进程：主线程调用fork方法fork出子线程,在子线程fork出的一瞬间,父线程和子线程共享内存中的数据。</li>
+<li>父子进程：主线程调用fork方法fork出子线程，子进程会进程父进程的内存数据。从而完成rdb持久化将内存数据写入文件。</li>
 <li>copy on write：主进程开始fork到fork结束之间，需要copy主进程的内存数据到子进程，在此期间，当主线程接收其他命令对数据进行操作的时候,
 主线程会复制出共享的数据页面,然后进行修改,这样不会对子线程中的内存页造成影响,子线程中的数据页中的数据还是刚从主线程中分离出来的样子,这样就可以保证子线程生成的rdb文件为主线程fork出子线程的一瞬间的快照。</li>
 </ol>
@@ -288,7 +288,6 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 <blockquote>
 <ol>
 <li>和rdb中保存二进制格式的内存中的数据不同,aof模式保存的是<em><strong>redis执行的写命令</strong></em>,当redis需要恢复数据时,只需要重复执行以下这些命令就可以了。</li>
-<li>Redis 会在收到客户端修改指令后，先进行参数校验，如果没问题，就立即将该指令文本存储到 AOF 日志中，也就是先存到磁盘，然后再执行指令。这样即使遇到突发宕机，已经存储到 AOF 日志的指令进行重放一下就可以恢复到宕机前的状态。</li>
 <li>因为aof日志写入和命令的执行都是主线程完成的,所以开启aof之后不可避免的将影响主线程执行命令的效率。</li>
 <li>当redis将aof日志内容写入aof文件的时候,其实只是写入了一个文件的缓冲区中,具体什么时间将缓冲区中的内容真正写入到磁盘上这个可以选择由redis触发或者由系统决定,这个可以配置。</li>
 </ol>
@@ -309,18 +308,11 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 <span style="color:#75715e">#第一种时每秒中写入一次,这个时最常用的,另外一个是每执行一次命令就写入一次,因为fsync命令非常慢所以这个不推荐使用.</span>
 <span style="color:#75715e">#还有一个是不主动写入到磁盘,而是由系统决定什么时候写入,</span>
 <span style="color:#a6e22e">appendfsync</span>  <span style="color:#a6e22e">always</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">everysec</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
-
-<span style="color:#75715e">#aof文件自上一次重写后文件大小增长了100%，则再次触发重写机制，</span>
-<span style="color:#75715e">#比如说，上次AOF文件容量为100M，这次文件已经到200M了，则自动触发重写机制</span>
-<span style="color:#a6e22e">auto-aof-rewrite-percentage</span> <span style="color:#ae81ff">100</span>
-
-<span style="color:#75715e">#aof文件至少要达到64M才会触发自动重写，文件太小，恢复速度很快，重写意义不大</span>
-<span style="color:#a6e22e">auto-aof-rewrite-min-size</span> <span style="color:#ae81ff">64</span><span style="color:#a6e22e">mb</span>
-　
 </code></pre></div><h3 id="重写机制">重写机制</h3>
 <h4 id="为什么要重写">为什么要重写</h4>
 <blockquote>
-<p>随着命令不断写入AOF， 文件会越来越大， 为了解决这个问题， Redis引入AOF重写机制压缩文件体积。 AOF文件重写是把Redis进程内的数据转化为写命令同步到新AOF文件的过程。<br>
+<p>随着命令不断写入AOF， 文件会越来越大， 为了解决这个问题， Redis引入AOF重写机制压缩文件体积。   <br>
+AOF文件重写是把Redis进程内的数据转化为写命令同步到新AOF文件的过程。<br>
 文件重写能够使得AOF文件的体积变得更小，从而使得可以更快的被Redis加载。</p>
 </blockquote>
 <h4 id="触发方式">触发方式</h4>
@@ -329,9 +321,17 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 <li>手动触发：使用bgrewriteaof命令</li>
 <li>自动触发：根据auto-aof-rewrite-min-size和auto-aof-rewrite-percentage参数确定自动触发时机。</li>
 </ul>
-<h4 id="那么文件重写后的aof文件为什么会变小呢">那么文件重写后的AOF文件为什么会变小呢？</h4>
+<h3 id="自动触发配置">自动触发配置</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e">#aof文件自上一次重写后文件大小增长了100%，则再次触发重写机制，</span>
+<span style="color:#75715e">#比如说，上次AOF文件容量为100M，这次文件已经到200M了，则自动触发重写机制</span>
+<span style="color:#a6e22e">auto-aof-rewrite-percentage</span> <span style="color:#ae81ff">100</span>
+
+<span style="color:#75715e">#aof文件至少要达到64M才会触发自动重写，文件太小，恢复速度很快，重写意义不大</span>
+<span style="color:#a6e22e">auto-aof-rewrite-min-size</span> <span style="color:#ae81ff">64</span><span style="color:#a6e22e">mb</span>
+　
+</code></pre></div><h4 id="那么文件重写后的aof文件为什么会变小呢">那么文件重写后的AOF文件为什么会变小呢？</h4>
 <ol>
-<li>进程内已经超时的数据将不会再次写入AOF文件中。</li>
+<li>进程内已经过期的数据将不会再次写入AOF文件中。</li>
 <li>旧的AOF文件含有无效命令，如del key1、 hdel key2等。重写使用进程内数据直接生成，这样新的AOF文件只保留最终数据的写入命令。</li>
 <li>多条写命令可以合并为一个， 如：lpush list a、 lpush list b、lpush listc可以转化为：lpush list a b c。为了防止单条命令过大造成客户端缓冲区溢出，对于list、 set、 hash、 zset等类型操作，以64个元素为界拆分为多条。</li>
 </ol>
@@ -397,8 +397,8 @@ Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的
 <p><img src="/images/redis_reload.jpeg" alt=""><br>
 上图很清晰的分析了Redis启动恢复数据的流程，先检查AOF文件是否开启，文件是否存在，再检查RDB是否开启，文件是否存在。</p>
 <h1 id="混合化部署">混合化部署</h1>
-<p>RDB持久化方式恢复速度快，文件体积小，但是容易丢数据
-AOF持久化方式恢复速度慢，文件体积大，但是相对不易丢数据
+<p>RDB持久化方式恢复速度快，文件体积小，但是容易丢数据。<br>
+AOF持久化方式恢复速度慢，文件体积大，但是相对不易丢数据。<br>
 为了充分利用两者的优点，redis4.0之后提出了混合化部署的形式，aof重写的时候使用rdb方式，将二进制数据写入aof文件中，在此期间如果有其他命令则记录命令到aof文件中，
 这样，aof文件格式就是二进制+命令的形式，在数据恢复时，可以使恢复速度更快，文件也更小。</p>
 <blockquote>

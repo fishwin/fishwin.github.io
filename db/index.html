@@ -145,13 +145,13 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/">Redis持久化</a></h1>
-	<div class="entry__content">redis为什么需要持久化？ redis中的数据全部保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+	<div class="entry__content">redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
-RDB 概念  Redis默认采用的是RDB持久化方式。
-按照一定的周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
-RDB持久化过程分为手动触发和自动触发。
+redis默认采用的使RDB的持久化方式。
+RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+RDB持久化方式分为手动触发和自动触发。
  配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</div>
 	<div class="entry__meta meta mt tar">
