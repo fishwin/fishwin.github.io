@@ -13,7 +13,7 @@
  ACID 事务的四大特性，简称ACID
  原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；&#43;1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/" /><meta property="article:section" content="db" />
+<meta property="og:url" content="https://fishwin.github.io/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/" /><meta property="article:section" content="selected" />
 <meta property="article:published_time" content="2022-12-11T09:51:43+08:00" />
 <meta property="article:modified_time" content="2022-12-11T09:51:43+08:00" />
 
@@ -144,7 +144,7 @@
 			<a class="breadcrumbs__link" href="/">Home</a>
 		</li>
 		<li class="breadcrumb__item">
-			<a class="breadcrumbs__link" href="/db/">Dbs</a>
+			<a class="breadcrumbs__link" href="/selected/">Selecteds</a>
 		</li>
 		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">浅析Mysql事务ACID原理</li>
 	</ol>

@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html class="no-js" lang="zh-CN">
 <head>
-	<meta name="generator" content="Hugo 0.92.0" />
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#1b1b1b">
-	<title>张海余的主页</title>
+	<title>Selecteds | 张海余的主页</title>
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
-	<meta name="description" content="张海余的个人博客">
-		<meta property="og:title" content="张海余的主页" />
+	<meta name="description" content="">
+		<meta property="og:title" content="Selecteds" />
 <meta property="og:description" content="张海余的个人博客" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://fishwin.github.io/" />
+<meta property="og:url" content="https://fishwin.github.io/selected/" />
 
 
-		<meta itemprop="name" content="张海余的主页">
+		<meta itemprop="name" content="Selecteds">
 <meta itemprop="description" content="张海余的个人博客">
 		<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="张海余的主页"/>
+<meta name="twitter:title" content="Selecteds"/>
 <meta name="twitter:description" content="张海余的个人博客"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
@@ -26,11 +25,11 @@
 	<link rel="stylesheet" href="/css/themes/dark-green.css">
 	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
 	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
-	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="张海余的主页">
+	<link rel="alternate" type="application/rss+xml" href="/selected/index.xml" title="张海余的主页">
 	<link rel="manifest" href="/manifest.json">
 		
 </head>
-<body class="body kind-home">
+<body class="body kind-section">
 	<header class="header">
 	<a class="logo" href="/">张海余的主页</a>
 	
@@ -127,8 +126,23 @@
 	<div class="primary">
 	
 	<main class="main">
-			<div class="cards">
-					<div class="card card--1col">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">Selecteds</li>
+	</ol>
+</nav>
+		<div class="page block">
+			<h1 class="page__title">Selecteds</h1>
+			
+		</div>
+		<div class="cards">
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">浅析Mysql事务ACID原理</a></h1>
 	<div class="entry__content">innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
@@ -138,8 +152,9 @@
 	<time class="entry__meta-published meta-published" datetime="2022-12-11T09:51:43&#43;08:00">2022年12月11日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/redis%E6%8C%81%E4%B9%85%E5%8C%96/">Redis持久化</a></h1>
 	<div class="entry__content">redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
@@ -155,8 +170,9 @@ RDB持久化方式分为手动触发和自动触发。
 	<time class="entry__meta-published meta-published" datetime="2022-12-03T17:02:57&#43;08:00">2022年12月03日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/">聚簇索引和非聚簇索引有什么区别？什么情况用聚集索引？</a></h1>
 	<div class="entry__content">MyISAM索引实现
@@ -184,8 +200,9 @@ RDB持久化方式分为手动触发和自动触发。
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:42:15&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a></h1>
 	<div class="entry__content">DMA (Direct Memory Access) 直接内存访问
@@ -199,8 +216,9 @@ RDB持久化方式分为手动触发和自动触发。
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:29:38&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">IO多路复用，select、poll、epoll区别</a></h1>
 	<div class="entry__content">IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
@@ -214,8 +232,9 @@ RDB持久化方式分为手动触发和自动触发。
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:28:33&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">TCP四次挥手</a></h1>
 	<div class="entry__content">TCP四次挥手过程   执行流程图
@@ -228,8 +247,9 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:38:54&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">Chanel底层原理</a></h1>
 	<div class="entry__content">数据结构
@@ -238,8 +258,9 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:48&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">Sync.Map 实现原理</a></h1>
 	<div class="entry__content">数据结构
@@ -248,8 +269,9 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:00&#43;08:00">2022年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/io%E6%A8%A1%E5%9E%8B/">IO模型</a></h1>
 	<div class="entry__content">阻塞I/O
@@ -283,8 +305,9 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
 	<time class="entry__meta-published meta-published" datetime="2021-11-24T19:25:48&#43;08:00">2021年11月24日</time>
 	</div>
 </article>
-					</div>
-					<div class="card card--1col">
+				</div>
+			
+				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/">Go调度器原理</a></h1>
 	<div class="entry__content">GPM模型
@@ -316,13 +339,14 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
 	<time class="entry__meta-published meta-published" datetime="2021-11-23T21:35:41&#43;08:00">2021年11月23日</time>
 	</div>
 </article>
-					</div>
-			</div>
+				</div>
+			
+		</div>
 	</main>
 	
 <div class="pagination block">
 				<span class="pagination__item pagination__item--active" data-total="2">1</span>
-				<a class="pagination__item pagination__item--desktop" href="/page/2/">2</a>
+				<a class="pagination__item pagination__item--desktop" href="/selected/page/2/">2</a>
 </div>
 
 	</div>

@@ -19,11 +19,39 @@
     </item>
     
     <item>
+      <title>浅析Mysql事务ACID原理</title>
+      <link>https://fishwin.github.io/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</link>
+      <pubDate>Sun, 11 Dec 2022 09:51:43 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</guid>
+      <description>innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ ACID 事务的四大特性，简称ACID
+ 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</description>
+    </item>
+    
+    <item>
       <title>Redis持久化</title>
       <link>https://fishwin.github.io/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
       <pubDate>Sat, 03 Dec 2022 17:02:57 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
+      <description>redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
+我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
+redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
+redis默认采用的使RDB的持久化方式。
+RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
+RDB持久化方式分为手动触发和自动触发。
+ 配置 满足任一条件都会触发rdb持久化
+# Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</description>
+    </item>
+    
+    <item>
+      <title>Redis持久化</title>
+      <link>https://fishwin.github.io/selected/redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
+      <pubDate>Sat, 03 Dec 2022 17:02:57 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/redis%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
       <description>redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
@@ -58,6 +86,35 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:42:15 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
+      <description>MyISAM索引实现
+  使用B+树
+  叶子节点的data域存储数据记录的地址（非聚簇索引）
+  主键索引与普通索引结构一样
+  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+  图示
+    InnoDB的索引实现
+  使用B+树
+  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+  普通索引叶子节点data域保存着主键值（非聚簇索引）
+  每个表只能有一个聚簇索引
+  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+  图示
+  主键索引
+  辅助索引
+    聚簇索引与非聚簇索引定义
+叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
+  什么是回表
+通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
+  什么是索引覆盖
+ 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</description>
+    </item>
+    
+    <item>
+      <title>聚簇索引和非聚簇索引有什么区别？什么情况用聚集索引？</title>
+      <link>https://fishwin.github.io/selected/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Thu, 24 Nov 2022 19:42:15 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
       <description>MyISAM索引实现
   使用B+树
   叶子节点的data域存储数据记录的地址（非聚簇索引）
@@ -183,11 +240,41 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
+      <title>零拷贝</title>
+      <link>https://fishwin.github.io/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</link>
+      <pubDate>Thu, 24 Nov 2022 19:29:38 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</guid>
+      <description>DMA (Direct Memory Access) 直接内存访问
+负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap+write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程</description>
+    </item>
+    
+    <item>
       <title>IO多路复用，select、poll、epoll区别</title>
       <link>https://fishwin.github.io/os/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</link>
       <pubDate>Thu, 24 Nov 2022 19:28:33 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
+      <description>IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
+  select
+ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif  } fd_set;   执行过程
+流程：
+1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
+  优点
+ 所有平台都支持，良好的跨平台性    缺点</description>
+    </item>
+    
+    <item>
+      <title>IO多路复用，select、poll、epoll区别</title>
+      <link>https://fishwin.github.io/selected/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Thu, 24 Nov 2022 19:28:33 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
       <description>IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
   select
  fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif  } fd_set;   执行过程
@@ -379,6 +466,20 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
     </item>
     
     <item>
+      <title>TCP四次挥手</title>
+      <link>https://fishwin.github.io/selected/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</link>
+      <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</guid>
+      <description>TCP四次挥手过程   执行流程图
+ 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+https://blog.csdn.net/qzcsu/article/details/72861891
+为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
+TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
+线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
+    </item>
+    
+    <item>
       <title>Tcp</title>
       <link>https://fishwin.github.io/net/tcp/</link>
       <pubDate>Thu, 24 Nov 2022 17:36:10 +0800</pubDate>
@@ -545,11 +646,31 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
     </item>
     
     <item>
+      <title>Chanel底层原理</title>
+      <link>https://fishwin.github.io/selected/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Thu, 24 Nov 2022 17:07:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</guid>
+      <description>数据结构
+type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 元素大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 元素类型 	sendx uint // 记录循环队列中发送操作处理到的位置（索引） 	recvx uint // 记录循环队列中接收操作处理到的位置（索引） 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 	last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 	prev *sudog // 双向链表前指针 	elem unsafe.</description>
+    </item>
+    
+    <item>
       <title>Sync.Map 实现原理</title>
       <link>https://fishwin.github.io/golang/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
       <pubDate>Thu, 24 Nov 2022 17:07:00 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>数据结构
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</description>
+    </item>
+    
+    <item>
+      <title>Sync.Map 实现原理</title>
+      <link>https://fishwin.github.io/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Thu, 24 Nov 2022 17:07:00 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
       <description>数据结构
 type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</description>
     </item>
@@ -687,6 +808,41 @@ https://blog.csdn.net/mrwangwang/article/details/8537775</description>
     </item>
     
     <item>
+      <title>IO模型</title>
+      <link>https://fishwin.github.io/selected/io%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Wed, 24 Nov 2021 19:25:48 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/io%E6%A8%A1%E5%9E%8B/</guid>
+      <description>阻塞I/O
+读写文件，网络I/O。当发生读写文件或网络I/O读写时，操作会阻塞当前线程，直到完成I/O操作，才能继续向下执行。
+一般采用多进程或多线程的方式来解决此类问题，但是由于过多的进程或过多的线程都会造成大量的资源浪费，并且多线程上下文切换，也会带来很大的开销
+执行流程：
+1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
+总结：
+​	上述整个过程，当前用户线程是阻塞等待的。
+  非阻塞I/O
+当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
+执行过程：
+  应用程序发起系统调用，进入到内核空间
+  如果内核空间数据还没准备好，则直接返回error。
+  应用程序会定时轮询，数据是否准备好了
+  数据准备好之后，则将数据从内核空间拷贝到用户空间
+  应用程序拿到数据之后，进行后续处理
+总结：
+不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
+    IO多路复用
+一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
+执行过程：
+1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
+总结：
+​	多路复用本质也是同步I/O
+  信号驱动I/O
+用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
+执行过程：
+1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</description>
+    </item>
+    
+    <item>
       <title>一致性hash算法原理</title>
       <link>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</link>
       <pubDate>Wed, 24 Nov 2021 18:36:47 +0800</pubDate>
@@ -757,6 +913,39 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
     </item>
     
     <item>
+      <title>Go调度器原理</title>
+      <link>https://fishwin.github.io/selected/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Tue, 23 Nov 2021 21:35:41 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/go%E8%B0%83%E5%BA%A6%E5%99%A8%E5%8E%9F%E7%90%86/</guid>
+      <description>GPM模型
+一个G对应一个goroutine
+一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
+一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
+gorutine 与 内核线程 N:M映射
+  全局运行队列
+go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
+全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
+  本地运行队列
+每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
+  netpoll（网络轮询器）
+比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
+  调度过程
+p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
+  sysmon
+go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
+ 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
+基于协作的抢占式调度器 - 1.2 ~ 1.13
+基于信号的抢占式调度器 - 1.14 ~ 至今
+  channel
+试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
+  总结
+goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
+  参考：</description>
+    </item>
+    
+    <item>
       <title>数据库的事务隔离级别有哪些？各有哪些优缺点？</title>
       <link>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
       <pubDate>Tue, 24 Nov 2020 19:41:37 +0800</pubDate>
@@ -797,6 +986,35 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
     </item>
     
     <item>
+      <title>虚拟内存</title>
+      <link>https://fishwin.github.io/selected/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
+      <pubDate>Tue, 24 Nov 2020 19:31:49 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
+      <description>个人理解
+  执行过程
+在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
+  如果保证进程地址空间隔离
+逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
+  内存存储方式
+ 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
+  定义
+由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
+  解决方案
+ 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
+系统公用函数可在物理内存中只存储一份，供多个进程使用
+    进程逻辑地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  虚拟内存解决了什么问题？
+可以使每个进程有独立的内存空间，相互隔离
+  进程地址空间划分
+一般1/4是内核地址空间，3/4是用户地址空间
+  页表
+建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
+每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
+    </item>
+    
+    <item>
       <title>停等协议</title>
       <link>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Tue, 24 Nov 2020 17:40:08 +0800</pubDate>
@@ -811,6 +1029,26 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
+      <description>TCP 三次握手过程及中间状态   执行流程图
+ 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
+  初始化并交换序列号
+序列号发挥着非常重要的作用
+ 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+https://www.cnblogs.com/xiaolincoding/p/12638546.html
+https://segmentfault.com/a/1190000020610336
+TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+    </item>
+    
+    <item>
+      <title>TCP三次握手</title>
+      <link>https://fishwin.github.io/selected/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</link>
+      <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
       <description>TCP 三次握手过程及中间状态   执行流程图
  过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
