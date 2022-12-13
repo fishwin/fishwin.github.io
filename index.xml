@@ -6,7 +6,18 @@
     <description>Recent content on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 03 Dec 2022 17:02:57 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Dec 2022 09:51:43 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>浅析Mysql事务ACID原理</title>
+      <link>https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</link>
+      <pubDate>Sun, 11 Dec 2022 09:51:43 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</guid>
+      <description>innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ ACID 事务的四大特性，简称ACID
+ 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</description>
+    </item>
+    
     <item>
       <title>Redis持久化</title>
       <link>https://fishwin.github.io/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
@@ -76,7 +87,7 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:39:37 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/</guid>
-      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] }  如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚  </description>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态]处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){[开启事务]1、查询订单2、推送钱包微服务扣款消息(推送消息)3、更新订单状态为扣款成功[提交事务]} 如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚  </description>
     </item>
     
     <item>
@@ -85,7 +96,7 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:38:37 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/</guid>
-      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] }  整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </description>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态]处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){[开启事务]1、查询订单2、HTTP调用钱包微服务扣款3、更新订单状态为扣款成功[提交事务]} 整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </description>
     </item>
     
     <item>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>浅析Mysql事务ACID原理 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="浅析Mysql事务ACID原理" />
+<meta property="og:description" content="innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ ACID 事务的四大特性，简称ACID
+ 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；&#43;1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/" /><meta property="article:section" content="db" />
+<meta property="article:published_time" content="2022-12-11T09:51:43+08:00" />
+<meta property="article:modified_time" content="2022-12-11T09:51:43+08:00" />
+
+
+		<meta itemprop="name" content="浅析Mysql事务ACID原理">
+<meta itemprop="description" content="innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ ACID 事务的四大特性，简称ACID
+ 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；&#43;1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。"><meta itemprop="datePublished" content="2022-12-11T09:51:43+08:00" />
+<meta itemprop="dateModified" content="2022-12-11T09:51:43+08:00" />
+<meta itemprop="wordCount" content="214">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="浅析Mysql事务ACID原理"/>
+<meta name="twitter:description" content="innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ ACID 事务的四大特性，简称ACID
+ 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；&#43;1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。"/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/db/">Dbs</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">浅析Mysql事务ACID原理</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2022-12-11T09:51:43&#43;08:00">2022年12月11日</time>
+	</div>
+				<h1 class="entry__title">浅析Mysql事务ACID原理</h1>
+				<div class="entry__content"><h1 id="innodb与myisam">innodb与myisam</h1>
+<table>
+<thead>
+<tr>
+<th>区别项</th>
+<th>innodb</th>
+<th>myisam</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是否支持<strong>事务</strong></td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>锁粒度</td>
+<td>行锁，适合高并发</td>
+<td>表锁，不适合高并发</td>
+</tr>
+<tr>
+<td>默认</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>支持外键</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>不支持，可通过插件（elasticSearch）实现</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>聚簇索引</td>
+<td>是，主键索引</td>
+<td>否</td>
+</tr>
+<tr>
+<td>count</td>
+<td>速度慢</td>
+<td>使用一个变量保存，速度快</td>
+</tr>
+</tbody>
+</table>
+<h1 id="事务">事务</h1>
+<ul>
+<li>事务 是一组操作集合，一个不可分割的工作单位；</li>
+<li>事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；</li>
+</ul>
+<blockquote>
+<p>比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。</p>
+</blockquote>
+<h1 id="acid">ACID</h1>
+<p>事务的四大特性，简称ACID</p>
+<ul>
+<li>原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。</li>
+<li>一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。</li>
+<li>隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。</li>
+<li>持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。</li>
+</ul>
+<h1 id="事务隔离级别">事务隔离级别</h1>
+<ul>
+<li>read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。</li>
+<li>read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。</li>
+<li>repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。</li>
+<li>serializable(串行)：所有事务顺序执行。</li>
+</ul>
+<blockquote>
+<p>从上而下，隔离安全性从低变高，但性能从高变低。</p>
+</blockquote>
+<p><img src="/images/shiwu.drawio.png" alt=""></p>
+<ul>
+<li>脏读：一个事务读取到另一个事务还未提交的数据；</li>
+</ul>
+<blockquote>
+<p>如图中，事务2第(3)步读到v=0，事务1执行(3)set=100，事务2第(4)步可读到v=100，那么当事务1回滚后，那么事务2读到的v=100就是脏数据。</p>
+</blockquote>
+<ul>
+<li>不可重复读：在一个事务内，先后读取同一条数据，但是两次读取到的值不同，叫做不可重复读；</li>
+</ul>
+<blockquote>
+<p>如图中，事务2在前四步读到的都是v=0，在事务1修改并commit之后，第(5)步读到的就是100，重复读取不一致，即不可重复读。</p>
+</blockquote>
+<ul>
+<li>幻读：在一个事务内，读到的数据可能不是最新的数据，可能已经由其他事务修改了。</li>
+</ul>
+<blockquote>
+<p>如图中，事务2前五步读到的数据都是v=0，但实际已经变成了v=100。还有可能其他事务已经将id=1的数据删除了。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>read uncommit</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>read commit</td>
+<td>no</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>repeatable read</td>
+<td>no</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>serializable</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<h1 id="读锁写锁">读锁、写锁</h1>
+<ul>
+<li>读锁（并发读，不可并发写）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">lock</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">share</span> <span style="color:#66d9ef">mode</span>; 
+</code></pre></div><ul>
+<li>写锁（不可并发读，不可并发写）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">update</span>; 
+</code></pre></div><blockquote>
+<p>serializable实现原理就是在所有读操作加隐式的读锁，写操作数据库会默认加写锁。从而实现顺序执行事务。
+read uncommit实现原理就是不加锁，并且没有任何并发控制。</p>
+</blockquote>
+<h1 id="mvcc机制">MVCC机制</h1>
+<ul>
+<li>MVCC(Multi-Version Concurrency Control)多版本并发控制协议。</li>
+<li>类似<em><strong>copy on write</strong></em>机制，写时将数据页复制一份，写副本数据页，读旧数据页。写完直接替换原数据页（原子操作）。读写分离。</li>
+<li>主要通过undo log版本链实现。</li>
+<li>read commit和repeatable read通过MVCC机制实现。</li>
+</ul>
+<blockquote>
+<p>隐藏字段</p>
+<ul>
+<li>tx_id: 事务id</li>
+<li>roll_pointer: 回滚指针，指向上一个版本的数据表记录，回滚时使用。</li>
+</ul>
+</blockquote>
+<hr>
+<ul>
+<li>read commit 总是读版本链中的已提交的数据记录。写时采用copy on write，写副本</li>
+<li>repeatable read 总是读同一个版本的数据，无论版本链中有多少新增的版本。写时采用copy on write，写副本。</li>
+</ul>
+<p><img src="/images/undo_versions.png" alt=""></p>
+<h1 id="乐观锁">乐观锁</h1>
+<p>因为repeatable read，可重复读，在同一事务内，任意时刻读到的数据都是一致的。 会出现脏写的问题。</p>
+<blockquote>
+<p>比如在可重复读隔离级别下，用户初始余额是500，事务A要对用户余额加300，事务B开始读到500（但实际已经变成800），这时候通过代码逻辑计算，余额要减去200，再更新到数据库中，
+这时执行update语句更新余额为500-200=300。显然是不符合预期的，因为用户余额应是800-200=600。这就是脏写问题。</p>
+</blockquote>
+<p>那么怎么解决脏写问题呢？可以使用乐观锁。</p>
+<h3 id="原理">原理</h3>
+<p>乐观锁就是在每条数据记录加上version字段，读时查出version字段，并在每次更新时，version递增，那么更新时sql应加上version条件。
+version为读出来的版本号。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">update</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">set</span> balance <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">and</span> <span style="color:#66d9ef">version</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">{</span><span style="color:#66d9ef">version</span><span style="color:#960050;background-color:#1e0010">}</span>;
+</code></pre></div><p>版本不一致，则更新失败，则重试。</p>
+<h1 id="思考">思考</h1>
+<p>如果事务内全是查询操作需要用事务吗？</p>
+<ul>
+<li>一条读sql不需要用事务</li>
+<li>可重复读，多条sql语句需要用事务，如果不用事务会出现在不同时刻读到的数据不一致。</li>
+</ul>
+<h1 id="redo-log">redo log</h1>
+<ul>
+<li>
+<p>什么是redo log<br>
+redo log叫做重做日志，是保证事务持久性的重要机制。当mysql服务器意外崩溃或者宕机后，保证已经提交的事务，确定持久化到磁盘中的一种措施。</p>
+</li>
+<li>
+<p>为什么要写redo log</p>
+<ul>
+<li>innodb是以页为单位来管理存储空间的，需要增删改查的数据页需要加载到buffer pool中， 然后对数据进行修改</li>
+<li>修改完成之后，不会立即将数据从buffer pool写入磁盘，而是在未来随机的时间写入。</li>
+<li>如果数据在从buffer pool写入磁盘之前，数据库宕机，则这些数据都会丢失。</li>
+<li>所以，在buffer pool 中修改数据的同时，会写一条redo log，记录数据变更。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>那么为什么不直接从buffer pool中写入磁盘呢？<br>
+因为数据库中每张表通常会存在各自的ibd文件中，从buffer pool直接写入磁盘是随机写，而redo log是磁盘顺序写，性能远高于前者。<br>
+所以，出于性能考虑，采用写redo log的方案，异常宕机后可以从redo log进行恢复数据。
+<img src="/images/redolog.png" alt=""></p>
+</blockquote>
+<h1 id="mysql的两阶段提交">Mysql的两阶段提交</h1>
+<p>对于Mysql Innodb存储引擎而言，每次修改后，不仅需要记录Redo log还需要记录Binlog，而且这两个操作必须保证同时成功或者同时失败，否则就会造成数据不一致。为此Mysql引入两阶段提交。</p>
+<ul>
+<li>如果先写redolog再写binlog
+<img src="/images/redobin1.png" alt=""></li>
+<li>先写binlog再写redolog
+<img src="/images/redobin2.png" alt=""></li>
+<li>两阶段提交
+<img src="/images/redobin.png" alt=""></li>
+</ul>
+<h3 id="一条更新语句的执行步骤">一条更新语句的执行步骤</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">update</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">set</span> v <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</code></pre></div><ul>
+<li>连接数据库 …</li>
+<li>判断id=1的这条记录在不在buffer pool中，在的话之间更新，否则从磁盘中加载到buffer pool中，然后进行更新</li>
+<li>将这个更新操作记录到redo log中，记录的是一个物理日志。此时redo log是一个prepare状态</li>
+<li>记录该操作的binlog，并且将binlog刷盘</li>
+<li>提交事务，对redo log进行提交。</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/liyhbk/p/15233034.html">mysql的innodb和myisam引擎的区别</a></li>
+<li><a href="https://www.jianshu.com/p/ba20890d27a5">mysql的MVCC机制</a></li>
+</ul>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2022 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>
