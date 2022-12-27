@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>零拷贝 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="零拷贝" />
+<meta property="og:description" content="DMA (Direct Memory Access) 直接内存访问
+负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/" /><meta property="article:section" content="selected" />
+<meta property="article:published_time" content="2022-11-24T19:29:38+08:00" />
+<meta property="article:modified_time" content="2022-11-24T19:29:38+08:00" />
+
+
+		<meta itemprop="name" content="零拷贝">
+<meta itemprop="description" content="DMA (Direct Memory Access) 直接内存访问
+负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程"><meta itemprop="datePublished" content="2022-11-24T19:29:38+08:00" />
+<meta itemprop="dateModified" content="2022-11-24T19:29:38+08:00" />
+<meta itemprop="wordCount" content="93">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="零拷贝"/>
+<meta name="twitter:description" content="DMA (Direct Memory Access) 直接内存访问
+负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程"/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/selected/">Selecteds</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">零拷贝</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:29:38&#43;08:00">2022年11月24日</time>
+	</div>
+				<h1 class="entry__title">零拷贝</h1>
+				<div class="entry__content"><ul>
+<li>
+<p>DMA (Direct Memory Access)  直接内存访问</p>
+<p>负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)</p>
+</li>
+<li>
+<p>传统文件传输过程</p>
+<p><img src="/images/traditional_transfer.png" alt=""></p>
+<ol>
+<li>应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令</li>
+<li>内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间</li>
+<li>内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换</li>
+<li>应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中</li>
+<li>write函数返回,完成一次用户空间与内核空间的切换</li>
+<li>DMA将内核socket缓冲区中的数据拷贝到网卡中</li>
+</ol>
+<ul>
+<li>总结
+<ol>
+<li>上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换</li>
+<li>共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝</li>
+<li>数据没必要拷贝到用户空间,浪费性能</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>使用mmap+write实现零拷贝</p>
+<p><img src="/images/mmap_write.png" alt=""></p>
+<ol>
+<li>应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令</li>
+<li>内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中</li>
+<li>mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区</li>
+<li>应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区</li>
+<li>write函数返回,切换回用户空间</li>
+<li>DMA将数据拷贝到网卡</li>
+</ol>
+<ul>
+<li>总结
+<ol>
+<li>共发生了4次用户与内核空间的切换</li>
+<li>共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝</li>
+<li>数据不会拷贝到用户空间,减少了一次CPU拷贝</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>sendfile实现零拷贝(linux 2.1版本)</p>
+<ul>
+<li>
+<p>函数原型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// out_fd  目的端
+</span><span style="color:#75715e">// in_fd 源端
+</span><span style="color:#75715e">// offset 源端的偏移
+</span><span style="color:#75715e">// count 源端需要复制数据的长度
+</span><span style="color:#75715e"></span>ssize_t <span style="color:#a6e22e">sendfile</span>(<span style="color:#66d9ef">int</span> out_fd, <span style="color:#66d9ef">int</span> in_fd, off_t <span style="color:#f92672">*</span>offset, size_t count);
+</code></pre></div></li>
+<li>
+<p>执行过程</p>
+<p><img src="/images/sendfile2.1.png" alt=""></p>
+<ol>
+<li>应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令</li>
+<li>内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中</li>
+<li>内核缓冲区中的数据被拷贝到内核socket缓冲区</li>
+<li>sendfile函数返回,切换回用户空间</li>
+<li>DMA将socket缓冲区中的数据拷贝到网卡</li>
+</ol>
+<ul>
+<li>总结
+<ol>
+<li>共发生2次用户与内核空间的切换</li>
+<li>共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>sendfile优化(linux 2.4版本)</p>
+<ul>
+<li>
+<p>前提</p>
+<p>网卡支持SG-DMA技术</p>
+</li>
+<li>
+<p>执行过程</p>
+</li>
+</ul>
+<p><img src="/images/sendfile2.png" alt=""></p>
+<ol>
+<li>应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令</li>
+<li>内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中</li>
+<li>将内核缓冲区关于<strong>数据位置和长度的描述符</strong>传到内核socket缓冲区</li>
+<li>sendfile函数返回,切换回用户空间</li>
+<li>SG-DMA将内核缓冲区中数据拷贝到网卡</li>
+</ol>
+<ul>
+<li>总结
+<ol>
+<li>共发生2次用户与内核空间的切换</li>
+<li>共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>哪些项目使用了零拷贝技术</p>
+<ul>
+<li>
+<p>kafka</p>
+</li>
+<li>
+<p>nginx</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">http</span> {
+<span style="color:#f92672">...</span>
+    <span style="color:#e6db74">sendfile</span> <span style="color:#66d9ef">on</span>  <span style="color:#e6db74">//</span> <span style="color:#e6db74">默认开启</span>
+<span style="color:#e6db74">...</span>
+<span style="color:#960050;background-color:#1e0010">}</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>注意</p>
+<ul>
+<li>传输大文件,使用异步IO+直接IO</li>
+<li>传输小文件,使用零拷贝技术</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://www.cnblogs.com/xiaolincoding/p/13719610.html">https://www.cnblogs.com/xiaolincoding/p/13719610.html</a></p>
+<p><a href="https://blog.biezhi.me/2019/01/zero-copy-user-mode-perspective.html">https://blog.biezhi.me/2019/01/zero-copy-user-mode-perspective.html</a></p>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2022 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>
