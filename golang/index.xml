@@ -6,7 +6,17 @@
     <description>Recent content in Golangs on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 24 Nov 2022 17:11:41 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Dec 2022 18:25:06 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>通过实例深入理解sync.Map的工作原理</title>
+      <link>https://fishwin.github.io/golang/sync.map/</link>
+      <pubDate>Tue, 27 Dec 2022 18:25:06 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/sync.map/</guid>
+      <description>Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &amp;lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &amp;lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &amp;lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&amp;#34;goroutine[%d] read m[%d]: %d\n&amp;#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</description>
+    </item>
+    
     <item>
       <title>Effective Golang</title>
       <link>https://fishwin.github.io/golang/effectivegolang/</link>
