@@ -2,11 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fishwin.github.io/golang/channel/</loc>
+    <lastmod>2023-01-08T18:27:55+08:00</lastmod>
+  </url><url>
     <loc>https://fishwin.github.io/golang/</loc>
-    <lastmod>2022-12-27T18:25:06+08:00</lastmod>
+    <lastmod>2023-01-08T18:27:55+08:00</lastmod>
   </url><url>
     <loc>https://fishwin.github.io/</loc>
-    <lastmod>2022-12-27T18:25:06+08:00</lastmod>
+    <lastmod>2023-01-08T18:27:55+08:00</lastmod>
   </url><url>
     <loc>https://fishwin.github.io/golang/sync.map/</loc>
     <lastmod>2022-12-27T18:25:06+08:00</lastmod>

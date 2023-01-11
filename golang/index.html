@@ -144,6 +144,20 @@
 			
 				<div class="card card--1col">
 					<article class="entry card__box block">
+	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/channel/">Channel实现原理</a></h1>
+	<div class="entry__content">Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
+不要通过共享内存来通信，而要通过通信来实现内存共享。
+ channel 的底层就是通过 mutex 来控制并发的。
+只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
+ 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</div>
+	<div class="entry__meta meta mt tar">
+	<time class="entry__meta-published meta-published" datetime="2023-01-08T18:27:55&#43;08:00">2023年01月08日</time>
+	</div>
+</article>
+				</div>
+			
+				<div class="card card--1col">
+					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/sync.map/">通过实例深入理解sync.Map的工作原理</a></h1>
 	<div class="entry__content">Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
  原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
@@ -257,16 +271,6 @@ type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B u
 </article>
 				</div>
 			
-				<div class="card card--1col">
-					<article class="entry card__box block">
-	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/">nil可与哪些类型比较?</a></h1>
-	<div class="entry__content">引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</div>
-	<div class="entry__meta meta mt tar">
-	<time class="entry__meta-published meta-published" datetime="2021-11-24T17:06:14&#43;08:00">2021年11月24日</time>
-	</div>
-</article>
-				</div>
-			
 		</div>
 	</main>
 	
@@ -285,7 +289,7 @@ type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B u
 			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
 		</a>
 </div>
-	<div class="footer__copyright">© 2022 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+	<div class="footer__copyright">© 2023 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
 </footer>
 <script src="/js/menu.js"></script>
 <script src="/js/custom.js"></script>
