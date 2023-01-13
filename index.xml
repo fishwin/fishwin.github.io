@@ -21,6 +21,19 @@
     </item>
     
     <item>
+      <title>Channel实现原理</title>
+      <link>https://fishwin.github.io/selected/channel/</link>
+      <pubDate>Sun, 08 Jan 2023 18:27:55 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/selected/channel/</guid>
+      <description>Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
+不要通过共享内存来通信，而要通过通信来实现内存共享。
+ channel 的底层就是通过 mutex 来控制并发的。
+只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
+ 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</description>
+    </item>
+    
+    <item>
       <title>通过实例深入理解sync.Map的工作原理</title>
       <link>https://fishwin.github.io/golang/sync.map/</link>
       <pubDate>Tue, 27 Dec 2022 18:25:06 +0800</pubDate>
