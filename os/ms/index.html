@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>操作系统八股文 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="操作系统八股文" />
+<meta property="og:description" content="进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】  参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】  参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5  简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】  参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&ndash;select&ndash;poll&ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html  简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】  参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007  线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】  参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html  什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】  参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters  创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】  参考一：https://www." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/os/ms/" /><meta property="article:section" content="os" />
+<meta property="article:published_time" content="2019-01-13T10:56:13+08:00" />
+<meta property="article:modified_time" content="2019-01-13T10:56:13+08:00" />
+
+
+		<meta itemprop="name" content="操作系统八股文">
+<meta itemprop="description" content="进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】  参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】  参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5  简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】  参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&ndash;select&ndash;poll&ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html  简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】  参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007  线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】  参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html  什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】  参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters  创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】  参考一：https://www."><meta itemprop="datePublished" content="2019-01-13T10:56:13+08:00" />
+<meta itemprop="dateModified" content="2019-01-13T10:56:13+08:00" />
+<meta itemprop="wordCount" content="181">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="操作系统八股文"/>
+<meta name="twitter:description" content="进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】  参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】  参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5  简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】  参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&ndash;select&ndash;poll&ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html  简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】  参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007  线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】  参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html  什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】  参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters  创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】  参考一：https://www."/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/os/">Os</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">操作系统八股文</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2019-01-13T10:56:13&#43;08:00">2019年01月13日</time>
+	</div>
+				<h1 class="entry__title">操作系统八股文</h1>
+				<div class="entry__content"><h3 id="进程和线程之间有什么区别-腾讯阿里字节跳动美团京东百度滴滴快手拼多多简单398次">进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/difference-between-process-and-thread.html</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf</li>
+</ul>
+<h3 id="进程间有哪些通信方式-腾讯阿里字节跳动美团百度滴滴快手拼多多困难358次">进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/inter-process-communication-ipc.html</li>
+<li>参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5</li>
+</ul>
+<h3 id="简述-select-poll-epoll-的使用场景以及区别epoll-中水平触发以及边缘触发有什么不同-腾讯阿里字节跳动美团百度滴滴拼多多困难253次">简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】</h3>
+<ul>
+<li>参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&ndash;select&ndash;poll&ndash;and-epoll/</li>
+<li>参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html</li>
+</ul>
+<h3 id="简述-linux-进程调度的算法-腾讯字节跳动美团百度拼多多困难138次">简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf</li>
+</ul>
+<h3 id="简述几个常用的-linux-命令以及他们的功能-腾讯阿里百度拼多多简单114次">简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】</h3>
+<h3 id="简述操作系统如何进行内存管理-腾讯腾讯字节跳动中等110次">简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/os-memory-management.html</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/143273007</li>
+</ul>
+<h3 id="线程有多少种状态状态之间如何转换-阿里京东简单60次">线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】</h3>
+<h3 id="线程间有哪些通信方式-腾讯字节跳动中等52次">线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】</h3>
+<h3 id="简述操作系统中的缺页中断-腾讯字节跳动中等52次">简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】</h3>
+<ul>
+<li>参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html</li>
+</ul>
+<h3 id="什么时候会由用户态陷入内核态-腾讯字节跳动简单48次">什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】</h3>
+<h3 id="简述自旋锁与互斥锁的使用场景-字节跳动快手中等44次">简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】</h3>
+<h3 id="进程有多少种状态-阿里百度简单44次">进程有多少种状态？ 【[阿里,百度]，简单，44次】</h3>
+<h3 id="linux-下如何查看端口被哪个进程占用-腾讯字节跳动简单42次">Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】</h3>
+<h3 id="操作系统中虚拟地址与物理地址之间如何映射-字节跳动中等40次">操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】</h3>
+<h3 id="简述-linux-系统态与用户态什么时候会进入系统态-腾讯简单32次">简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】</h3>
+<ul>
+<li>参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters</li>
+</ul>
+<h3 id="创建线程有多少种方式-京东中等28次">创建线程有多少种方式？ 【[京东]，中等，28次】</h3>
+<h3 id="简述同步与异步的区别阻塞与非阻塞的区别-腾讯困难26次">简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】</h3>
+<h3 id="简述-linux-零拷贝的原理-阿里字节跳动中等26次">简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】</h3>
+<h3 id="linux-中虚拟内存和物理内存有什么区别有什么优点-腾讯字节跳动中等26次">Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】</h3>
+<h3 id="bionio-有什么区别怎么判断写文件时-buffer-已经写满简述-linux-的-io模型-腾讯困难22次">BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】</h3>
+<h3 id="简述-mmap-的使用场景以及原理-字节跳动中等20次">简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】</h3>
+<h3 id="简述操作系统中-malloc-的实现原理-腾讯中等18次">简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】</h3>
+<h3 id="linux-下如何排查-cpu-以及-内存占用过多-阿里简单18次">Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】</h3>
+<h3 id="两个线程交替打印一个共享变量-字节跳动中等18次">两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】</h3>
+<h3 id="多线程和多进程的区别是什么-美团简单16次">多线程和多进程的区别是什么？ 【[美团]，简单，16次】</h3>
+<h3 id="共享内存是如何实现的-滴滴16次">共享内存是如何实现的？ 【[滴滴]，，16次】</h3>
+<h3 id="进程通信中的管道实现原理是什么-阿里简单16次">进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】</h3>
+<h3 id="linux-下如何查看-cpu-荷载正在运行的进程某个端口对应的进程-阿里简单16次">Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】</h3>
+<h3 id="linux-如何查看实时的滚动日志-阿里简单14次">Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】</h3>
+<h3 id="如何调试服务器内存占用过高的问题-阿里中等14次">如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】</h3>
+<h3 id="malloc-创建的对象在堆还是栈中-滴滴简单14次">malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】</h3>
+<h3 id="为什么进程切换慢线程切换快-美团简单14次">为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】</h3>
+<h3 id="简述创建进程的流程-美团中等14次">简述创建进程的流程 【[美团]，中等，14次】</h3>
+<h3 id="简述-linux-虚拟内存的页面置换算法-美团中等14次">简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】</h3>
+<h3 id="简述-cpu-l1-l2-l3-多级缓存的基本作用-京东简单14次">简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】</h3>
+<h3 id="进程空间从高位到低位都有些什么-腾讯简单12次">进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】</h3>
+<h3 id="简述-linux-的-io模型-滴滴12次">简述 Linux 的 I/O模型 【[滴滴]，，12次】</h3>
+<h3 id="什么情况下进程会进行切换-字节跳动简单12次">什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】</h3>
+<h3 id="信号量是如何实现的-滴滴10次">信号量是如何实现的？ 【[滴滴]，，10次】</h3>
+<h3 id="简述-traceroute-命令的原理-字节跳动简单10次">简述 traceroute 命令的原理 【[字节跳动]，简单，10次】</h3>
+<h3 id="linux-页大小是多少-滴滴简单10次">Linux 页大小是多少？ 【[滴滴]，简单，10次】</h3>
+<h3 id="进程和线程之间有什么区别-shopee简单28次">进程和线程之间有什么区别？ 【[Shopee]，简单，28次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/difference-between-process-and-thread.html</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf</li>
+</ul>
+<h3 id="简述-linux-进程调度的算法-shopee困难24次">简述 Linux 进程调度的算法 【[Shopee]，困难，24次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf</li>
+</ul>
+<h3 id="进程通信中的管道实现原理是什么-shopee简单22次">进程通信中的管道实现原理是什么？ 【[Shopee]，简单，22次】</h3>
+<h3 id="进程间有哪些通信方式-shopee困难20次">进程间有哪些通信方式？ 【[Shopee]，困难，20次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/inter-process-communication-ipc.html</li>
+<li>参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5</li>
+</ul>
+<h3 id="简述-select-poll-epoll-的使用场景以及区别epoll-中水平触发以及边缘触发有什么不同-shopee困难20次">简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[Shopee]，困难，20次】</h3>
+<ul>
+<li>参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&ndash;select&ndash;poll&ndash;and-epoll/</li>
+<li>参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html</li>
+</ul>
+<h3 id="linux-下如何排查-cpu-以及-内存占用过多-shopee简单18次">Linux 下如何排查 CPU 以及 内存占用过多？ 【[Shopee]，简单，18次】</h3>
+<h3 id="lvs-的-nattundr-原理及区别-shopee困难16次">LVS 的 NAT、TUN、DR 原理及区别 【[Shopee]，困难，16次】</h3>
+<h3 id="系统调用的过程是怎样的操作系统是通过什么机制触发系统调用的-shopee14次">系统调用的过程是怎样的？操作系统是通过什么机制触发系统调用的？ 【[Shopee]，，14次】</h3>
+<h3 id="简述-linux-虚拟内存的页面置换算法-shopee14次">简述 Linux 虚拟内存的页面置换算法 【[Shopee]，，14次】</h3>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2023 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>

@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>算法常考 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="算法常考" />
+<meta property="og:description" content="JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/algorithm/ms/" /><meta property="article:section" content="algorithm" />
+<meta property="article:published_time" content="2019-01-13T10:55:39+08:00" />
+<meta property="article:modified_time" content="2019-01-13T10:55:39+08:00" />
+
+
+		<meta itemprop="name" content="算法常考">
+<meta itemprop="description" content="JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215."><meta itemprop="datePublished" content="2019-01-13T10:55:39+08:00" />
+<meta itemprop="dateModified" content="2019-01-13T10:55:39+08:00" />
+<meta itemprop="wordCount" content="1630">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="算法常考"/>
+<meta name="twitter:description" content="JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215."/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/algorithm/">Algorithms</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">算法常考</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2019-01-13T10:55:39&#43;08:00">2019年01月13日</time>
+	</div>
+				<h1 class="entry__title">算法常考</h1>
+				<div class="entry__content"><h3 id="jmm-中内存模型是怎样的什么是指令序列重排序-京东腾讯阿里字节跳动美团百度百度滴滴滴滴快手中等314次">JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】</h3>
+<ul>
+<li>参考一：https://zhuanlan.zhihu.com/p/29881777</li>
+</ul>
+<h3 id="使用递归及非递归两种方式实现快速排序-腾讯阿里字节跳动美团京东百度滴滴快手中等283次">使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/sort-an-array/</li>
+<li>参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/</li>
+<li>参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/</li>
+</ul>
+<h3 id="146-lru-缓存机制-腾讯阿里字节跳动美团百度滴滴拼多多中等199次">146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/lru-cache/</li>
+</ul>
+<h3 id="206-反转链表-腾讯阿里字节跳动京东百度滴滴快手拼多多简单196次">206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reverse-linked-list/</li>
+</ul>
+<h3 id="19-删除链表的倒数第-n-个结点-腾讯阿里字节跳动美团美团百度滴滴快手拼多多中等193次">19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/</li>
+</ul>
+<h3 id="10亿个数中如何高效地找到最大的一个数以及最大的第-k-个数-腾讯阿里字节跳动百度困难190次">10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】</h3>
+<ul>
+<li>参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md</li>
+</ul>
+<h3 id="141-环形链表-腾讯字节跳动京东京东百度快手简单160次">141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/linked-list-cycle/</li>
+</ul>
+<h3 id="快速排序的空间复杂度是多少时间复杂度的最好最坏的情况是多少有哪些优化方案-腾讯字节跳动美团京东滴滴拼多多中等130次">快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】</h3>
+<ul>
+<li>参考一：https://zhuanlan.zhihu.com/p/267133203</li>
+</ul>
+<h3 id="21-合并两个有序链表-腾讯字节跳动百度简单126次">21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/</li>
+</ul>
+<h3 id="102-二叉树的层序遍历-腾讯阿里快手拼多多中等116次">102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/</li>
+</ul>
+<h3 id="112-路径总和-腾讯字节跳动美团百度简单115次">112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/path-sum/</li>
+</ul>
+<h3 id="215-数组中的第k个最大元素-腾讯字节跳动美团快手中等112次">215. 数组中的第K个最大元素 【[腾讯,字节跳动,美团,快手]，中等，112次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/kth-largest-element-in-an-array/</li>
+</ul>
+<h3 id="53-最大子序和-腾讯字节跳动快手简单108次">53. 最大子序和 【[腾讯,字节跳动,快手]，简单，108次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/maximum-subarray/</li>
+</ul>
+<h3 id="232-用栈实现队列-腾讯阿里美团百度滴滴简单104次">232. 用栈实现队列 【[腾讯,阿里,美团,百度,滴滴]，简单，104次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/implement-queue-using-stacks/</li>
+</ul>
+<h3 id="300-最长递增子序列-腾讯字节跳动美团百度中等103次">300. 最长递增子序列 【[腾讯,字节跳动,美团,百度]，中等，103次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-increasing-subsequence/</li>
+</ul>
+<h3 id="给定-100g-的-url-磁盘数据使用最多-1g-内存统计出现频率最高的-top-k-个-url-字节跳动百度拼多多困难92次">给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL 【[字节跳动,百度,拼多多]，困难，92次】</h3>
+<h3 id="33-搜索旋转排序数组-字节跳动美团百度中等91次">33. 搜索旋转排序数组 【[字节跳动,美团,百度]，中等，91次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/search-in-rotated-sorted-array/</li>
+</ul>
+<h3 id="简述常见的负载均衡算法-腾讯字节跳动百度快手简单84次">简述常见的负载均衡算法 【[腾讯,字节跳动,百度,快手]，简单，84次】</h3>
+<ul>
+<li>参考一：https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/</li>
+</ul>
+<h3 id="常用的排序方式有哪些时间复杂度是多少-阿里京东拼多多简单84次">常用的排序方式有哪些，时间复杂度是多少？ 【[阿里,京东,拼多多]，简单，84次】</h3>
+<h3 id="236-二叉树的最近公共祖先-阿里字节跳动滴滴中等80次">236. 二叉树的最近公共祖先 【[阿里,字节跳动,滴滴]，中等，80次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/</li>
+</ul>
+<h3 id="470-用-rand7-实现-rand10-腾讯阿里中等76次">470. 用 Rand7() 实现 Rand10() 【[腾讯,阿里]，中等，76次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/implement-rand10-using-rand7/</li>
+</ul>
+<h3 id="1143-最长公共子序列-阿里美团滴滴中等75次">1143. 最长公共子序列 【[阿里,美团,滴滴]，中等，75次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-common-subsequence/</li>
+</ul>
+<h3 id="1114-按序打印-阿里字节跳动美团简单73次">1114. 按序打印 【[阿里,字节跳动,美团]，简单，73次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/print-in-order/</li>
+</ul>
+<h3 id="70-爬楼梯-腾讯滴滴简单72次">70. 爬楼梯 【[腾讯,滴滴]，简单，72次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/climbing-stairs/</li>
+</ul>
+<h3 id="两个-10g-大小包含-url-数据的文件最多使用-1g-内存将这两个文件合并并找到相同的-url-阿里京东困难70次">两个 10G 大小包含 URL 数据的文件，最多使用 1G 内存，将这两个文件合并，并找到相同的 URL 【[阿里,京东]，困难，70次】</h3>
+<h3 id="简述布隆过滤器原理及其使用场景-美团滴滴快手简单66次">简述布隆过滤器原理及其使用场景 【[美团,滴滴,快手]，简单，66次】</h3>
+<ul>
+<li>参考一：https://blog.medium.com/what-are-bloom-filters-1ec2a50c68ff</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/43263751</li>
+</ul>
+<h3 id="103-二叉树的锯齿形层序遍历-阿里字节跳动中等65次">103. 二叉树的锯齿形层序遍历 【[阿里,字节跳动]，中等，65次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/</li>
+</ul>
+<h3 id="简述你熟悉的几个排序算法以及优缺点-腾讯阿里百度中等62次">简述你熟悉的几个排序算法以及优缺点 【[腾讯,阿里,百度]，中等，62次】</h3>
+<ul>
+<li>参考一：https://lamfo-unb.github.io/2019/04/21/Sorting-algorithms/</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/42586566</li>
+</ul>
+<h3 id="avl-树和红黑树有什么区别-腾讯滴滴简单62次">AVL 树和红黑树有什么区别？ 【[腾讯,滴滴]，简单，62次】</h3>
+<ul>
+<li>参考一：https://www.geeksforgeeks.org/red-black-tree-vs-avl-tree/</li>
+</ul>
+<h3 id="剑指-offer-10--ii-青蛙跳台阶问题-美团滴滴60次">剑指 Offer 10- II. 青蛙跳台阶问题 【[美团,滴滴]，，60次】</h3>
+<h3 id="125-验证回文串-腾讯阿里字节跳动简单59次">125. 验证回文串 【[腾讯,阿里,字节跳动]，简单，59次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/valid-palindrome/</li>
+</ul>
+<h3 id="155-最小栈-字节跳动美团简单59次">155. 最小栈 【[字节跳动,美团]，简单，59次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/min-stack/</li>
+</ul>
+<h3 id="25-k-个一组翻转链表-腾讯字节跳动困难56次">25. K 个一组翻转链表 【[腾讯,字节跳动]，困难，56次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reverse-nodes-in-k-group/</li>
+</ul>
+<h3 id="常用的限流算法有哪些简述令牌桶算法原理-腾讯京东快手中等56次">常用的限流算法有哪些？简述令牌桶算法原理 【[腾讯,京东,快手]，中等，56次】</h3>
+<ul>
+<li>参考一：https://cloud.google.com/architecture/rate-limiting-strategies-techniques</li>
+<li>参考二：https://konghq.com/blog/how-to-design-a-scalable-rate-limiting-algorithm/</li>
+</ul>
+<h3 id="5-最长回文子串-腾讯阿里美团中等54次">5. 最长回文子串 【[腾讯,阿里,美团]，中等，54次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-palindromic-substring/</li>
+</ul>
+<h3 id="堆排序的时间复杂度是多少说几个堆排序的应用场景-字节跳动京东滴滴简单54次">堆排序的时间复杂度是多少？说几个堆排序的应用场景 【[字节跳动,京东,滴滴]，简单，54次】</h3>
+<h3 id="3-无重复字符的最长子串-百度快手中等54次">3. 无重复字符的最长子串 【[百度,快手]，中等，54次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/</li>
+</ul>
+<h3 id="多数元素-leetcode-美团拼多多52次">多数元素 (Leetcode) 【[美团,拼多多]，，52次】</h3>
+<h3 id="64-匹马8-个赛道找出前-4-匹马最少需要比几次-腾讯字节跳动困难52次">64 匹马，8 个赛道，找出前 4 匹马最少需要比几次 【[腾讯,字节跳动]，困难，52次】</h3>
+<ul>
+<li>参考一：https://zhuanlan.zhihu.com/p/79971028</li>
+</ul>
+<h3 id="如何随机生成不重复的-10-个-100-以内的数字-阿里百度简单50次">如何随机生成不重复的 10 个 100 以内的数字？ 【[阿里,百度]，简单，50次】</h3>
+<h3 id="81-搜索旋转排序数组-ii-字节跳动滴滴中等50次">81. 搜索旋转排序数组 II 【[字节跳动,滴滴]，中等，50次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/search-in-rotated-sorted-array-ii/</li>
+</ul>
+<h3 id="94-二叉树的中序遍历-美团滴滴拼多多简单48次">94. 二叉树的中序遍历 【[美团,滴滴,拼多多]，简单，48次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-inorder-traversal/</li>
+</ul>
+<h3 id="189-旋转数组-腾讯字节跳动中等47次">189. 旋转数组 【[腾讯,字节跳动]，中等，47次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/rotate-array/</li>
+</ul>
+<h3 id="88-合并两个有序数组-美团快手简单47次">88. 合并两个有序数组 【[美团,快手]，简单，47次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/merge-sorted-array/</li>
+</ul>
+<h3 id="153-寻找旋转排序数组中的最小值-腾讯字节跳动中等46次">153. 寻找旋转排序数组中的最小值 【[腾讯,字节跳动]，中等，46次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/</li>
+</ul>
+<h3 id="34-在排序数组中查找元素的第一个和最后一个位置-字节跳动百度中等44次">34. 在排序数组中查找元素的第一个和最后一个位置 【[字节跳动,百度]，中等，44次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/</li>
+</ul>
+<h3 id="394-字符串解码-字节跳动拼多多中等44次">394. 字符串解码 【[字节跳动,拼多多]，中等，44次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/decode-string/</li>
+</ul>
+<h3 id="179-最大数-字节跳动百度中等43次">179. 最大数 【[字节跳动,百度]，中等，43次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/largest-number/</li>
+</ul>
+<h3 id="如何从一个数组输出随机数组洗牌算法-字节跳动快手42次">如何从一个数组输出随机数组（洗牌算法） 【[字节跳动,快手]，，42次】</h3>
+<h3 id="144-二叉树的前序遍历-美团简单40次">144. 二叉树的前序遍历 【[美团]，简单，40次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-preorder-traversal/</li>
+</ul>
+<h3 id="145-二叉树的后序遍历-快手拼多多简单40次">145. 二叉树的后序遍历 【[快手,拼多多]，简单，40次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-postorder-traversal/</li>
+</ul>
+<h3 id="如何通过一个不均匀的硬币得到公平的结果-腾讯简单40次">如何通过一个不均匀的硬币得到公平的结果？ 【[腾讯]，简单，40次】</h3>
+<ul>
+<li>参考一：https://blog.gocalf.com/unbalanced-coin</li>
+</ul>
+<h3 id="10亿条数据包括-id上线时间下线时间请绘制每一秒在线人数的曲线图-腾讯中等39次">10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图 【[腾讯]，中等，39次】</h3>
+<h3 id="给定一个包含-40-亿个无符号整数的大型文件使用最多-1g-内存对此文件进行排序-腾讯困难38次">给定一个包含 40 亿个无符号整数的大型文件，使用最多 1G 内存，对此文件进行排序 【[腾讯]，困难，38次】</h3>
+<ul>
+<li>参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting#2021-02-18-%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE</li>
+</ul>
+<h3 id="23-合并k个升序链表-腾讯字节跳动困难38次">23. 合并K个升序链表 【[腾讯,字节跳动]，困难，38次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/merge-k-sorted-lists/</li>
+</ul>
+<h3 id="83-删除排序链表中的重复元素-腾讯简单38次">83. 删除排序链表中的重复元素 【[腾讯]，简单，38次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list/</li>
+</ul>
+<h3 id="445-两数相加-ii-字节跳动中等36次">445. 两数相加 II 【[字节跳动]，中等，36次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/add-two-numbers-ii/</li>
+</ul>
+<h3 id="169-多数元素-字节跳动快手简单35次">169. 多数元素 【[字节跳动,快手]，简单，35次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/majority-element/</li>
+</ul>
+<h3 id="142-环形链表-ii-字节跳动中等34次">142. 环形链表 II 【[字节跳动]，中等，34次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/linked-list-cycle-ii/</li>
+</ul>
+<h3 id="用队列实现栈-leetcode-快手拼多多34次">用队列实现栈 (Leetcode) 【[快手,拼多多]，，34次】</h3>
+<h3 id="旋转图像-leetcode-美团34次">旋转图像 (Leetcode) 【[美团]，，34次】</h3>
+<h3 id="有序链表插入的时间复杂度是多少-腾讯简单32次">有序链表插入的时间复杂度是多少？ 【[腾讯]，简单，32次】</h3>
+<h3 id="哪些排序算法是稳定排序-京东百度简单32次">哪些排序算法是稳定排序？ 【[京东,百度]，简单，32次】</h3>
+<h3 id="56-合并区间-阿里百度中等30次">56. 合并区间 【[阿里,百度]，中等，30次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/merge-intervals/</li>
+</ul>
+<h3 id="给定一个-foo-函数60的概率返回040的概率返回1如何利用-foo-函数实现一个-50-返回-0-的函数-字节跳动30次">给定一个 foo 函数，60%的概率返回0，40%的概率返回1，如何利用 foo 函数实现一个 50% 返回 0 的函数？ 【[字节跳动]，，30次】</h3>
+<h3 id="69-x-的平方根-腾讯快手简单30次">69. x 的平方根 【[腾讯,快手]，简单，30次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/sqrtx/</li>
+</ul>
+<h3 id="128-最长连续序列-字节跳动中等30次">128. 最长连续序列 【[字节跳动]，中等，30次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-consecutive-sequence/</li>
+</ul>
+<h3 id="哈希表常见操作的时间复杂度是多少遇到哈希冲突是如何解决的-腾讯简单30次">哈希表常见操作的时间复杂度是多少？遇到哈希冲突是如何解决的？ 【[腾讯]，简单，30次】</h3>
+<ul>
+<li>参考一：https://algs4.cs.princeton.edu/34hash/</li>
+</ul>
+<h3 id="按奇偶排序数组-ii-leetcode-美团30次">按奇偶排序数组 II (Leetcode) 【[美团]，，30次】</h3>
+<h3 id="136-只出现一次的数字-腾讯腾讯简单28次">136. 只出现一次的数字 【[腾讯,腾讯]，简单，28次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/single-number/</li>
+</ul>
+<h3 id="4-寻找两个正序数组的中位数-腾讯困难28次">4. 寻找两个正序数组的中位数 【[腾讯]，困难，28次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/median-of-two-sorted-arrays/</li>
+</ul>
+<h3 id="实现二分查找-京东滴滴28次">实现二分查找 【[京东,滴滴]，，28次】</h3>
+<h3 id="手写判断电话号码的正则表达式-百度中等26次">手写判断电话号码的正则表达式 【[百度]，中等，26次】</h3>
+<h3 id="200-岛屿数量-腾讯字节跳动中等26次">200. 岛屿数量 【[腾讯,字节跳动]，中等，26次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/number-of-islands/</li>
+</ul>
+<h3 id="105-从前序与中序遍历序列构造二叉树-阿里中等26次">105. 从前序与中序遍历序列构造二叉树 【[阿里]，中等，26次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/</li>
+</ul>
+<h3 id="如何实现大数运算-阿里简单24次">如何实现大数运算 【[阿里]，简单，24次】</h3>
+<h3 id="264-丑数-ii-字节跳动中等24次">264. 丑数 II 【[字节跳动]，中等，24次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/ugly-number-ii/</li>
+</ul>
+<h3 id="226-翻转二叉树-拼多多简单24次">226. 翻转二叉树 【[拼多多]，简单，24次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/invert-binary-tree/</li>
+</ul>
+<h3 id="143-重排链表-字节跳动中等22次">143. 重排链表 【[字节跳动]，中等，22次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reorder-list/</li>
+</ul>
+<h3 id="数字转换为中文-例如-1008--一千零八-字节跳动中等22次">数字转换为中文 (例如 1008 = 一千零八) 【[字节跳动]，中等，22次】</h3>
+<h3 id="75-颜色分类-字节跳动中等22次">75. 颜色分类 【[字节跳动]，中等，22次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/sort-colors/</li>
+</ul>
+<h3 id="121-买卖股票的最佳时机-字节跳动简单22次">121. 买卖股票的最佳时机 【[字节跳动]，简单，22次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/</li>
+</ul>
+<h3 id="智力题-httpswwwnowcodercomdiscuss262595-腾讯困难20次">智力题 <a href="https://www.nowcoder.com/discuss/262595">https://www.nowcoder.com/discuss/262595</a> 【[腾讯]，困难，20次】</h3>
+<h3 id="2-两数相加-美团中等20次">2. 两数相加 【[美团]，中等，20次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/add-two-numbers/</li>
+</ul>
+<h3 id="什么是排序算法中的稳定性-拼多多简单20次">什么是排序算法中的稳定性？ 【[拼多多]，简单，20次】</h3>
+<h3 id="验证ip地址-leetcode-美团20次">验证IP地址 (Leetcode) 【[美团]，，20次】</h3>
+<h3 id="498-对角线遍历-快手中等20次">498. 对角线遍历 【[快手]，中等，20次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/diagonal-traverse/</li>
+</ul>
+<h3 id="695-岛屿的最大面积-字节跳动中等20次">695. 岛屿的最大面积 【[字节跳动]，中等，20次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/max-area-of-island/</li>
+</ul>
+<h3 id="一手顺子-leetcode-846-京东20次">一手顺子 (Leetcode 846) 【[京东]，，20次】</h3>
+<h3 id="1-两数之和-腾讯简单20次">1. 两数之和 【[腾讯]，简单，20次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/two-sum/</li>
+</ul>
+<h3 id="红黑树是怎么实现平衡的它的优点是什么-拼多多中等18次">红黑树是怎么实现平衡的？它的优点是什么？ 【[拼多多]，中等，18次】</h3>
+<h3 id="160-相交链表-字节跳动简单18次">160. 相交链表 【[字节跳动]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/intersection-of-two-linked-lists/</li>
+</ul>
+<h3 id="92-反转链表-ii-阿里中等18次">92. 反转链表 II 【[阿里]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reverse-linked-list-ii/</li>
+</ul>
+<h3 id="74-搜索二维矩阵-字节跳动中等18次">74. 搜索二维矩阵 【[字节跳动]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/search-a-2d-matrix/</li>
+</ul>
+<h3 id="缺失的第一个正数-leetcode-字节跳动18次">缺失的第一个正数 (Leetcode) 【[字节跳动]，，18次】</h3>
+<h3 id="543-二叉树的直径-字节跳动简单18次">543. 二叉树的直径 【[字节跳动]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/diameter-of-binary-tree/</li>
+</ul>
+<h3 id="493-翻转对-字节跳动困难18次">493. 翻转对 【[字节跳动]，困难，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reverse-pairs/</li>
+</ul>
+<h3 id="组件之间通信方式有哪些-美团18次">组件之间通信方式有哪些？ 【[美团]，，18次】</h3>
+<h3 id="1000-个苹果放在-10-个箱子里保证-1-1000-中的任意数量的苹果都等于其中-n-个箱子苹果数量的总和请问应该如何分配苹果在箱子中-京东中等18次">1000 个苹果放在 10 个箱子里，保证 1-1000 中的任意数量的苹果都等于其中 N 个箱子苹果数量的总和，请问应该如何分配苹果在箱子中？ 【[京东]，中等，18次】</h3>
+<h3 id="846-一手顺子-字节跳动中等18次">846. 一手顺子 【[字节跳动]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/hand-of-straights/</li>
+</ul>
+<h3 id="108-将有序数组转换为二叉搜索树-字节跳动简单18次">108. 将有序数组转换为二叉搜索树 【[字节跳动]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/</li>
+</ul>
+<h3 id="100-相同的树-腾讯简单18次">100. 相同的树 【[腾讯]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/same-tree/</li>
+</ul>
+<h3 id="199-二叉树的右视图-滴滴中等18次">199. 二叉树的右视图 【[滴滴]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/binary-tree-right-side-view/</li>
+</ul>
+<h3 id="104-二叉树的最大深度-百度简单17次">104. 二叉树的最大深度 【[百度]，简单，17次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/</li>
+</ul>
+<h3 id="1000-台机器每台机器-1000-个文件每个文件存储了-10-亿个整数如何找到其中最小的-1000-个值-阿里困难17次">1000 台机器，每台机器 1000 个文件，每个文件存储了 10 亿个整数，如何找到其中最小的 1000 个值？ 【[阿里]，困难，17次】</h3>
+<h3 id="48-旋转图像-快手中等16次">48. 旋转图像 【[快手]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/rotate-image/</li>
+</ul>
+<h3 id="不同路径-leetcode-拼多多16次">不同路径 (Leetcode) 【[拼多多]，，16次】</h3>
+<h3 id="14-最长公共前缀-腾讯简单16次">14. 最长公共前缀 【[腾讯]，简单，16次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/longest-common-prefix/</li>
+</ul>
+<h3 id="42-接雨水-腾讯困难16次">42. 接雨水 【[腾讯]，困难，16次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/trapping-rain-water/</li>
+</ul>
+<h3 id="面试题-0404-检查平衡性-腾讯简单16次">面试题 04.04. 检查平衡性 【[腾讯]，简单，16次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/check-balance-lcci/</li>
+</ul>
+<h3 id="简述内部排序以及外部排序的常见算法-京东16次">简述内部排序以及外部排序的常见算法 【[京东]，，16次】</h3>
+<h3 id="98-验证二叉搜索树-字节跳动中等16次">98. 验证二叉搜索树 【[字节跳动]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/validate-binary-search-tree/</li>
+</ul>
+<h3 id="实现归并排序-滴滴16次">实现归并排序 【[滴滴]，，16次】</h3>
+<h3 id="有效的括号-leetcode-快手16次">有效的括号 (Leetcode) 【[快手]，，16次】</h3>
+<h3 id="110-平衡二叉树-美团简单15次">110. 平衡二叉树 【[美团]，简单，15次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/balanced-binary-tree/</li>
+</ul>
+<h3 id="234-回文链表-腾讯简单15次">234. 回文链表 【[腾讯]，简单，15次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/palindrome-linked-list/</li>
+</ul>
+<h3 id="54-螺旋矩阵-快手中等14次">54. 螺旋矩阵 【[快手]，中等，14次】</h3>
+<h3 id="15-三数之和-滴滴中等14次">15. 三数之和 【[滴滴]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/3sum/</li>
+</ul>
+<h3 id="165-比较版本号-阿里中等14次">165. 比较版本号 【[阿里]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/compare-version-numbers/</li>
+</ul>
+<h3 id="46-全排列-百度中等14次">46. 全排列 【[百度]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/permutations/</li>
+</ul>
+<h3 id="两个文件包含无序的数字数字的大小范围是0-500w左右如何求两个文件中的重复的数据-阿里中等14次">两个文件包含无序的数字，数字的大小范围是0-500w左右。如何求两个文件中的重复的数据？ 【[阿里]，中等，14次】</h3>
+<h3 id="617-合并二叉树-滴滴简单14次">617. 合并二叉树 【[滴滴]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/merge-two-binary-trees/</li>
+</ul>
+<h3 id="青蛙跳台阶问题-快手简单14次">青蛙跳台阶问题 【[快手]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/</li>
+</ul>
+<h3 id="76-最小覆盖子串-快手困难14次">76. 最小覆盖子串 【[快手]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/minimum-window-substring/</li>
+</ul>
+<h3 id="716-最大栈-快手简单14次">716. 最大栈 【[快手]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/max-stack/</li>
+</ul>
+<h3 id="876-链表的中间结点-腾讯简单14次">876. 链表的中间结点 【[腾讯]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/middle-of-the-linked-list/</li>
+</ul>
+<h3 id="简述银行家算法-百度12次">简述银行家算法 【[百度]，，12次】</h3>
+<h3 id="移除元素-leetcode-美团12次">移除元素 (Leetcode) 【[美团]，，12次】</h3>
+<h3 id="7-整数反转-快手简单12次">7. 整数反转 【[快手]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/reverse-integer/</li>
+</ul>
+<h3 id="最长和谐子序列-leetcode-拼多多12次">最长和谐子序列 (Leetcode) 【[拼多多]，，12次】</h3>
+<h3 id="如何找到无序数组的中位数-腾讯中等12次">如何找到无序数组的中位数？ 【[腾讯]，中等，12次】</h3>
+<h3 id="二叉搜索树的第-k-大节点-快手简单12次">二叉搜索树的第 k 大节点 【[快手]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/</li>
+</ul>
+<h3 id="回文子串-leetcode-滴滴12次">回文子串 (Leetcode) 【[滴滴]，，12次】</h3>
+<h3 id="每秒有-5万个-qq-号登陆怎么找出每小时登录区间在-5-10次-的所有-qq-号-腾讯中等12次">每秒有 5万个 QQ 号登陆，怎么找出每小时登录区间在 5-10次 的所有 QQ 号 【[腾讯]，中等，12次】</h3>
+<h3 id="手写无锁队列-拼多多10次">手写无锁队列 【[拼多多]，，10次】</h3>
+<h3 id="236-lowest-common-ancestor-of-a-binary-tree-脸书苹果苹果中等50次">236. Lowest Common Ancestor of a Binary Tree 【[脸书,苹果,苹果]，中等，50次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/</li>
+</ul>
+<h3 id="124-binary-tree-maximum-path-sum-脸书苹果微软困难50次">124. Binary Tree Maximum Path Sum 【[脸书,苹果,微软]，困难，50次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/binary-tree-maximum-path-sum/</li>
+</ul>
+<h3 id="146-lru-cache-苹果亚马逊中等45次">146. LRU Cache 【[苹果,亚马逊]，中等，45次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/lru-cache/</li>
+</ul>
+<h3 id="210-course-schedule-ii-脸书亚马逊微软中等45次">210. Course Schedule II 【[脸书,亚马逊,微软]，中等，45次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/course-schedule-ii/</li>
+</ul>
+<h3 id="359-logger-rate-limiter-谷歌脸书简单30次">359. Logger Rate Limiter 【[谷歌,脸书]，简单，30次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/logger-rate-limiter/</li>
+</ul>
+<h3 id="快速排序的空间复杂度是多少时间复杂度的最好最坏的情况是多少有哪些优化方案-shopee30次">快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[Shopee]，，30次】</h3>
+<ul>
+<li>参考一：https://zhuanlan.zhihu.com/p/267133203</li>
+</ul>
+<h3 id="105-construct-binary-tree-from-preorder-and-inorder-traversal-谷歌微软中等30次">105. Construct Binary Tree from Preorder and Inorder Traversal 【[谷歌,微软]，中等，30次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/</li>
+</ul>
+<h3 id="398-random-pick-index-谷歌苹果中等30次">398. Random Pick Index 【[谷歌,苹果]，中等，30次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/random-pick-index/</li>
+</ul>
+<h3 id="1048-longest-string-chain-谷歌中等29次">1048. Longest String Chain 【[谷歌]，中等，29次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/longest-string-chain/</li>
+</ul>
+<h3 id="116-populating-next-right-pointers-in-each-node-亚马逊微软中等29次">116. Populating Next Right Pointers in Each Node 【[亚马逊,微软]，中等，29次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/populating-next-right-pointers-in-each-node/</li>
+</ul>
+<h3 id="157-read-n-characters-given-read4-谷歌脸书简单28次">157. Read N Characters Given Read4 【[谷歌,脸书]，简单，28次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/read-n-characters-given-read4/</li>
+</ul>
+<h3 id="121-best-time-to-buy-and-sell-stock-苹果亚马逊简单28次">121. Best Time to Buy and Sell Stock 【[苹果,亚马逊]，简单，28次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/best-time-to-buy-and-sell-stock/</li>
+</ul>
+<h3 id="297-serialize-and-deserialize-binary-tree-谷歌微软困难26次">297. Serialize and Deserialize Binary Tree 【[谷歌,微软]，困难，26次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/serialize-and-deserialize-binary-tree/</li>
+</ul>
+<h3 id="238-product-of-array-except-self-脸书亚马逊中等26次">238. Product of Array Except Self 【[脸书,亚马逊]，中等，26次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/product-of-array-except-self/</li>
+</ul>
+<h3 id="56-merge-intervals-谷歌亚马逊中等26次">56. Merge Intervals 【[谷歌,亚马逊]，中等，26次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/merge-intervals/</li>
+</ul>
+<h3 id="279-perfect-squares-脸书亚马逊中等25次">279. Perfect Squares 【[脸书,亚马逊]，中等，25次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/perfect-squares/</li>
+</ul>
+<h3 id="560-subarray-sum-equals-k-脸书苹果中等24次">560. Subarray Sum Equals K 【[脸书,苹果]，中等，24次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/subarray-sum-equals-k/</li>
+</ul>
+<h3 id="10亿个数中如何高效地找到最大的一个数以及最大的第-k-个数-shopee困难24次">10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[Shopee]，困难，24次】</h3>
+<ul>
+<li>参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md</li>
+</ul>
+<h3 id="106-construct-binary-tree-from-inorder-and-postorder-traversal-亚马逊中等23次">106. Construct Binary Tree from Inorder and Postorder Traversal 【[亚马逊]，中等，23次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/</li>
+</ul>
+<h3 id="99-recover-binary-search-tree-谷歌亚马逊中等23次">99. Recover Binary Search Tree 【[谷歌,亚马逊]，中等，23次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/recover-binary-search-tree/</li>
+</ul>
+<h3 id="103-binary-tree-zigzag-level-order-traversal-微软中等22次">103. Binary Tree Zigzag Level Order Traversal 【[微软]，中等，22次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/</li>
+</ul>
+<h3 id="141-环形链表-shopee简单22次">141. 环形链表 【[Shopee]，简单，22次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/linked-list-cycle/</li>
+</ul>
+<h3 id="692-top-k-frequent-words-苹果亚马逊中等22次">692. Top K Frequent Words 【[苹果,亚马逊]，中等，22次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/top-k-frequent-words/</li>
+</ul>
+<h3 id="232-用栈实现队列-shopee简单22次">232. 用栈实现队列 【[Shopee]，简单，22次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/implement-queue-using-stacks/</li>
+</ul>
+<h3 id="33-search-in-rotated-sorted-array-苹果微软中等21次">33. Search in Rotated Sorted Array 【[苹果,微软]，中等，21次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/search-in-rotated-sorted-array/</li>
+</ul>
+<h3 id="133-clone-graph-脸书中等20次">133. Clone Graph 【[脸书]，中等，20次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/clone-graph/</li>
+</ul>
+<h3 id="1114-按序打印-shopee简单20次">1114. 按序打印 【[Shopee]，简单，20次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/print-in-order/</li>
+</ul>
+<h3 id="两数相加-leetcode-shopee20次">两数相加 (Leetcode) 【[Shopee]，，20次】</h3>
+<h3 id="23-merge-k-sorted-lists-脸书亚马逊困难19次">23. Merge k Sorted Lists 【[脸书,亚马逊]，困难，19次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/merge-k-sorted-lists/</li>
+</ul>
+<h3 id="153-寻找旋转排序数组中的最小值-shopee中等19次">153. 寻找旋转排序数组中的最小值 【[Shopee]，中等，19次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/</li>
+</ul>
+<h3 id="138-copy-list-with-random-pointer-脸书中等19次">138. Copy List with Random Pointer 【[脸书]，中等，19次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/copy-list-with-random-pointer/</li>
+</ul>
+<h3 id="49-group-anagrams-亚马逊中等19次">49. Group Anagrams 【[亚马逊]，中等，19次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/group-anagrams/</li>
+</ul>
+<h3 id="1448-count-good-nodes-in-binary-tree-微软中等18次">1448. Count Good Nodes in Binary Tree 【[微软]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/count-good-nodes-in-binary-tree/</li>
+</ul>
+<h3 id="636-exclusive-time-of-functions-脸书中等18次">636. Exclusive Time of Functions 【[脸书]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/exclusive-time-of-functions/</li>
+</ul>
+<h3 id="29-divide-two-integers-脸书中等18次">29. Divide Two Integers 【[脸书]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/divide-two-integers/</li>
+</ul>
+<h3 id="200-number-of-islands-亚马逊中等18次">200. Number of Islands 【[亚马逊]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/number-of-islands/</li>
+</ul>
+<h3 id="112-路径总和-shopee简单18次">112. 路径总和 【[Shopee]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode-cn.com/problems/path-sum/</li>
+</ul>
+<h3 id="973-k-closest-points-to-origin-脸书中等18次">973. K Closest Points to Origin 【[脸书]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/k-closest-points-to-origin/</li>
+</ul>
+<h3 id="953-verifying-an-alien-dictionary-脸书简单18次">953. Verifying an Alien Dictionary 【[脸书]，简单，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/verifying-an-alien-dictionary/</li>
+</ul>
+<h3 id="1268-search-suggestions-system-脸书中等18次">1268. Search Suggestions System 【[脸书]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/search-suggestions-system/</li>
+</ul>
+<h3 id="348-design-tic-tac-toe-脸书亚马逊中等18次">348. Design Tic-Tac-Toe 【[脸书,亚马逊]，中等，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/design-tic-tac-toe/</li>
+</ul>
+<h3 id="avl-树和红黑树有什么区别-shopee简单18次">AVL 树和红黑树有什么区别？ 【[Shopee]，简单，18次】</h3>
+<ul>
+<li>参考一：https://www.geeksforgeeks.org/red-black-tree-vs-avl-tree/</li>
+</ul>
+<h3 id="1095-find-in-mountain-array-苹果困难18次">1095. Find in Mountain Array 【[苹果]，困难，18次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/find-in-mountain-array/</li>
+</ul>
+<h3 id="840-magic-squares-in-grid-谷歌中等16次">840. Magic Squares In Grid 【[谷歌]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/magic-squares-in-grid/</li>
+</ul>
+<h3 id="317-shortest-distance-from-all-buildings-谷歌困难16次">317. Shortest Distance from All Buildings 【[谷歌]，困难，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/shortest-distance-from-all-buildings/</li>
+</ul>
+<h3 id="273-integer-to-english-words-苹果困难16次">273. Integer to English Words 【[苹果]，困难，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/integer-to-english-words/</li>
+</ul>
+<h3 id="767-reorganize-string-苹果中等16次">767. Reorganize String 【[苹果]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/reorganize-string/</li>
+</ul>
+<h3 id="48-rotate-image-亚马逊中等16次">48. Rotate Image 【[亚马逊]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/rotate-image/</li>
+</ul>
+<h3 id="394-decode-string-谷歌中等16次">394. Decode String 【[谷歌]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/decode-string/</li>
+</ul>
+<h3 id="329-longest-increasing-path-in-a-matrix-脸书困难16次">329. Longest Increasing Path in a Matrix 【[脸书]，困难，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/longest-increasing-path-in-a-matrix/</li>
+</ul>
+<h3 id="523-continuous-subarray-sum-脸书中等16次">523. Continuous Subarray Sum 【[脸书]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/continuous-subarray-sum/</li>
+</ul>
+<h3 id="数组中的逆序对-leetcode-shopee16次">数组中的逆序对 (Leetcode) 【[Shopee]，，16次】</h3>
+<h3 id="46-ptermutations-微软中等16次">46. Ptermutations 【[微软]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/permutations/</li>
+</ul>
+<h3 id="295-find-median-from-data-stream-苹果亚马逊困难16次">295. Find Median from Data Stream 【[苹果,亚马逊]，困难，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/find-median-from-data-stream/</li>
+</ul>
+<h3 id="642-design-search-autocomplete-system-苹果中等16次">642. Design Search Autocomplete System 【[苹果]，中等，16次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/design-search-autocomplete-system/</li>
+</ul>
+<h3 id="1547-minimum-cost-to-cut-a-stick-苹果困难15次">1547. Minimum Cost to Cut a Stick 【[苹果]，困难，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/minimum-cost-to-cut-a-stick/</li>
+</ul>
+<h3 id="150-evaluate-reverse-polish-notation-谷歌中等15次">150. Evaluate Reverse Polish Notation 【[谷歌]，中等，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/evaluate-reverse-polish-notation/</li>
+</ul>
+<h3 id="1382-balance-a-binary-search-tree-脸书中等15次">1382. Balance a Binary Search Tree 【[脸书]，中等，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/balance-a-binary-search-tree/</li>
+</ul>
+<h3 id="1272-remove-interval-谷歌中等15次">1272. Remove Interval 【[谷歌]，中等，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/remove-interval/</li>
+</ul>
+<h3 id="65-valid-number-脸书困难15次">65. Valid Number 【[脸书]，困难，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/valid-number/</li>
+</ul>
+<h3 id="1249-minimum-remove-to-make-valid-parentheses-脸书中等15次">1249. Minimum Remove to Make Valid Parentheses 【[脸书]，中等，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/</li>
+</ul>
+<h3 id="151-reverse-words-in-a-string-亚马逊中等15次">151. Reverse Words in a String 【[亚马逊]，中等，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/reverse-words-in-a-string/</li>
+</ul>
+<h3 id="126-word-ladder-ii-亚马逊困难15次">126. Word Ladder II 【[亚马逊]，困难，15次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/word-ladder-ii/</li>
+</ul>
+<h3 id="725-split-linked-list-in-parts-苹果中等14次">725. Split Linked List in Parts 【[苹果]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/split-linked-list-in-parts/</li>
+</ul>
+<h3 id="红黑树是怎么实现平衡的它的优点是什么-shopee中等14次">红黑树是怎么实现平衡的？它的优点是什么？ 【[Shopee]，中等，14次】</h3>
+<h3 id="322-coin-change-亚马逊中等14次">322. Coin Change 【[亚马逊]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/coin-change/</li>
+</ul>
+<h3 id="1428-leftmost-column-with-at-least-a-one-脸书中等14次">1428. Leftmost Column with at Least a One 【[脸书]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/leftmost-column-with-at-least-a-one/</li>
+</ul>
+<h3 id="380-insert-delete-getrandom-o1-脸书中等14次">380. Insert Delete GetRandom O(1) 【[脸书]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/insert-delete-getrandom-o1/</li>
+</ul>
+<h3 id="269-alien-dictionary-谷歌困难14次">269. Alien Dictionary 【[谷歌]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/alien-dictionary/</li>
+</ul>
+<h3 id="如何从一个数组输出随机数组洗牌算法-shopee14次">如何从一个数组输出随机数组（洗牌算法） 【[Shopee]，，14次】</h3>
+<h3 id="1146-snapshot-array-谷歌中等14次">1146. Snapshot Array 【[谷歌]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/snapshot-array/</li>
+</ul>
+<h3 id="375-guess-number-higher-or-lower-ii-谷歌中等14次">375. Guess Number Higher or Lower II 【[谷歌]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/guess-number-higher-or-lower-ii/</li>
+</ul>
+<h3 id="621-task-scheduler-谷歌中等14次">621. Task Scheduler 【[谷歌]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/task-scheduler/</li>
+</ul>
+<h3 id="391-perfect-rectangle-谷歌困难14次">391. Perfect Rectangle 【[谷歌]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/perfect-rectangle/</li>
+</ul>
+<h3 id="1056-confusing-number-谷歌简单14次">1056. Confusing Number 【[谷歌]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/confusing-number/</li>
+</ul>
+<h3 id="211-design-add-and-search-words-data-structure-脸书中等14次">211. Design Add and Search Words Data Structure 【[脸书]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/design-add-and-search-words-data-structure/</li>
+</ul>
+<h3 id="543-diameter-of-binary-tree-脸书简单14次">543. Diameter of Binary Tree 【[脸书]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/diameter-of-binary-tree/</li>
+</ul>
+<h3 id="54-spiral-matrix-苹果中等14次">54. Spiral Matrix 【[苹果]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/spiral-matrix/</li>
+</ul>
+<h3 id="722-remove-comments-苹果中等14次">722. Remove Comments 【[苹果]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/remove-comments/</li>
+</ul>
+<h3 id="743-network-delay-time-苹果中等14次">743. Network Delay Time 【[苹果]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/network-delay-time/</li>
+</ul>
+<h3 id="139-word-break-脸书困难14次">139. Word Break 【[脸书]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/word-break/</li>
+</ul>
+<h3 id="203-remove-linked-list-elements-脸书简单14次">203. Remove Linked List Elements 【[脸书]，简单，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/remove-linked-list-elements/description/</li>
+</ul>
+<h3 id="253-meeting-rooms-ii-亚马逊中等14次">253. Meeting Rooms II 【[亚马逊]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/meeting-rooms-ii/</li>
+</ul>
+<h3 id="340-longest-substring-with-at-most-k-distinct-characters-微软中等14次">340. Longest Substring with At Most K Distinct Characters 【[微软]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/</li>
+</ul>
+<h3 id="381-insert-delete-getrandom-o1---duplicates-allowed-亚马逊困难14次">381. Insert Delete GetRandom O(1) - Duplicates allowed 【[亚马逊]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/</li>
+</ul>
+<h3 id="472-concatenated-words-亚马逊困难14次">472. Concatenated Words 【[亚马逊]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/concatenated-words/</li>
+</ul>
+<h3 id="445-add-two-numbers-ii-亚马逊中等14次">445. Add Two Numbers II 【[亚马逊]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/add-two-numbers-ii/</li>
+</ul>
+<h3 id="4-median-of-two-sorted-arrays-微软困难14次">4. Median of Two Sorted Arrays 【[微软]，困难，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/median-of-two-sorted-arrays/</li>
+</ul>
+<h3 id="347-top-k-frequent-elements-脸书中等14次">347. Top K Frequent Elements 【[脸书]，中等，14次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/top-k-frequent-elements/</li>
+</ul>
+<h3 id="308-range-sum-query---mutable-苹果中等13次">308. Range Sum Query - Mutable 【[苹果]，中等，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/range-sum-query-2d-mutable/</li>
+</ul>
+<h3 id="71-simplify-path-脸书中等13次">71. Simplify Path 【[脸书]，中等，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/simplify-path/</li>
+</ul>
+<h3 id="227-basic-calculator-ii-脸书中等13次">227. Basic Calculator II 【[脸书]，中等，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/basic-calculator-ii/</li>
+</ul>
+<h3 id="695-max-area-of-island-谷歌中等13次">695. Max Area of Island 【[谷歌]，中等，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/max-area-of-island/</li>
+</ul>
+<h3 id="266-palindrome-permutation-脸书简单13次">266. Palindrome Permutation 【[脸书]，简单，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/palindrome-permutation/</li>
+</ul>
+<h3 id="57-insert-interval-谷歌中等13次">57. Insert Interval 【[谷歌]，中等，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/insert-interval/</li>
+</ul>
+<h3 id="88-merge-sorted-array-脸书简单13次">88. Merge Sorted Array 【[脸书]，简单，13次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/merge-sorted-array/</li>
+</ul>
+<h3 id="632-smallest-range-covering-elements-from-k-lists-谷歌困难12次">632. Smallest Range Covering Elements from K Lists 【[谷歌]，困难，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/</li>
+</ul>
+<h3 id="1631-path-with-minimum-effort-谷歌中等12次">1631. Path With Minimum Effort 【[谷歌]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/path-with-minimum-effort/</li>
+</ul>
+<h3 id="415-add-strings-脸书简单12次">415. Add Strings 【[脸书]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/add-strings/</li>
+</ul>
+<h3 id="158-read-n-characters-given-read4-ii-脸书困难12次">158. Read N Characters Given Read4 II 【[脸书]，困难，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times/</li>
+</ul>
+<h3 id="47-permutations-ii-亚马逊中等12次">47. Permutations II 【[亚马逊]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/permutations-ii/</li>
+</ul>
+<h3 id="127-word-ladder-谷歌困难12次">127. Word Ladder 【[谷歌]，困难，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/word-ladder/</li>
+</ul>
+<h3 id="309-best-time-to-buy-and-sell-stock-with-cooldown-苹果中等12次">309. Best Time to Buy and Sell Stock with Cooldown 【[苹果]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/</li>
+</ul>
+<h3 id="867-transpose-matrix-苹果简单12次">867. Transpose Matrix 【[苹果]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/transpose-matrix/</li>
+</ul>
+<h3 id="746-min-cost-climbing-stairs-脸书简单12次">746. Min Cost Climbing Stairs 【[脸书]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/min-cost-climbing-stairs/</li>
+</ul>
+<h3 id="827-making-a-large-island-脸书12次">827. Making A Large Island 【[脸书]，，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/making-a-large-island/</li>
+</ul>
+<h3 id="528-random-pick-with-weight-谷歌中等12次">528. Random Pick with Weight 【[谷歌]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/random-pick-with-weight/</li>
+</ul>
+<h3 id="199-binary-tree-right-side-view-脸书中等12次">199. Binary Tree Right Side View 【[脸书]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/binary-tree-right-side-view/</li>
+</ul>
+<h3 id="1825-finding-mk-average-谷歌困难12次">1825. Finding MK Average 【[谷歌]，困难，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/finding-mk-average/</li>
+</ul>
+<h3 id="125-valid-palindrome-脸书简单12次">125. Valid Palindrome 【[脸书]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/valid-palindrome/</li>
+</ul>
+<h3 id="1539-kth-missing-positive-number-脸书简单12次">1539. Kth Missing Positive Number 【[脸书]，简单，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/kth-missing-positive-number/</li>
+</ul>
+<h3 id="117-populating-next-right-pointers-in-each-node-ii-微软中等12次">117. Populating Next Right Pointers in Each Node II 【[微软]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/</li>
+</ul>
+<h3 id="1377-frog-position-after-t-seconds-谷歌困难12次">1377. Frog Position After T Seconds 【[谷歌]，困难，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/frog-position-after-t-seconds/</li>
+</ul>
+<h3 id="240-search-a-2d-matrix-ii-亚马逊中等12次">240. Search a 2D Matrix II 【[亚马逊]，中等，12次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/search-a-2d-matrix-ii/</li>
+</ul>
+<h3 id="135-candy-苹果困难11次">135. Candy 【[苹果]，困难，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/candy/</li>
+</ul>
+<h3 id="45-jump-game-ii-微软中等11次">45. Jump Game II 【[微软]，中等，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/jump-game-ii/</li>
+</ul>
+<h3 id="1353-maximum-number-of-events-that-can-be-attended-谷歌中等11次">1353. Maximum Number of Events That Can Be Attended 【[谷歌]，中等，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/maximum-number-of-accepted-invitations/</li>
+</ul>
+<h3 id="42-trapping-rain-water-脸书困难11次">42. Trapping Rain Water 【[脸书]，困难，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/trapping-rain-water/</li>
+</ul>
+<h3 id="284-peeking-iterator-谷歌中等11次">284. Peeking Iterator 【[谷歌]，中等，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/peeking-iterator/</li>
+</ul>
+<h3 id="302-smallest-rectangle-enclosing-black-pixels-谷歌困难11次">302. Smallest Rectangle Enclosing Black Pixels 【[谷歌]，困难，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels/</li>
+</ul>
+<h3 id="1258-synonymous-sentences-微软中等11次">1258. Synonymous Sentences 【[微软]，中等，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/synonymous-sentences/</li>
+</ul>
+<h3 id="63-unique-paths-ii-亚马逊中等11次">63. Unique Paths II 【[亚马逊]，中等，11次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/unique-paths-ii/</li>
+</ul>
+<h3 id="1254-number-of-closed-islands-微软中等10次">1254. Number of Closed Islands 【[微软]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/number-of-closed-islands/</li>
+</ul>
+<h3 id="510-inorder-successor-in-bst-ii-脸书中等10次">510. Inorder Successor in BST II 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/inorder-successor-in-bst-ii/</li>
+</ul>
+<h3 id="212-word-search-ii-亚马逊困难10次">212. Word Search II 【[亚马逊]，困难，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/word-search-ii/</li>
+</ul>
+<h3 id="424-longest-repeating-character-replacement-脸书中等10次">424. Longest Repeating Character Replacement 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/longest-repeating-character-replacement/</li>
+</ul>
+<h3 id="234-palindrome-linked-list-脸书简单10次">234. Palindrome Linked List 【[脸书]，简单，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/palindrome-linked-list/</li>
+</ul>
+<h3 id="和为-k-的子数组-leetcode-shopee10次">和为 K 的子数组 (Leetcode) 【[Shopee]，，10次】</h3>
+<h3 id="1762-buildings-with-an-ocean-view-脸书中等10次">1762. Buildings With an Ocean View 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/buildings-with-an-ocean-view/</li>
+</ul>
+<h3 id="1429-first-unique-number-脸书中等10次">1429. First Unique Number 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/first-unique-number/</li>
+</ul>
+<h3 id="1406-stone-game-iii-谷歌困难10次">1406. Stone Game III 【[谷歌]，困难，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/stone-game-iii/</li>
+</ul>
+<h3 id="1197-minimum-knight-moves-谷歌中等10次">1197. Minimum Knight Moves 【[谷歌]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/minimum-knight-moves/</li>
+</ul>
+<h3 id="958-check-completeness-of-a-binary-tree-脸书中等10次">958. Check Completeness of a Binary Tree 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/check-completeness-of-a-binary-tree/</li>
+</ul>
+<h3 id="741-cherry-pickup-谷歌困难10次">741. Cherry Pickup 【[谷歌]，困难，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/cherry-pickup/</li>
+</ul>
+<h3 id="1777-products-price-for-each-store-谷歌简单10次">1777. Products Price For Each Store 【[谷歌]，简单，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/products-price-for-each-store/</li>
+</ul>
+<h3 id="736-parse-lisp-expression-谷歌困难10次">736. Parse Lisp Expression 【[谷歌]，困难，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/parse-lisp-expression/</li>
+</ul>
+<h3 id="301-remove-invalid-parentheses-脸书困难10次">301. Remove Invalid Parentheses 【[脸书]，困难，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/remove-invalid-parentheses/</li>
+</ul>
+<h3 id="721-accounts-merge-脸书中等10次">721. Accounts Merge 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/accounts-merge/</li>
+</ul>
+<h3 id="863-all-nodes-distance-k-in-binary-tree-脸书中等10次">863. All Nodes Distance K in Binary Tree 【[脸书]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/</li>
+</ul>
+<h3 id="5-longest-palindromic-substring-微软中等10次">5. Longest Palindromic Substring 【[微软]，中等，10次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/longest-palindromic-substring/</li>
+</ul>
+<h3 id="987-vertical-order-traversal-of-a-binary-tree-微软困难9次">987. Vertical Order Traversal of a Binary Tree 【[微软]，困难，9次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/</li>
+</ul>
+<h3 id="442-find-all-duplicates-in-an-array-微软中等9次">442. Find All Duplicates in an Array 【[微软]，中等，9次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/find-all-duplicates-in-an-array/</li>
+</ul>
+<h3 id="2184-number-of-ways-to-build-sturdy-brick-wall-谷歌中等8次">2184. Number of Ways to Build Sturdy Brick Wall 【[谷歌]，中等，8次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/number-of-ways-to-build-sturdy-brick-wall/</li>
+</ul>
+<h3 id="341-flatten-nested-list-iterator-微软中等8次">341. Flatten Nested List Iterator 【[微软]，中等，8次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/flatten-nested-list-iterator/</li>
+</ul>
+<h3 id="538-convert-bst-to-greater-tree-谷歌中等8次">538. Convert BST to Greater Tree 【[谷歌]，中等，8次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/convert-bst-to-greater-tree/</li>
+</ul>
+<h3 id="186-reverse-words-in-a-string-ii-苹果中等7次">186. Reverse Words in a String II 【[苹果]，中等，7次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/reverse-words-in-a-string-ii/</li>
+</ul>
+<h3 id="937-reorder-data-in-log-files-亚马逊简单7次">937. Reorder Data in Log Files 【[亚马逊]，简单，7次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/reorder-data-in-log-files/</li>
+</ul>
+<h3 id="1200-minimum-absolute-difference-uber简单6次">1200. Minimum Absolute Difference 【[Uber]，简单，6次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/minimum-absolute-difference/</li>
+</ul>
+<h3 id="224-basic-calculator-亚马逊困难6次">224. Basic Calculator 【[亚马逊]，困难，6次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/basic-calculator/</li>
+</ul>
+<h3 id="17-letter-combinations-of-a-phone-number-亚马逊中等6次">17. Letter Combinations of a Phone Number 【[亚马逊]，中等，6次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/letter-combinations-of-a-phone-number/</li>
+</ul>
+<h3 id="489-robot-room-cleaner-snap困难5次">489. Robot Room Cleaner 【[Snap]，困难，5次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/robot-room-cleaner/</li>
+</ul>
+<h3 id="841-keys-and-rooms-谷歌中等5次">841. Keys and Rooms 【[谷歌]，中等，5次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/keys-and-rooms/</li>
+</ul>
+<h3 id="463-island-perimeter-谷歌简单4次">463. Island Perimeter 【[谷歌]，简单，4次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/island-perimeter/</li>
+</ul>
+<h3 id="155-min-stack-亚马逊简单3次">155. Min Stack 【[亚马逊]，简单，3次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/min-stack/</li>
+</ul>
+<h3 id="799-champagne-tower-亚马逊中等3次">799. Champagne Tower 【[亚马逊]，中等，3次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/champagne-tower/</li>
+</ul>
+<h3 id="387-first-unique-character-in-a-string-亚马逊简单3次">387. First Unique Character in a String 【[亚马逊]，简单，3次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/first-unique-character-in-a-string/</li>
+</ul>
+<h3 id="140-word-break-ii-亚马逊困难2次">140. Word Break II 【[亚马逊]，困难，2次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/word-break-ii/</li>
+</ul>
+<h3 id="828-count-unique-characters-of-all-substrings-of-a-given-string-亚马逊困难2次">828. Count Unique Characters of All Substrings of a Given String 【[亚马逊]，困难，2次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/count-unique-characters-of-all-substrings-of-a-given-string/</li>
+</ul>
+<h3 id="1568-minimum-number-of-days-to-disconnect-island-谷歌困难2次">1568. Minimum Number of Days to Disconnect Island 【[谷歌]，困难，2次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/</li>
+</ul>
+<h3 id="487-max-consecutive-ones-ii-微软中等1次">487. Max Consecutive Ones II 【[微软]，中等，1次】</h3>
+<ul>
+<li>链接：https://leetcode.com/problems/max-consecutive-ones-ii/</li>
+</ul>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2023 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>

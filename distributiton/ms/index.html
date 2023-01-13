@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>分布式八股文 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="分布式八股文" />
+<meta property="og:description" content="电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/distributiton/ms/" /><meta property="article:section" content="distributiton" />
+<meta property="article:published_time" content="2019-01-13T10:58:44+08:00" />
+<meta property="article:modified_time" content="2019-01-13T10:58:44+08:00" />
+
+
+		<meta itemprop="name" content="分布式八股文">
+<meta itemprop="description" content="电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror."><meta itemprop="datePublished" content="2019-01-13T10:58:44+08:00" />
+<meta itemprop="dateModified" content="2019-01-13T10:58:44+08:00" />
+<meta itemprop="wordCount" content="191">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="分布式八股文"/>
+<meta name="twitter:description" content="电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror."/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/distributiton/">Distributitons</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">分布式八股文</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2019-01-13T10:58:44&#43;08:00">2019年01月13日</time>
+	</div>
+				<h1 class="entry__title">分布式八股文</h1>
+				<div class="entry__content"><h3 id="电商系统中如何实现秒杀功能如何解决商品的超卖问题-腾讯阿里美团滴滴快手困难156次">电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】</h3>
+<ul>
+<li>参考一：https://osjobs.net/system/posts/spike-system/</li>
+</ul>
+<h3 id="简述-cap-理论-腾讯字节跳动美团百度简单118次">简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】</h3>
+<h3 id="简述一致性哈希算法的实现方式及原理-腾讯美团滴滴阿里快手困难114次">简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】</h3>
+<h3 id="如何解决缓存与数据库不一致的问题-快手阿里京东拼多多中等74次">如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】</h3>
+<ul>
+<li>参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database</li>
+</ul>
+<h3 id="简述-zookeeper-基础原理以及使用场景-腾讯阿里京东中等58次">简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】</h3>
+<ul>
+<li>参考一：https://www.guru99.com/zookeeper-tutorial.html</li>
+<li>参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html</li>
+</ul>
+<h3 id="什么是设计模式描述几个常用的设计模式-腾讯百度滴滴快手中等58次">什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】</h3>
+<h3 id="简述生产者消费者模型-字节跳动百度字节跳动简单46次">简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】</h3>
+<h3 id="什么是-cap-什么是最终一致性什么是幂等操作-阿里中等44次">什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】</h3>
+<h3 id="项目上有什么技术难点-快手拼多多44次">项目上有什么技术难点？ 【[快手,拼多多]，，44次】</h3>
+<h3 id="如何设计一个线程池-腾讯拼多多中等44次">如何设计一个线程池 【[腾讯,拼多多]，中等，44次】</h3>
+<h3 id="简述中间件削峰和限流的使用场景-美团快手38次">简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】</h3>
+<h3 id="简述-kafka-的基本架构如何用-kafka-保证消息的有序性-美团京东36次">简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】</h3>
+<h3 id="设计一个阻塞队列-阿里字节跳动中等34次">设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】</h3>
+<h3 id="了解高并发的解决方案吗例如动静分离缓存负载均衡-拼多多简单24次">了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】</h3>
+<h3 id="有哪些实现服务发现的方法-拼多多22次">有哪些实现服务发现的方法？ 【[拼多多]，，22次】</h3>
+<h3 id="阻塞队列都有哪几种有什么区别-滴滴阿里中等22次">阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】</h3>
+<h3 id="如何实现唯一的分布式-id-美团中等22次">如何实现唯一的分布式 ID 【[美团]，中等，22次】</h3>
+<h3 id="zookeeper-的-zab-算法与-paxos-的区别是什么-阿里困难18次">ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】</h3>
+<h3 id="如何实现百度搜索功能-阿里困难18次">如何实现百度搜索功能？ 【[阿里]，困难，18次】</h3>
+<h3 id="简述什么是两阶段提交-腾讯简单18次">简述什么是两阶段提交？ 【[腾讯]，简单，18次】</h3>
+<h3 id="微服务中如何实现服务发现-滴滴16次">微服务中如何实现服务发现 【[滴滴]，，16次】</h3>
+<h3 id="简述-nginx-的工作模型为什么-nginx-性能如此高-滴滴中等16次">简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】</h3>
+<h3 id="熔断与限流是如何实现的-滴滴16次">熔断与限流是如何实现的？ 【[滴滴]，，16次】</h3>
+<h3 id="高并发情景下核心线程池该如何设置参数-阿里中等16次">高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】</h3>
+<h3 id="如何测试应用的-qps-腾讯中等16次">如何测试应用的 QPS？ 【[腾讯]，中等，16次】</h3>
+<h3 id="简述-zookeeper-选举机制-腾讯中等14次">简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】</h3>
+<h3 id="如何设计一个消息队列-腾讯中等14次">如何设计一个消息队列 【[腾讯]，中等，14次】</h3>
+<h3 id="简述-dubbo-服务注册与发现的过程-美团简单14次">简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】</h3>
+<h3 id="如何阅读大型项目的源码-拼多多12次">如何阅读大型项目的源码？ 【[拼多多]，，12次】</h3>
+<h3 id="设计-tiny-url-系统-字节跳动中等12次">设计 Tiny URL 系统 【[字节跳动]，中等，12次】</h3>
+<h3 id="kafka-如何保证消息一致性-字节跳动中等12次">kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】</h3>
+<h3 id="简述-mapreduce-的原理-字节跳动中等12次">简述 MapReduce 的原理 【[字节跳动]，中等，12次】</h3>
+<h3 id="简述-git-的工作流-腾讯简单12次">简述 Git 的工作流 【[腾讯]，简单，12次】</h3>
+<h3 id="假如明天是活动高峰qps-预计会翻10倍你要怎么做-腾讯中等12次">假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】</h3>
+<h3 id="停车场有有限个车位有多个车来抢车位设计一个系统需要根据车辆进入和离开停车场的时间进行计费-字节跳动困难10次">停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】</h3>
+<h3 id="容器化了解吗它的基本原理是什么-阿里中等10次">容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/kubernetes/%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%20Pod.pdf</li>
+</ul>
+<h3 id="rabbitmq-如何保证信息可靠性-腾讯简单4次">RabbitMQ 如何保证信息可靠性？ 【[腾讯]，简单，4次】</h3>
+<h3 id="designing-a-url-shortening-service-like-tinyurl-亚马逊微软中等32次">Designing a URL Shortening service like TinyURL 【[亚马逊,微软]，中等，32次】</h3>
+<h3 id="简述-cap-理论-shopee简单28次">简述 CAP 理论 【[Shopee]，简单，28次】</h3>
+<h3 id="简述-kafka-的选举过程-shopee18次">简述 Kafka 的选举过程 【[Shopee]，，18次】</h3>
+<h3 id="design-a-web-crawler-脸书困难15次">Design a web crawler 【[脸书]，困难，15次】</h3>
+<h3 id="designing-pastebin-苹果中等14次">Designing Pastebin 【[苹果]，中等，14次】</h3>
+<h3 id="design-typeahead-system-苹果中等14次">Design typeahead system 【[苹果]，中等，14次】</h3>
+<h3 id="常用的限流算法有哪些简述令牌桶算法原理-shopee中等14次">常用的限流算法有哪些？简述令牌桶算法原理 【[Shopee]，中等，14次】</h3>
+<ul>
+<li>参考一：https://cloud.google.com/architecture/rate-limiting-strategies-techniques</li>
+<li>参考二：https://konghq.com/blog/how-to-design-a-scalable-rate-limiting-algorithm/</li>
+</ul>
+<h3 id="design-parking-system-亚马逊中等12次">Design Parking System 【[亚马逊]，中等，12次】</h3>
+<h3 id="design-bicycle-rental-system-亚马逊中等12次">Design Bicycle Rental System 【[亚马逊]，中等，12次】</h3>
+<h3 id="design-twitter-谷歌困难12次">Design twitter 【[谷歌]，困难，12次】</h3>
+<h3 id="design-taxi-service-like-uber-脸书困难10次">Design taxi service like Uber 【[脸书]，困难，10次】</h3>
+<h3 id="design-google-calendar-领英困难6次">Design Google Calendar 【[领英]，困难，6次】</h3>
+<h3 id="design-stock-trading-system-亚马逊困难6次">Design Stock Trading System 【[亚马逊]，困难，6次】</h3>
+<h3 id="design-a-rate-limiter-领英中等5次">Design a rate limiter 【[领英]，中等，5次】</h3>
+<h3 id="design-a-message-queue-领英困难3次">Design a message queue 【[领英]，困难，3次】</h3>
+<h3 id="design-an-autocomplete-system-领英中等3次">Design an autocomplete system 【[领英]，中等，3次】</h3>
+<h3 id="design-netflix-亚马逊中等2次">Design Netflix 【[亚马逊]，中等，2次】</h3>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2023 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>

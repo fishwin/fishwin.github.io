@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#1b1b1b">
+	<title>数据库八股文 | 张海余的主页</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="数据库八股文" />
+<meta property="og:description" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fishwin.github.io/db/ms/" /><meta property="article:section" content="db" />
+<meta property="article:published_time" content="2019-01-13T10:59:27+08:00" />
+<meta property="article:modified_time" content="2019-01-13T10:59:27+08:00" />
+
+
+		<meta itemprop="name" content="数据库八股文">
+<meta itemprop="description" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev."><meta itemprop="datePublished" content="2019-01-13T10:59:27+08:00" />
+<meta itemprop="dateModified" content="2019-01-13T10:59:27+08:00" />
+<meta itemprop="wordCount" content="385">
+<meta itemprop="keywords" content="" />
+		<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="数据库八股文"/>
+<meta name="twitter:description" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev."/>
+
+	<link rel="stylesheet" href="/css/bundle.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/themes/dark-green.css">
+	<link rel="icon" href="/icons/16.png" sizes="16x16" type="image/png">
+	<link rel="icon" href="/icons/32.png" sizes="32x32" type="image/png">
+	<link rel="manifest" href="/manifest.json">
+		
+</head>
+<body class="body kind-page">
+	<header class="header">
+	<a class="logo" href="/">张海余的主页</a>
+	
+<nav class="main-nav main-nav--right" role="navigation">
+	<button id="toggle" class="main-nav__btn" aria-label="Menu toggle" aria-expanded="false" tabindex="0">
+		<div class="main-nav__btn-box" tabindex="-1">
+			<svg class="main-nav__icon icon-menu" width="18" height="18" viewBox="0 0 18 18">
+				<path class="icon-menu__burger" d="M18 0v3.6H0V0h18zM0 10.8h18V7.2H0v3.6zM0 18h18v-3.6H0V18z"/>
+				<path class="icon-menu__x" d="M11.55 9L18 15.45 15.45 18 9 11.55 2.55 18 0 15.45 6.45 9 0 2.55 2.55 0 9 6.45 15.45 0 18 2.55 11.55 9z"/>
+			</svg>
+		</div>
+	</button>
+	<ul id="menu" class="main-nav__list">
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/">
+					
+					<span class="main-nav__text">首页</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/golang/">
+					
+					<span class="main-nav__text">Go</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/os/">
+					
+					<span class="main-nav__text">操作系统</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/net/">
+					
+					<span class="main-nav__text">网络协议</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/distributiton/">
+					
+					<span class="main-nav__text">分布式</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/sysdesign/">
+					
+					<span class="main-nav__text">系统设计</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/algorithm/">
+					
+					<span class="main-nav__text">算法</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/db/">
+					
+					<span class="main-nav__text">数据库</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/middleware/">
+					
+					<span class="main-nav__text">中间件</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/othertech/">
+					
+					<span class="main-nav__text">谈古论今</span>
+					
+				</a>
+			</li>
+			<li class="main-nav__item">
+				<a class="main-nav__link" href="/about/">
+					
+					<span class="main-nav__text">关于</span>
+					
+				</a>
+			</li>
+	</ul>
+</nav>
+</header>
+	<div class="primary">
+	
+	<main class="main">
+		
+<nav class="breadcrumb block" aria-label="breadcrumb">
+	<ol class="breadcrumb__list">
+		
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="breadcrumb__item">
+			<a class="breadcrumbs__link" href="/db/">Dbs</a>
+		</li>
+		<li class="breadcrumbs__item breadcrumb__item--active" aria-current="page">数据库八股文</li>
+	</ol>
+</nav>
+		<div class="single block">
+			<article class="entry">
+	<div class="entry__meta meta mb">
+	<time class="entry__meta-published meta-published" datetime="2019-01-13T10:59:27&#43;08:00">2019年01月13日</time>
+	</div>
+				<h1 class="entry__title">数据库八股文</h1>
+				<div class="entry__content"><h3 id="mysql-为什么使用-b-树来作索引对比-b-树它的优点和缺点是什么-腾讯阿里字节跳动美团京东百度滴滴快手拼多多中等604次">MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf</li>
+<li>参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.</li>
+</ul>
+<h3 id="数据库的事务隔离级别有哪些各有哪些优缺点-腾讯阿里字节跳动美团京东百度滴滴快手拼多多中等412次">数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/117476959</li>
+</ul>
+<h3 id="简述乐观锁以及悲观锁的区别以及使用场景-腾讯阿里字节跳动美团京东百度快手简单304次">简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】</h3>
+<ul>
+<li>参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking</li>
+<li>参考二：https://juejin.cn/post/6844903639207641096</li>
+</ul>
+<h3 id="redis-如何实现分布式锁-腾讯阿里字节跳动美团京东百度滴滴快手困难234次">Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/distlock</li>
+<li>参考二：https://www.redis.com.cn/topics/distlock.html</li>
+</ul>
+<h3 id="聚簇索引和非聚簇索引有什么区别-腾讯字节跳动美团京东百度滴滴快手拼多多简单220次">聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html</li>
+<li>参考二：https://cloud.tencent.com/developer/article/1541265</li>
+</ul>
+<h3 id="简述-redis-持久化中-rdb-以及-aof-方案的优缺点-腾讯阿里字节跳动美团京东拼多多困难218次">简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/persistence</li>
+<li>参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8</li>
+</ul>
+<h3 id="简述脏读和幻读的发生场景innodb-是如何解决幻读的-腾讯阿里字节跳动美团滴滴中等182次">简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html</li>
+<li>参考二：https://cloud.tencent.com/developer/article/1450773</li>
+</ul>
+<h3 id="简述-redis-中如何防止缓存雪崩和缓存击穿-腾讯阿里字节跳动美团京东百度滴滴中等180次">简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】</h3>
+<ul>
+<li>参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/346651831</li>
+</ul>
+<h3 id="redis-有几种数据结构zset-是如何实现的-腾讯阿里字节跳动美团百度滴滴快手中等170次">Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/data-types</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf</li>
+</ul>
+<h3 id="什么是数据库事务mysql-为什么会使用-innodb-作为默认选项-腾讯字节跳动美团百度拼多多中等158次">什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-model.html#:~:text=The%20InnoDB%20transaction%20model%20aims,with%20traditional%20two%2Dphase%20locking.&amp;text=Typically%2C%20several%20users%20are%20permitted,without%20causing%20InnoDB%20memory%20exhaustion.</li>
+<li>参考二：https://draveness.me/mysql-transaction/</li>
+</ul>
+<h3 id="简述什么是最左匹配原则-阿里字节跳动美团京东百度快手简单146次">简述什么是最左匹配原则 【[阿里,字节跳动,美团,京东,百度,快手]，简单，146次】</h3>
+<h3 id="为什么-redis-在单线程下能如此快-阿里美团京东快手拼多多中等144次">为什么 Redis 在单线程下能如此快？ 【[阿里,美团,京东,快手,拼多多]，中等，144次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/benchmarks</li>
+</ul>
+<h3 id="简述-redis-中常见类型的底层数据结构-字节跳动美团京东滴滴122次">简述 Redis 中常见类型的底层数据结构 【[字节跳动,美团,京东,滴滴]，，122次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/data-types</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf</li>
+</ul>
+<h3 id="mysql中-innodb-和-mylsam-的区别是什么-阿里美团京东百度快手简单116次">MySQL中 InnoDB 和 MylSAM 的区别是什么？ 【[阿里,美团,京东,百度,快手]，简单，116次】</h3>
+<ul>
+<li>参考一：https://www.runoob.com/w3cnote/mysql-different-nnodb-myisam.html</li>
+</ul>
+<h3 id="数据库如何设计索引如何优化查询-腾讯美团京东百度滴滴困难114次">数据库如何设计索引，如何优化查询？ 【[腾讯,美团,京东,百度,滴滴]，困难，114次】</h3>
+<h3 id="简述数据库中什么情况下进行分库什么情况下进行分表-腾讯阿里美团京东滴滴中等112次">简述数据库中什么情况下进行分库，什么情况下进行分表？ 【[腾讯,阿里,美团,京东,滴滴]，中等，112次】</h3>
+<h3 id="简述数据库中的-acid-分别是什么-腾讯字节跳动美团京东百度拼多多简单106次">简述数据库中的 ACID 分别是什么？ 【[腾讯,字节跳动,美团,京东,百度,拼多多]，简单，106次】</h3>
+<h3 id="什么是-sql-注入攻击如何防止这类攻击-腾讯美团京东百度滴滴中等100次">什么是 SQL 注入攻击？如何防止这类攻击？ 【[腾讯,美团,京东,百度,滴滴]，中等，100次】</h3>
+<ul>
+<li>参考一：https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</li>
+</ul>
+<h3 id="简述-redis-中跳表的应用以及优缺点-腾讯阿里字节跳动美团中等86次">简述 Redis 中跳表的应用以及优缺点 【[腾讯,阿里,字节跳动,美团]，中等，86次】</h3>
+<h3 id="简述-redis-的过期机制和内存淘汰策略-字节跳动美团京东困难76次">简述 Redis 的过期机制和内存淘汰策略 【[字节跳动,美团,京东]，困难，76次】</h3>
+<h3 id="mysql-中-join-与-left-join-的区别是什么-字节跳动美团百度滴滴简单74次">MySQL 中 join 与 left join 的区别是什么？ 【[字节跳动,美团,百度,滴滴]，简单，74次】</h3>
+<h3 id="联合索引的存储结构是什么-百度滴滴74次">联合索引的存储结构是什么？ 【[百度,滴滴]，，74次】</h3>
+<h3 id="数据库有哪些常见索引数据库设计的范式是什么-字节跳动京东百度中等70次">数据库有哪些常见索引？数据库设计的范式是什么？ 【[字节跳动,京东,百度]，中等，70次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%20InnoDB%20Index.pdf</li>
+</ul>
+<h3 id="简述-mysql-常见索引类型介绍一下覆盖索引-美团快手68次">简述 MySQL 常见索引类型，介绍一下覆盖索引 【[美团,快手]，，68次】</h3>
+<h3 id="数据库索引的实现原理是什么-阿里京东拼多多简单68次">数据库索引的实现原理是什么？ 【[阿里,京东,拼多多]，简单，68次】</h3>
+<h3 id="简述-redis-的哨兵机制-字节跳动美团中等66次">简述 Redis 的哨兵机制 【[字节跳动,美团]，中等，66次】</h3>
+<h3 id="mysql-有哪些常见的存储引擎它们的区别是什么-腾讯美团百度中等65次">MySQL 有哪些常见的存储引擎？它们的区别是什么？ 【[腾讯,美团,百度]，中等，65次】</h3>
+<h3 id="redis的缓存淘汰策略有哪些-阿里拼多多简单64次">Redis的缓存淘汰策略有哪些？ 【[阿里,拼多多]，简单，64次】</h3>
+<ul>
+<li>参考一：https://redis.io/commands/expire</li>
+<li>参考二：https://www.redis.com.cn/commands/expire.html</li>
+</ul>
+<h3 id="简述-mysql-的主从同步机制如果同步失败会怎么样-腾讯美团快手中等62次">简述 MySQL 的主从同步机制，如果同步失败会怎么样？ 【[腾讯,美团,快手]，中等，62次】</h3>
+<h3 id="简述-mysql-mvcc-的实现原理-腾讯字节跳动美团困难60次">简述 MySQL MVCC 的实现原理 【[腾讯,字节跳动,美团]，困难，60次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html</li>
+</ul>
+<h3 id="简述-mysql-三种日志的使用场景-阿里字节跳动百度中等58次">简述 MySQL 三种日志的使用场景 【[阿里,字节跳动,百度]，中等，58次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/InnoDB-WAL.pdf</li>
+<li>参考二：https://dev.mysql.com/doc/refman/8.0/en/binary-log.html</li>
+</ul>
+<h3 id="简述-redis-集群配置以及基础原理-阿里美团滴滴困难56次">简述 Redis 集群配置以及基础原理 【[阿里,美团,滴滴]，困难，56次】</h3>
+<h3 id="mysql-联合索引底层原理是什么-京东快手简单46次">MySQL 联合索引底层原理是什么？ 【[京东,快手]，简单，46次】</h3>
+<h3 id="唯一索引与普通索引的区别是什么使用索引会有哪些优缺点-腾讯简单44次">唯一索引与普通索引的区别是什么？使用索引会有哪些优缺点？ 【[腾讯]，简单，44次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/optimization-indexes.html</li>
+<li>参考二：https://juejin.cn/post/6859391402322132999</li>
+</ul>
+<h3 id="简述事务的四大特性-美团42次">简述事务的四大特性 【[美团]，，42次】</h3>
+<h3 id="简述-mysql-的间隙锁-腾讯简单38次">简述 MySQL 的间隙锁 【[腾讯]，简单，38次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E5%85%A8%E5%B1%80%E9%94%81%E3%80%81%E8%A1%A8%E7%BA%A7%E9%94%81%E4%BB%A5%E5%8F%8A%E8%A1%8C%E9%94%81%EF%BC%88%E4%B8%AD%EF%BC%89.pdf</li>
+</ul>
+<h3 id="b-树中叶子节点存储的是什么数据-美团京东简单38次">B+ 树中叶子节点存储的是什么数据 【[美团,京东]，简单，38次】</h3>
+<h3 id="mysql-索引使用什么数据结构-腾讯滴滴简单38次">MySQL 索引使用什么数据结构？ 【[腾讯,滴滴]，简单，38次】</h3>
+<h3 id="数据库的读写分离的作用是什么如何实现-阿里拼多多中等38次">数据库的读写分离的作用是什么？如何实现？ 【[阿里,拼多多]，中等，38次】</h3>
+<h3 id="假设建立联合索引-a-b-c-如果对字段-a-和-c-查询会用到这个联合索引吗-腾讯滴滴中等36次">假设建立联合索引 (a, b, c) 如果对字段 a 和 c 查询，会用到这个联合索引吗？ 【[腾讯,滴滴]，中等，36次】</h3>
+<h3 id="简述-redis-的线程模型以及底层架构设计-美团36次">简述 Redis 的线程模型以及底层架构设计 【[美团]，，36次】</h3>
+<h3 id="sql优化的方案有哪些如何定位问题并解决问题-阿里困难36次">SQL优化的方案有哪些，如何定位问题并解决问题？ 【[阿里]，困难，36次】</h3>
+<h3 id="redis-序列化有哪些方式-字节跳动中等34次">Redis 序列化有哪些方式？ 【[字节跳动]，中等，34次】</h3>
+<h3 id="简述-redis-如何处理热点-key-访问-美团32次">简述 Redis 如何处理热点 key 访问 【[美团]，，32次】</h3>
+<h3 id="redis-如何实现高可用-百度中等30次">Redis 如何实现高可用？ 【[百度]，中等，30次】</h3>
+<h3 id="mysql-有什么调优的方式-腾讯困难30次">MySQL 有什么调优的方式？ 【[腾讯]，困难，30次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/optimization.html</li>
+<li>参考二：https://www.cloudways.com/blog/mysql-performance-tuning/</li>
+</ul>
+<h3 id="简述-redis-字符串的底层结构-滴滴快手简单28次">简述 Redis 字符串的底层结构 【[滴滴,快手]，简单，28次】</h3>
+<h3 id="mysql-常用的聚合函数有哪些-京东简单25次">MySQL 常用的聚合函数有哪些？ 【[京东]，简单，25次】</h3>
+<h3 id="mysql-的索引什么情况下会失效-腾讯简单24次">MySQL 的索引什么情况下会失效？ 【[腾讯]，简单，24次】</h3>
+<h3 id="什么时候索引会失效-滴滴22次">什么时候索引会失效？ 【[滴滴]，，22次】</h3>
+<h3 id="简述-sql-中左连接和右连接的区别-百度20次">简述 SQL 中左连接和右连接的区别 【[百度]，，20次】</h3>
+<h3 id="简述-redis-的通信模型-百度20次">简述 Redis 的通信模型 【[百度]，，20次】</h3>
+<h3 id="如何解决主从不一致的问题-滴滴20次">如何解决主从不一致的问题？ 【[滴滴]，，20次】</h3>
+<h3 id="简述-undo-log-和-redo-log-的作用-阿里简单18次">简述 undo log 和 redo log 的作用 【[阿里]，简单，18次】</h3>
+<h3 id="数据库主键索引和唯一索引有什么区别-京东18次">数据库主键索引和唯一索引有什么区别？ 【[京东]，，18次】</h3>
+<h3 id="简述主从复制以及读写分离的使用场景-滴滴18次">简述主从复制以及读写分离的使用场景 【[滴滴]，，18次】</h3>
+<h3 id="mysql-中-varchar-和-char-的区别是什么-字节跳动简单17次">MySQL 中 varchar 和 char 的区别是什么？ 【[字节跳动]，简单，17次】</h3>
+<h3 id="模糊查询是如何实现的-字节跳动简单16次">模糊查询是如何实现的？ 【[字节跳动]，简单，16次】</h3>
+<h3 id="如何设计数据库压测方案-快手16次">如何设计数据库压测方案？ 【[快手]，，16次】</h3>
+<h3 id="kafka-发送消息是如何保证可靠性的-腾讯简单16次">Kafka 发送消息是如何保证可靠性的？ 【[腾讯]，简单，16次】</h3>
+<h3 id="数据库查询中左外连接和内连接的区别是什么-阿里简单14次">数据库查询中左外连接和内连接的区别是什么？ 【[阿里]，简单，14次】</h3>
+<h3 id="如何定位以及优化数据库慢查询-滴滴14次">如何定位以及优化数据库慢查询 【[滴滴]，，14次】</h3>
+<h3 id="假设-redis-的-master-节点宕机了你会怎么进行数据恢复-腾讯中等14次">假设 Redis 的 master 节点宕机了，你会怎么进行数据恢复？ 【[腾讯]，中等，14次】</h3>
+<h3 id="建立了三个单列索引-a-b-c-查询-where-a---b---c--索引会起作用吗-京东14次">建立了三个单列索引 a, b, c 查询 where a = ? b = ? c = ？索引会起作用吗？ 【[京东]，，14次】</h3>
+<h3 id="并发事务会引发哪些问题如何解决-字节跳动中等14次">并发事务会引发哪些问题？如何解决？ 【[字节跳动]，中等，14次】</h3>
+<h3 id="数据库索引的叶子结点为什么是有序链表-拼多多14次">数据库索引的叶子结点为什么是有序链表？ 【[拼多多]，，14次】</h3>
+<h3 id="数据库反范式设计会出现什么问题-腾讯中等12次">数据库反范式设计会出现什么问题？ 【[腾讯]，中等，12次】</h3>
+<h3 id="redis-如何实现主从同步-滴滴困难12次">Redis 如何实现主从同步？ 【[滴滴]，困难，12次】</h3>
+<ul>
+<li>参考一：https://www.redis.com.cn/topics/replication.html</li>
+</ul>
+<h3 id="redis-中sentinel-和-cluster-的区别和适用场景是什么-阿里中等11次">Redis 中，sentinel 和 cluster 的区别和适用场景是什么？ 【[阿里]，中等，11次】</h3>
+<h3 id="简述-redis-哨兵的选举过程-美团困难8次">简述 Redis 哨兵的选举过程 【[美团]，困难，8次】</h3>
+<h3 id="简述乐观锁以及悲观锁的区别以及使用场景-shopee简单42次">简述乐观锁以及悲观锁的区别以及使用场景 【[Shopee]，简单，42次】</h3>
+<ul>
+<li>参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking</li>
+<li>参考二：https://juejin.cn/post/6844903639207641096</li>
+</ul>
+<h3 id="数据库的事务隔离级别有哪些各有哪些优缺点-shopee中等36次">数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[Shopee]，中等，36次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html</li>
+<li>参考二：https://zhuanlan.zhihu.com/p/117476959</li>
+</ul>
+<h3 id="为什么-redis-在单线程下能如此快-shopee中等32次">为什么 Redis 在单线程下能如此快？ 【[Shopee]，中等，32次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/benchmarks</li>
+</ul>
+<h3 id="mysql-为什么使用-b-树来作索引对比-b-树它的优点和缺点是什么-shopee中等30次">MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[Shopee]，中等，30次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf</li>
+<li>参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.</li>
+</ul>
+<h3 id="redis-有几种数据结构zset-是如何实现的-shopee中等28次">Redis 有几种数据结构？Zset 是如何实现的？ 【[Shopee]，中等，28次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/data-types</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf</li>
+</ul>
+<h3 id="mysql-的索引什么情况下会失效-shopee简单26次">MySQL 的索引什么情况下会失效？ 【[Shopee]，简单，26次】</h3>
+<h3 id="mysql-有哪些常见的存储引擎它们的区别是什么-shopee中等24次">MySQL 有哪些常见的存储引擎？它们的区别是什么？ 【[Shopee]，中等，24次】</h3>
+<h3 id="redis-如何实现分布式锁-shopee困难22次">Redis 如何实现分布式锁？ 【[Shopee]，困难，22次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/distlock</li>
+<li>参考二：https://www.redis.com.cn/topics/distlock.html</li>
+</ul>
+<h3 id="数据库有哪些常见索引数据库设计的范式是什么-shopee中等20次">数据库有哪些常见索引？数据库设计的范式是什么？ 【[Shopee]，中等，20次】</h3>
+<ul>
+<li>参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%20InnoDB%20Index.pdf</li>
+</ul>
+<h3 id="产生死锁的必要条件有哪些如何解决死锁-shopee中等20次">产生死锁的必要条件有哪些？如何解决死锁？ 【[Shopee]，中等，20次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlocks.html</li>
+<li>参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E5%85%A8%E5%B1%80%E9%94%81%E3%80%81%E8%A1%A8%E7%BA%A7%E9%94%81%E4%BB%A5%E5%8F%8A%E8%A1%8C%E9%94%81%EF%BC%88%E4%B8%8A%EF%BC%89.pdf</li>
+<li>参考三：https://www.gatevidyalay.com/deadlock-in-os-conditions-for-deadlock/</li>
+</ul>
+<h3 id="简述-sql-中左连接和右连接的区别-shopee18次">简述 SQL 中左连接和右连接的区别 【[Shopee]，，18次】</h3>
+<h3 id="简述主从复制以及读写分离的使用场景-shopee18次">简述主从复制以及读写分离的使用场景 【[Shopee]，，18次】</h3>
+<h3 id="数据库的读写分离的作用是什么如何实现-shopee中等16次">数据库的读写分离的作用是什么？如何实现？ 【[Shopee]，中等，16次】</h3>
+<h3 id="redis-中sentinel-和-cluster-的区别和适用场景是什么-shopee中等16次">Redis 中，sentinel 和 cluster 的区别和适用场景是什么？ 【[Shopee]，中等，16次】</h3>
+<h3 id="简述-redis-持久化中-rdb-以及-aof-方案的优缺点-shopee困难16次">简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[Shopee]，困难，16次】</h3>
+<ul>
+<li>参考一：https://redis.io/topics/persistence</li>
+<li>参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8</li>
+</ul>
+<h3 id="简述数据库中的-acid-分别是什么-shopee简单14次">简述数据库中的 ACID 分别是什么？ 【[Shopee]，简单，14次】</h3>
+<h3 id="什么是数据库事务mysql-为什么会使用-innodb-作为默认选项-shopee中等14次">什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[Shopee]，中等，14次】</h3>
+<ul>
+<li>参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-model.html#:~:text=The%20InnoDB%20transaction%20model%20aims,with%20traditional%20two%2Dphase%20locking.&amp;text=Typically%2C%20several%20users%20are%20permitted,without%20causing%20InnoDB%20memory%20exhaustion.</li>
+<li>参考二：https://draveness.me/mysql-transaction/</li>
+</ul>
+<h3 id="kafka-发送消息是如何保证可靠性的-shopee简单14次">Kafka 发送消息是如何保证可靠性的？ 【[Shopee]，简单，14次】</h3>
+</div>
+				
+				<footer class="entry__footer">
+					
+					
+<div class="entry__share share">
+</div>
+				</footer>
+				
+			</article>
+		</div>
+	</main>
+	
+<div class="authorbox block">
+	<div class="author">
+		<figure class="author__avatar">
+			<img class="author__img" alt="张海余 avatar" src="https://avatars.githubusercontent.com/u/35171365?s=400&amp;u=4028845ffbfa05c281117eee69a561e7e4e268ad&amp;v=4" height="90" width="90">
+		</figure>
+		<div class="author__body">
+			<div class="author__name">
+				张海余
+			</div>
+			<div class="author__bio">张海余的个人博客，好记性不如烂笔头。</div>
+		</div>
+	</div>
+</div>
+	
+
+
+
+	
+
+	</div>
+	<footer class="footer">
+<div class="footer__social social">
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="mailto:zhanghaiyu@hellogroup.com">
+			<svg class="social__icon" aria-label="Email" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M299 268l124 106c-4 4-10 7-17 7H106c-7 0-13-3-17-7l124-106 43 38 43-38zm-43 13L89 138c4-4 10-7 17-7h300c7 0 13 3 17 7L256 281zm54-23l121-105v208L310 258zM81 153l121 105L81 361V153z"/></svg>
+		</a>
+		<a class="social__link" target="_blank" rel="noopener noreferrer" href="https://github.com/fishwin">
+			<svg class="social__icon" aria-label="Github" role="img" width="32" height="32" viewBox="0 0 512 512"><path d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+		</a>
+</div>
+	<div class="footer__copyright">© 2023 张海余的主页. <span class="footer__copyright-credits">Powered by <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/vimux/binario" rel="nofollow noopener" target="_blank">Binario</a> theme.</span></div>
+</footer>
+<script src="/js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+
+<script src="/js/custom.js"></script>
+</body>
+</html>

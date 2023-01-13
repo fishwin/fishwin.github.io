@@ -1212,5 +1212,68 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
 由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
     </item>
     
+    <item>
+      <title>非技术常问</title>
+      <link>https://fishwin.github.io/othertech/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 11:00:30 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/othertech/ms/</guid>
+      <description>项目中最难的地方是哪里？你学习到了什么？ 【[腾讯,阿里,字节跳动,美团]，中等，114次】 未来的职业规划是什么？ 【[腾讯,美团,京东,快手,拼多多]，中等，112次】 你的优势和劣势是什么？ 【[腾讯,阿里,京东,百度]，简单，98次】 最近在看什么书吗，有没有接触过什么新技术？ 【[腾讯,字节跳动,美团,快手]，简单，98次】 最近阅读哪些技术书籍，遇到技术问题是怎么去解决？ 【[阿里]，简单，54次】 你的老师和同学是如何评价你的？ 【[字节跳动,百度]，简单，50次】 与同事沟通的时候，如果遇到冲突了如何解决？ 【[腾讯,阿里]，中等，48次】 能接受多大强度的加班？ 【[阿里,快手,拼多多]，简单，48次】 实习的内容是什么？最大收获是什么？ 【[京东,快手]，简单，46次】 团队合作沟通中遇到过什么问题？ 【[阿里,美团]，中等，38次】 对加班有什么看法？ 【[腾讯]，简单，38次】 请简单自我介绍一下 【[字节跳动]，简单，34次】 最有技术难度的项目是什么？遇到技术难点怎么解决？ 【[阿里,京东]，中等，34次】 简单描述一下自己是怎么样的人？ 【[阿里,快手]，简单，32次】 下一份工作希望学习到什么？ 【[美团]，简单，32次】 最有成就感的项目是什么？ 【[京东,快手]，，28次】 你用过快手吗？说说对对快手的看法，使用上有哪些优缺点 【[快手]，简单，28次】 大学中最具有挑战的事情，怎么解决的？ 【[百度]，简单，26次】 在朋友眼里是一个怎样的人 【[滴滴]，，22次】 成长过程中影响你最深的事件和人 【[美团]，简单，20次】 你的性格和技能上有什么缺点 【[快手]，，18次】 你用过美团吗？说说对对美团的看法，使用上有哪些优缺点 【[美团]，简单，18次】 项目中有哪些难点，有没有提升过系统性能？ 【[滴滴]，，18次】 你用过拼多多吗？说说对对拼多多的看法，使用上有哪些优缺点 【[拼多多]，简单，18次】 为什么想要来快手？ 【[快手]，简单，16次】 学习中遇到的最大的困难是什么？ 【[快手]，，16次】 如何排查生产环境的问题？ 【[阿里]，困难，16次】 项目中有哪些可改进的点以及很优秀的点？ 【[阿里]，中等，16次】 团队中对技术选型有冲突的话怎么解决？ 【[美团]，中等，16次】 如何评价自己学习新知识的能力 【[阿里]，简单，16次】 近几年中，最有成就感的一件事是什么？ 【[百度]，，14次】 为什么要离开现在的公司？ 【[阿里]，简单，14次】 最近一家公司中遇到最大的挑战是什么？ 【[滴滴]，，12次】 对下一家入职的公司主要看重哪些方面？ 【[拼多多]，简单，12次】 自己有哪些不足之处，准备如何提升？ 【[拼多多]，中等，12次】 最近一年内遇到的最有挑战的事情是什么？ 【[腾讯]，中等，10次】 目前为止，坚持得最久一件事情是什么？ 【[阿里]，简单，10次】 你的老师和同学是如何评价你的？ 【[Shopee]，，22次】 你对 Shopee 了解多少？你选择 Shopee 的原因是什么？ 【[Shopee]，，22次】 最近在看什么书以及技术文章？ 【[Shopee]，，14次】 How to make quick decision with insufficient information?</description>
+    </item>
+    
+    <item>
+      <title>数据库八股文</title>
+      <link>https://fishwin.github.io/db/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:59:27 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/db/ms/</guid>
+      <description>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev.</description>
+    </item>
+    
+    <item>
+      <title>分布式八股文</title>
+      <link>https://fishwin.github.io/distributiton/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:58:44 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/distributiton/ms/</guid>
+      <description>电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror.</description>
+    </item>
+    
+    <item>
+      <title>网络八股文</title>
+      <link>https://fishwin.github.io/net/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:56:51 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/net/ms/</guid>
+      <description>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，476次】  参考一：https://hit-alibaba.github.io/interview/basic/network/TCP.html 参考二：https://zhuanlan.zhihu.com/p/53374516  HTTP 与 HTTPS 有哪些区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,拼多多]，中等，363次】  参考一：https://www.keycdn.com/blog/difference-between-http-and-https 参考二：https://www.runoob.com/w3cnote/http-vs-https.html  从输入 URL 到展现页面的全过程 【[腾讯,阿里,字节跳动,美团,京东,百度,快手,拼多多]，困难，362次】  参考一：https://github.com/alex/what-happens-when  TCP 与 UDP 在网络协议中的哪一层，他们之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，简单，305次】  参考一：https://www.guru99.com/tcp-vs-udp-understanding-the-difference.html 参考二：https://developer.aliyun.com/article/454541  TCP 怎么保证可靠传输？ 【[腾讯,阿里,字节跳动,美团,京东,快手,拼多多]，中等，260次】  参考一：https://www.cs.colostate.edu/~christos/cs557s12/Slides/05TCP.pdf 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93  简述 HTTP 1.0，1.1，2.0 的主要区别 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，简单，190次】  参考一：https://www.digitalocean.com/community/tutorials/http-1-1-vs-http-2-what-s-the-difference 参考二：https://juejin.cn/post/6844903489596833800  TCP 中常见的拥塞控制算法有哪些？ 【[腾讯,阿里,字节跳动,百度]，中等，170次】  参考一：https://zh.wikipedia.org/wiki/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93  什么是跨域，什么情况下会发生跨域请求？ 【[阿里,字节跳动,滴滴,腾讯,京东,百度]，中等，164次】  参考一：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS  Cookie 和 Session 的关系和区别是什么？ 【[腾讯,阿里,字节跳动,美团,京东,滴滴]，简单，136次】 HTTP 中 GET 和 POST 区别 【[腾讯,阿里,字节跳动,美团,滴滴,拼多多]，简单，132次】  参考一：https://www.</description>
+    </item>
+    
+    <item>
+      <title>操作系统八股文</title>
+      <link>https://fishwin.github.io/os/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:56:13 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/ms/</guid>
+      <description>进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】  参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】  参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5  简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】  参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&amp;ndash;select&amp;ndash;poll&amp;ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html  简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】  参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007  线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】  参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html  什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】  参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters  创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】  参考一：https://www.</description>
+    </item>
+    
+    <item>
+      <title>算法常考</title>
+      <link>https://fishwin.github.io/algorithm/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:55:39 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/algorithm/ms/</guid>
+      <description>JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215.</description>
+    </item>
+    
+    <item>
+      <title>Golang八股文</title>
+      <link>https://fishwin.github.io/golang/ms/</link>
+      <pubDate>Sun, 13 Jan 2019 10:54:17 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/golang/ms/</guid>
+      <description>简述 slice 的底层原理，slice 和数组的区别是什么？ 【[腾讯,字节跳动]，简单，26次】 简述 Golang 垃圾回收的机制 【[腾讯,字节跳动]，中等，24次】 简述 defer 的执行顺序 【[腾讯,字节跳动,京东]，中等，22次】 简单介绍 GMP 模型以及该模型的优点 【[字节跳动]，困难，18次】 简述 Goroutine 的调度流程 【[腾讯]，困难，16次】 协程与进程，线程的区别是什么？协程有什么优势？ 【[腾讯,字节跳动]，简单，14次】 Golang 是如何实现 Maps 的？ 【[腾讯]，简单，10次】 Golang 有哪些优缺点、错误处理有什么优缺点？ 【[字节跳动]，简单，8次】 两次 GC 周期重叠会引发什么问题，GC 触发机制是什么样的？ 【[字节跳动]，简单，8次】 Channels 怎么保证线程安全？ 【[腾讯]，中等，6次】 有缓存的管道和没有缓存的管道区别是什么？ 【[腾讯]，简单，6次】 Golang 的一个协程能保证绑定在一个内核线程上吗？ 【[腾讯]，简单，4次】 Golang 的协程可以自己主动让出 CPU 吗？ 【[腾讯]，简单，4次】 Maps 是线程安全的吗？怎么解决它的并发安全问题？ 【[腾讯]，简单，4次】 Golang 的协程通信方式有哪些？ 【[字节跳动]，中等，4次】 简述 Golang 的伪抢占式调度 【[字节跳动]，中等，4次】 什么是 goroutine 泄漏 【[字节跳动]，简单，4次】 groutinue 什么时候会被挂起？ 【[字节跳动]，简单，4次】 </description>
+    </item>
+    
   </channel>
 </rss>
