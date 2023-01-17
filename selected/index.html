@@ -158,6 +158,17 @@
 			
 				<div class="card card--1col">
 					<article class="entry card__box block">
+	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/sync.map/">通过实例深入理解sync.Map的工作原理</a></h1>
+	<div class="entry__content">Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
+	<div class="entry__meta meta mt tar">
+	<time class="entry__meta-published meta-published" datetime="2022-12-27T18:25:06&#43;08:00">2022年12月27日</time>
+	</div>
+</article>
+				</div>
+			
+				<div class="card card--1col">
+					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">浅析Mysql事务ACID原理</a></h1>
 	<div class="entry__content">innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
  ACID 事务的四大特性，简称ACID
@@ -281,42 +292,6 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
 type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:00&#43;08:00">2022年11月24日</time>
-	</div>
-</article>
-				</div>
-			
-				<div class="card card--1col">
-					<article class="entry card__box block">
-	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/io%E6%A8%A1%E5%9E%8B/">IO模型</a></h1>
-	<div class="entry__content">阻塞I/O
-读写文件，网络I/O。当发生读写文件或网络I/O读写时，操作会阻塞当前线程，直到完成I/O操作，才能继续向下执行。
-一般采用多进程或多线程的方式来解决此类问题，但是由于过多的进程或过多的线程都会造成大量的资源浪费，并且多线程上下文切换，也会带来很大的开销
-执行流程：
-1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
-总结：
-​	上述整个过程，当前用户线程是阻塞等待的。
-  非阻塞I/O
-当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
-执行过程：
-  应用程序发起系统调用，进入到内核空间
-  如果内核空间数据还没准备好，则直接返回error。
-  应用程序会定时轮询，数据是否准备好了
-  数据准备好之后，则将数据从内核空间拷贝到用户空间
-  应用程序拿到数据之后，进行后续处理
-总结：
-不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
-    IO多路复用
-一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
-执行过程：
-1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
-总结：
-​	多路复用本质也是同步I/O
-  信号驱动I/O
-用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
-执行过程：
-1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</div>
-	<div class="entry__meta meta mt tar">
-	<time class="entry__meta-published meta-published" datetime="2021-11-24T19:25:48&#43;08:00">2021年11月24日</time>
 	</div>
 </article>
 				</div>
