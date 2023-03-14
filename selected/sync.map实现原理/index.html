@@ -10,28 +10,23 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="Sync.Map 实现原理" />
 <meta property="og:description" content="数据结构
-type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
-sync.Map 的实现原理可概括为：
-两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考：" />
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" /><meta property="article:section" content="selected" />
 <meta property="article:published_time" content="2022-11-24T17:07:00+08:00" />
 <meta property="article:modified_time" content="2022-11-24T17:07:00+08:00" />
 
+
 		<meta itemprop="name" content="Sync.Map 实现原理">
 <meta itemprop="description" content="数据结构
-type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
-sync.Map 的实现原理可概括为：
-两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考："><meta itemprop="datePublished" content="2022-11-24T17:07:00+08:00" />
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe."><meta itemprop="datePublished" content="2022-11-24T17:07:00+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T17:07:00+08:00" />
 <meta itemprop="wordCount" content="96">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Sync.Map 实现原理"/>
 <meta name="twitter:description" content="数据结构
-type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
-sync.Map 的实现原理可概括为：
-两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考："/>
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe."/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -158,37 +153,37 @@ sync.Map 的实现原理可概括为：
 	</div>
 				<h1 class="entry__title">Sync.Map 实现原理</h1>
 				<div class="entry__content"><p>数据结构</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Map</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//互斥锁，用于锁定dirty map
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mu</span> <span style="color:#a6e22e">Mutex</span>    
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">read</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">Value</span> 
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// dirty是一个当前最新的map，允许读写
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">dirty</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span> 
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">misses</span> <span style="color:#66d9ef">int</span> 
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">readOnly</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// read的map, 用于存储所有read数据
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">m</span>       <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 如果数据在dirty中但没有在read中，该值为true,作为修改标识
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">amended</span> <span style="color:#66d9ef">bool</span> 
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// entry 为 Map.dirty 的具体map值
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">entry</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//  其他: 表示存着真正的数据
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">p</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// *interface{}
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p>逻辑流程图</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Map</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">//互斥锁，用于锁定dirty map
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mu</span> <span style="color:#a6e22e">Mutex</span>    
+    
+    <span style="color:#75715e">//优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">read</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">Value</span> 
+    
+    <span style="color:#75715e">// dirty是一个当前最新的map，允许读写
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">dirty</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span> 
+    
+    <span style="color:#75715e">// 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">misses</span> <span style="color:#66d9ef">int</span> 
+}
+
+<span style="color:#75715e">// readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">readOnly</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// read的map, 用于存储所有read数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">m</span>       <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>
+    
+    <span style="color:#75715e">// 如果数据在dirty中但没有在read中，该值为true,作为修改标识
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">amended</span> <span style="color:#66d9ef">bool</span> 
+}
+
+<span style="color:#75715e">// entry 为 Map.dirty 的具体map值
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">entry</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#75715e">// nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//  其他: 表示存着真正的数据
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">p</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// *interface{}
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>逻辑流程图</p>
 <p><img src="/images/sync_map.jpeg" alt=""></p>
 <p><code>sync.Map</code> 的实现原理可概括为：</p>
 <ul>

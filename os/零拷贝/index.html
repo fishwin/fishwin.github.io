@@ -11,34 +11,25 @@
 		<meta property="og:title" content="零拷贝" />
 <meta property="og:description" content="DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-传统文件传输过程
-应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap&#43;write实现零拷贝
-应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
-函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
-应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
-前提
-网卡支持SG-DMA技术
-执行过程
-应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术" />
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/os/%E9%9B%B6%E6%8B%B7%E8%B4%9D/" /><meta property="article:section" content="os" />
 <meta property="article:published_time" content="2022-11-24T19:29:38+08:00" />
 <meta property="article:modified_time" content="2022-11-24T19:29:38+08:00" />
 
+
 		<meta itemprop="name" content="零拷贝">
 <meta itemprop="description" content="DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-传统文件传输过程
-应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap&#43;write实现零拷贝
-应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
-函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
-应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
-前提
-网卡支持SG-DMA技术
-执行过程
-应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术"><meta itemprop="datePublished" content="2022-11-24T19:29:38+08:00" />
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程"><meta itemprop="datePublished" content="2022-11-24T19:29:38+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T19:29:38+08:00" />
 <meta itemprop="wordCount" content="93">
 <meta itemprop="keywords" content="" />
@@ -46,16 +37,11 @@
 <meta name="twitter:title" content="零拷贝"/>
 <meta name="twitter:description" content="DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-传统文件传输过程
-应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap&#43;write实现零拷贝
-应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
-函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
-应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
-前提
-网卡支持SG-DMA技术
-执行过程
-应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术"/>
+  传统文件传输过程
+ 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap&#43;write实现零拷贝
+ 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
+  函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -233,12 +219,12 @@
 <ul>
 <li>
 <p>函数原型</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// out_fd  目的端
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// in_fd 源端
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// offset 源端的偏移
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// count 源端需要复制数据的长度
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">ssize_t</span> <span style="color:#a6e22e">sendfile</span>(<span style="color:#66d9ef">int</span> out_fd, <span style="color:#66d9ef">int</span> in_fd, <span style="color:#66d9ef">off_t</span> <span style="color:#f92672">*</span>offset, <span style="color:#66d9ef">size_t</span> count);
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// out_fd  目的端
+</span><span style="color:#75715e">// in_fd 源端
+</span><span style="color:#75715e">// offset 源端的偏移
+</span><span style="color:#75715e">// count 源端需要复制数据的长度
+</span><span style="color:#75715e"></span>ssize_t <span style="color:#a6e22e">sendfile</span>(<span style="color:#66d9ef">int</span> out_fd, <span style="color:#66d9ef">int</span> in_fd, off_t <span style="color:#f92672">*</span>offset, size_t count);
+</code></pre></div></li>
 <li>
 <p>执行过程</p>
 <p><img src="/images/sendfile2.1.png" alt=""></p>
@@ -294,12 +280,12 @@
 </li>
 <li>
 <p>nginx</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">http</span> {
-</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">sendfile</span> <span style="color:#66d9ef">on</span>  <span style="color:#e6db74">//</span> <span style="color:#e6db74">默认开启</span>
-</span></span><span style="display:flex;"><span><span style="color:#e6db74">...</span>
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">http</span> {
+<span style="color:#f92672">...</span>
+    <span style="color:#e6db74">sendfile</span> <span style="color:#66d9ef">on</span>  <span style="color:#e6db74">//</span> <span style="color:#e6db74">默认开启</span>
+<span style="color:#e6db74">...</span>
+<span style="color:#960050;background-color:#1e0010">}</span>
+</code></pre></div></li>
 </ul>
 </li>
 <li>

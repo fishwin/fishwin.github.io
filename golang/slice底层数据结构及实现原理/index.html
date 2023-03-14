@@ -9,62 +9,51 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="Slice底层数据结构及实现原理" />
-<meta property="og:description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组） len int // 长度 cap int // 容量 } 切片长度
+<meta property="og:description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
 切片长度是切片引用的元素数目
-切片容量
+  切片容量
 容量是底层数组的长度
-slice作为参数传递
+  slice作为参数传递
 当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } } 扩容机制
+func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } }   扩容机制
 当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-nil 切片
+  nil 切片
 var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-空切片
-slice2 := make([]int,0) slice2 与 nil比较结果为false，json.Marshal结果为[]
-切片的切片操作
-切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：
-func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6,7,8,9} s2 := s[2:5] fmt." />
+  空切片" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" /><meta property="article:section" content="golang" />
 <meta property="article:published_time" content="2019-11-23T21:36:33+08:00" />
 <meta property="article:modified_time" content="2019-11-23T21:36:33+08:00" />
 
+
 		<meta itemprop="name" content="Slice底层数据结构及实现原理">
-<meta itemprop="description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组） len int // 长度 cap int // 容量 } 切片长度
+<meta itemprop="description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
 切片长度是切片引用的元素数目
-切片容量
+  切片容量
 容量是底层数组的长度
-slice作为参数传递
+  slice作为参数传递
 当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } } 扩容机制
+func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } }   扩容机制
 当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-nil 切片
+  nil 切片
 var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-空切片
-slice2 := make([]int,0) slice2 与 nil比较结果为false，json.Marshal结果为[]
-切片的切片操作
-切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：
-func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6,7,8,9} s2 := s[2:5] fmt."><meta itemprop="datePublished" content="2019-11-23T21:36:33+08:00" />
+  空切片"><meta itemprop="datePublished" content="2019-11-23T21:36:33+08:00" />
 <meta itemprop="dateModified" content="2019-11-23T21:36:33+08:00" />
 <meta itemprop="wordCount" content="263">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Slice底层数据结构及实现原理"/>
-<meta name="twitter:description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组） len int // 长度 cap int // 容量 } 切片长度
+<meta name="twitter:description" content="// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
 切片长度是切片引用的元素数目
-切片容量
+  切片容量
 容量是底层数组的长度
-slice作为参数传递
+  slice作为参数传递
 当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } } 扩容机制
+func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i &#43;&#43; { *s = append(*s, i) } }   扩容机制
 当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-nil 切片
+  nil 切片
 var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-空切片
-slice2 := make([]int,0) slice2 与 nil比较结果为false，json.Marshal结果为[]
-切片的切片操作
-切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：
-func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6,7,8,9} s2 := s[2:5] fmt."/>
+  空切片"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -190,13 +179,13 @@ func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6
 	<time class="entry__meta-published meta-published" datetime="2019-11-23T21:36:33&#43;08:00">2019年11月23日</time>
 	</div>
 				<h1 class="entry__title">Slice底层数据结构及实现原理</h1>
-				<div class="entry__content"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// runtime/slice.go
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">slice</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">array</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 元素指针（底层数组）
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">len</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 长度 
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cap</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 容量
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><ul>
+				<div class="entry__content"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// runtime/slice.go
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">slice</span> <span style="color:#66d9ef">struct</span> {
+    <span style="color:#a6e22e">array</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">// 元素指针（底层数组）
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">len</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 长度 
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cap</span>   <span style="color:#66d9ef">int</span> <span style="color:#75715e">// 容量
+</span><span style="color:#75715e"></span>}
+</code></pre></div><ul>
 <li>
 <p>切片长度</p>
 <p>切片长度是切片引用的元素数目</p>
@@ -208,12 +197,12 @@ func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6
 <li>
 <p>slice作为参数传递</p>
 <p>当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendSlice</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">int</span>) {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span> = append(<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">i</span>)
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendSlice</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">int</span>) {
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">++</span> {
+		<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span> = append(<span style="color:#f92672">*</span><span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">i</span>)
+	}
+}
+</code></pre></div></li>
 <li>
 <p>扩容机制</p>
 <p>当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。</p>
@@ -231,30 +220,30 @@ func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6
 <p>切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：</p>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span> []<span style="color:#66d9ef">int</span>) {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">_</span> = append(<span style="color:#a6e22e">a</span>, <span style="color:#ae81ff">0</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">9</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">5</span>]
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5 6 7 8 9]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [3 4 5]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">88</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">1</span>] = <span style="color:#ae81ff">88</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">2</span>] = <span style="color:#ae81ff">88</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 88 88 88 6 7 8 9]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [88 88 88]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 未指定容量，由于切片操作复用原底层数组，所以append操作会直接修改原底层数组上的值
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// 输出 [1 2 0 4 5]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">b</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 指定容量，在append时，发现容量不足，则需要扩容，不会修改原底层数组上的值
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">b</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5]
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span> []<span style="color:#66d9ef">int</span>) {
+	<span style="color:#a6e22e">_</span> = append(<span style="color:#a6e22e">a</span>, <span style="color:#ae81ff">0</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">9</span>}
+	<span style="color:#a6e22e">s2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">5</span>]
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5 6 7 8 9]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [3 4 5]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">0</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">1</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">s2</span>[<span style="color:#ae81ff">2</span>] = <span style="color:#ae81ff">88</span>
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">// 输出 [1 2 88 88 88 6 7 8 9]
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s2</span>) <span style="color:#75715e">// 输出 [88 88 88]
+</span><span style="color:#75715e"></span>    
+	<span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>}
+	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 未指定容量，由于切片操作复用原底层数组，所以append操作会直接修改原底层数组上的值
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// 输出 [1 2 0 4 5]
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>}
+	<span style="color:#a6e22e">doAppend</span>(<span style="color:#a6e22e">b</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">2</span>:<span style="color:#ae81ff">2</span>]) <span style="color:#75715e">// 指定容量，在append时，发现容量不足，则需要扩容，不会修改原底层数组上的值
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">b</span>) <span style="color:#75715e">// 输出 [1 2 3 4 5]
+</span><span style="color:#75715e"></span>}
+</code></pre></div><ul>
 <li>
 <p>copy 函数 func copy(dst, src []Type) int</p>
 <p>copy函数是值拷贝，新的拷贝切片修改不会影响旧切片</p>
@@ -262,42 +251,42 @@ func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6
 </li>
 <li>
 <p>slice常用操作</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//删除
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">remove</span>(<span style="color:#a6e22e">slice</span> []<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">interface</span>{} {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">slice</span>[:<span style="color:#a6e22e">i</span>], <span style="color:#a6e22e">slice</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:]<span style="color:#f92672">...</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//插入
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">insert</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">value</span> <span style="color:#66d9ef">interface</span>{}) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rear</span> <span style="color:#f92672">:=</span> append([]<span style="color:#66d9ef">interface</span>{}{}, (<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[<span style="color:#a6e22e">index</span>:]<span style="color:#f92672">...</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append(append((<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[:<span style="color:#a6e22e">index</span>], <span style="color:#a6e22e">value</span>), <span style="color:#a6e22e">rear</span><span style="color:#f92672">...</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//清空slice
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">empty</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//    *slice = nil
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append([]<span style="color:#66d9ef">interface</span>{}{})
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//删除
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">remove</span>(<span style="color:#a6e22e">slice</span> []<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">interface</span>{} {
+    <span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">slice</span>[:<span style="color:#a6e22e">i</span>], <span style="color:#a6e22e">slice</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:]<span style="color:#f92672">...</span>)
+}
+
+<span style="color:#75715e">//插入
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">insert</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">value</span> <span style="color:#66d9ef">interface</span>{}) {
+    <span style="color:#a6e22e">rear</span> <span style="color:#f92672">:=</span> append([]<span style="color:#66d9ef">interface</span>{}{}, (<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[<span style="color:#a6e22e">index</span>:]<span style="color:#f92672">...</span>)
+    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append(append((<span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span>)[:<span style="color:#a6e22e">index</span>], <span style="color:#a6e22e">value</span>), <span style="color:#a6e22e">rear</span><span style="color:#f92672">...</span>)
+}
+
+<span style="color:#75715e">//清空slice
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">empty</span>(<span style="color:#a6e22e">slice</span> <span style="color:#f92672">*</span>[]<span style="color:#66d9ef">interface</span>{}) {
+    <span style="color:#75715e">//    *slice = nil
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">slice</span> = append([]<span style="color:#66d9ef">interface</span>{}{})
+}
+</code></pre></div></li>
 <li>
 <p>range</p>
 <p>使用range遍历切片，拿到的value时切片元素的值拷贝</p>
 </li>
 <li>
 <p>在循环中可使用s[0:0]复用切片，而不需要每次循环重新申请新的切片</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> []<span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span> ;<span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">s</span> = <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">0</span>] <span style="color:#75715e">// 这里可以复用切片，否则就需要每一次循环都需要重新申请一个新的slice
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		}
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">i</span>; <span style="color:#a6e22e">j</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">j</span> <span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">s</span> = append(<span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">j</span>)
-</span></span><span style="display:flex;"><span>		}
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> []<span style="color:#66d9ef">int</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span> ;<span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">s</span> = <span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">0</span>] <span style="color:#75715e">// 这里可以复用切片，否则就需要每一次循环都需要重新申请一个新的slice
+</span><span style="color:#75715e"></span>		}
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">i</span>; <span style="color:#a6e22e">j</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">j</span> <span style="color:#f92672">++</span> {
+			<span style="color:#a6e22e">s</span> = append(<span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">j</span>)
+		}
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>)
+	}
+}
+</code></pre></div></li>
 </ul>
 </div>
 				

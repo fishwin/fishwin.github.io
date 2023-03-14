@@ -26,42 +26,30 @@ https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.ht
       
       <guid>https://fishwin.github.io/algorithm/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
       <description>冒泡排序
-思路
+  思路
 设对长度为n的数组进行排序，则需要进行n-1次循环，并且每次循环两两比较相邻的两个数字，将较大的数字移动到后面。
-算法复杂度
-优缺点
-选择排序
-思路
+  算法复杂度
+  优缺点
+    选择排序
+  思路
 设对长度为n的数组进行排序，首先在所有元素中选择一个最小的元素，交换到最前面，然后在剩下的元素中选出一个最小的，交换到第二位，依次类推，所有元素有序
-算法复杂度
-优缺点
-插入排序
-思路
+  算法复杂度
+  优缺点
+    插入排序
+  思路
 设对长度为n的数组进行排序，初始时将整个数组划分为两块，第一个元素为有序序列，第二个元素为无序序列。然后遍历无序序列，并将其插入到有序序列的合适位置
-算法复杂度
-优缺点
-希尔排序
-思路
+  算法复杂度
+  优缺点
+    希尔排序
+  思路
 设对长度为n的数组进行排序，初始设置gap=n/2，并依据gap将所有元素分组，并对每个组进行插入排序。然后gap=gap/2，
 再分组，再插入排序，直到gap=1，进行最后一次插入排序即可。
-算法复杂度
-优缺点
-归并排序
-思路
+  算法复杂度
+  优缺点
+    归并排序
+  思路
 设对长度为n的数组进行排序，递归每次将数组分成等长的两部分，并每次合并两个有序的序列
-算法复杂度
-优缺点
-快速排序
-思路
-设对长度为n的数组进行排序，首先遍历查找所有比第一个元素小的元素，并放到第一个元素的左边，这样比这个元素大的元素全在右边，然后再对左右两侧递归执行相同的操作。
-堆排序
-思路
-设对长度为n的数组进行升序排序，首先对所有元素构造大顶堆，然后将堆的顶点与数组最后一个元素进行交换。然后再对剩下的n-1个元素，重复以上操作，构造大顶堆，与末尾元素交换，依此类推，可实现升序排列。
-大顶堆
-一棵完全二叉树(除了最下层外都是满的)，并且每个节点都大于等于左右子节点的值 小顶堆
-一棵完全二叉树，并且每个节点都小于等于左右子树。 参考
-https://www.cnblogs.com/onepixel/articles/7674659.html
-https://www.cnblogs.com/chengxiao/p/6104371.html</description>
+  算法复杂度</description>
     </item>
     
     <item>
@@ -70,7 +58,7 @@ https://www.cnblogs.com/chengxiao/p/6104371.html</description>
       <pubDate>Sun, 13 Jan 2019 10:55:39 +0800</pubDate>
       
       <guid>https://fishwin.github.io/algorithm/ms/</guid>
-      <description>JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】 参考一：https://zhuanlan.zhihu.com/p/29881777 使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】 链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/ 146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】 链接：https://leetcode-cn.com/problems/lru-cache/ 206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】 链接：https://leetcode-cn.com/problems/reverse-linked-list/ 19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】 链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/ 10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】 参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md 141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】 链接：https://leetcode-cn.com/problems/linked-list-cycle/ 快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】 参考一：https://zhuanlan.zhihu.com/p/267133203 21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】 链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/ 102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】 链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/ 112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】 链接：https://leetcode-cn.com/problems/path-sum/ 215. 数组中的第K个最大元素 【[腾讯,字节跳动,美团,快手]，中等，112次】 链接：https://leetcode-cn.com/problems/kth-largest-element-in-an-array/ 53. 最大子序和 【[腾讯,字节跳动,快手]，简单，108次】 链接：https://leetcode-cn.com/problems/maximum-subarray/ 232. 用栈实现队列 【[腾讯,阿里,美团,百度,滴滴]，简单，104次】 链接：https://leetcode-cn.com/problems/implement-queue-using-stacks/ 300. 最长递增子序列 【[腾讯,字节跳动,美团,百度]，中等，103次】 链接：https://leetcode-cn.com/problems/longest-increasing-subsequence/ 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL 【[字节跳动,百度,拼多多]，困难，92次】 33.</description>
+      <description>JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215.</description>
     </item>
     
   </channel>

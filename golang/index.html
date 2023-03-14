@@ -13,6 +13,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fishwin.github.io/golang/" />
 
+
 		<meta itemprop="name" content="Golangs">
 <meta itemprop="description" content="张海余的个人博客">
 		<meta name="twitter:card" content="summary"/>
@@ -144,11 +145,11 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/channel/">Channel实现原理</a></h1>
-	<div class="entry__content">Go语言并发哲学 Do not communicate by sharing memory; instead, share memory by communicating.
+	<div class="entry__content">Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
 不要通过共享内存来通信，而要通过通信来实现内存共享。
-channel 的底层就是通过 mutex 来控制并发的。
+ channel 的底层就是通过 mutex 来控制并发的。
 只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
-数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 循环队列中每个数组元素的大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 循环队列中每个数组元素的类型 sendx uint // 记录循环队列中发送操作处理到的位置下标 recvx uint // 记录循环队列中接收操作处理到的位置下标 recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine next *sudog // 指向双向链表的下一个节点 prev *sudog // 指向双向链表的前一个节点 elem unsafe.</div>
+ 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2023-01-08T18:27:55&#43;08:00">2023年01月08日</time>
 	</div>
@@ -159,7 +160,7 @@ channel 的底层就是通过 mutex 来控制并发的。
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/sync.map/">通过实例深入理解sync.Map的工作原理</a></h1>
 	<div class="entry__content">Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
-原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读 go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-12-27T18:25:06&#43;08:00">2022年12月27日</time>
 	</div>
@@ -179,12 +180,13 @@ channel 的底层就是通过 mutex 来控制并发的。
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/">go逃逸分析</a></h1>
-	<div class="entry__content">定义
+	<div class="entry__content">  定义
 逃逸分析就是由编译器决定内存分配的位置，栈还是堆，在编译阶段完成。
-栈与堆的区别
-栈上分配内存效率更高 栈上分配的内存不需要GC处理，堆上的内存使用完毕后需要GC处理 逃逸场景
-返回局部变量的指针 栈空间不足（空间开辟过大） 动态类型逃逸比如interface 闭包引用对象逃逸 函数传递指针真的比传值效率高吗
-不一定，因为指针传递会产生逃逸，会给GC带来压力。</div>
+  栈与堆的区别
+ 栈上分配内存效率更高 栈上分配的内存不需要GC处理，堆上的内存使用完毕后需要GC处理    逃逸场景
+ 返回局部变量的指针 栈空间不足（空间开辟过大） 动态类型逃逸比如interface 闭包引用对象逃逸    函数传递指针真的比传值效率高吗
+不一定，因为指针传递会产生逃逸，会给GC带来压力。
+  </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:10:57&#43;08:00">2022年11月24日</time>
 	</div>
@@ -194,7 +196,7 @@ channel 的底层就是通过 mutex 来控制并发的。
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/select/">select，select是随机的还是顺序的？</a></h1>
-	<div class="entry__content">select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。 参考：
+	<div class="entry__content">select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。  参考：
 https://wudaijun.com/2017/10/go-select/</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:10:09&#43;08:00">2022年11月24日</time>
@@ -206,11 +208,11 @@ https://wudaijun.com/2017/10/go-select/</div>
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/defer/">Defer</a></h1>
 	<div class="entry__content">数据结构
-type _defer struct { siz int32 started bool sp uintptr pc uintptr fn *funcval _panic *_panic link *_defer // 链表指针 } 多个defer会形成一个链表，后面声明的defer会放到链表的头部,运行时，从前向后运行。
-defer 一般用于资源释放，如下 f,err := os.Open(filename) if err != nil { panic(err) } defer f.Close() 多个defer，执行顺序类似于栈（后进先出），下面的先执行
-defer 与 return的执行顺序
-返回值=x 执行defer语句 空的return 如以下几个例子
-// 例1 func f() (result int) { defer func() { result++ }() return 0 } // 可改写为 func f() (result int) { result = 0 defer func() { result++ }() return } // 所以例1返回1 //============================================================ // 例2 func f() (r int) { t := 5 defer func() { t = t + 5 }() return t } // 可改写为 func f() (r int) { t := 5 r = t defer func() { t = t + 5 }() return } // 因为t赋值给r后，defer语句中并不会改变r的值，所以返回5 //============================================================ // 例3 func f() (r int) { defer func(r int) { r = r + 5 }(r) return 1 } // 可改写为 func f() (r int) { r = 1 defer func(r int) { r = r + 5 }(r) return } // 因为r被赋值为1后，defer语句是用的是r的拷贝（值传递），所以r的值不会发生变化，返回值为1 被deferred的函数的参数在defer时确定</div>
+type _defer struct { siz int32 started bool sp uintptr pc uintptr fn *funcval _panic *_panic link *_defer // 链表指针 }   多个defer会形成一个链表，后面声明的defer会放到链表的头部,运行时，从前向后运行。
+ defer 一般用于资源释放，如下  f,err := os.Open(filename) if err != nil { panic(err) } defer f.Close()   多个defer，执行顺序类似于栈（后进先出），下面的先执行
+  defer 与 return的执行顺序
+ 返回值=x 执行defer语句 空的return  如以下几个例子
+// 例1 func f() (result int) { defer func() { result++ }() return 0 } // 可改写为 func f() (result int) { result = 0 defer func() { result++ }() return } // 所以例1返回1  //============================================================  // 例2 func f() (r int) { t := 5 defer func() { t = t + 5 }() return t } // 可改写为 func f() (r int) { t := 5 r = t defer func() { t = t + 5 }() return } // 因为t赋值给r后，defer语句中并不会改变r的值，所以返回5  //============================================================  // 例3 func f() (r int) { defer func(r int) { r = r + 5 }(r) return 1 } // 可改写为 func f() (r int) { r = 1 defer func(r int) { r = r + 5 }(r) return } // 因为r被赋值为1后，defer语句是用的是r的拷贝（值传递），所以r的值不会发生变化，返回值为1    被deferred的函数的参数在defer时确定</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:08:40&#43;08:00">2022年11月24日</time>
 	</div>
@@ -221,7 +223,7 @@ defer 与 return的执行顺序
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">Chanel底层原理</a></h1>
 	<div class="entry__content">数据结构
-type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 元素大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 元素类型 sendx uint // 记录循环队列中发送操作处理到的位置（索引） recvx uint // 记录循环队列中接收操作处理到的位置（索引） recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 prev *sudog // 双向链表前指针 elem unsafe.</div>
+type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 元素大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 元素类型 	sendx uint // 记录循环队列中发送操作处理到的位置（索引） 	recvx uint // 记录循环队列中接收操作处理到的位置（索引） 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 	last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 	prev *sudog // 双向链表前指针 	elem unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:48&#43;08:00">2022年11月24日</time>
 	</div>
@@ -232,9 +234,7 @@ type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint 
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">Sync.Map 实现原理</a></h1>
 	<div class="entry__content">数据结构
-type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
-sync.Map 的实现原理可概括为：
-两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考：</div>
+type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:00&#43;08:00">2022年11月24日</time>
 	</div>
@@ -244,7 +244,7 @@ sync.Map 的实现原理可概括为：
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstruct/">同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？</a></h1>
-	<div class="entry__content"> 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行 </div>
+	<div class="entry__content"> 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:02:53&#43;08:00">2022年11月24日</time>
 	</div>
@@ -255,26 +255,16 @@ sync.Map 的实现原理可概括为：
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">Map实现原理</a></h1>
 	<div class="entry__content">hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法
-哈希冲突（哈希碰撞）
-开放寻址 如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
-拉链法（golang map使用拉链法解决hash冲突）
+  哈希冲突（哈希碰撞）
+ 开放寻址  如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
+ 拉链法（golang map使用拉链法解决hash冲突）
 链表的数组
-如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
-再hash法
+  如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
+ 再hash法
 当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。
-golang map数据结构
+    golang map数据结构
 golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
-type hmap struct { count int // 记录当前hash表元素数量 flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用 buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) } hash表扩容
-当hash表中的元素越来越多时，hash冲突的概率就会越来越高，hash表中桶的链表会越来越长，导致遍历链表耗时变长，这时就需要hash表扩容，一般每次扩容两倍。
-渐进式rehash
-map在rehash时，和redis一样采用渐进式rehash，使用oldbuckets字段保存旧的hash表，不一次性迁移完所有的buckets，而是把key的迁移分摊到每次的插入和删除操作中，在全部迁移完成后，释放oldbuckets。
-读取数据
-在扩容期间会发生读oldbuckets的情况，如果oldbuckets还未迁移完成则读oldbuckets
-触发扩容时机
-装载因子大于6.5（即每个桶平均存储6.5个key，通常每个桶最大为8）（装载因子：元素数量/桶数量） 哈希使用了太多的溢出桶（当hash冲突数超过桶最大数量时，会存储在溢出桶中，并形成一个链表） 参考：
-https://juejin.im/entry/6844903793927143438
-https://juejin.im/post/6844903940866179079#heading-3
-https://juejin.im/post/6844904078636482574#heading-15</div>
+type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-23T21:37:28&#43;08:00">2022年11月23日</time>
 	</div>

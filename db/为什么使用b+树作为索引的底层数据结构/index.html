@@ -10,82 +10,47 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？" />
 <meta property="og:description" content="B树（平衡多路搜索树）
-图示
-特征
-每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度 查询伪代码
-BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key); 时间复杂度
+  图示
+  特征
+ 每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key);   时间复杂度
 O(log n)
-B&#43;树
-图示
-特征
-子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表 时间复杂度
-O(log n)
-局部性原理与磁盘预读
-局部性原理
-当一个数据被用到时，其附近的数据通常也会被用到
-磁盘预读
-磁盘不是按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置向后读取一定长度放到内存。 预读的长度一般为页（页的大小通常为4k）的整数倍 mysql为什么使用B&#43;树而不是B树作为索引？
-由于mysql通常将数据存放在磁盘中，读取数据就会产生磁盘IO消耗。而B&#43;树的非叶子节点中不保存数据，B树中非叶子节点会保存数据，通常一个节点大小会设置为磁盘页大小，这样B&#43;树每个节点可放更多的key，B树则更少。这样就造成了，B树的高度会比B&#43;树更高，从而会产生更多的磁盘IO消耗。 B&#43;树叶子节点构成链表，更利用范围查找和排序。而B树进行范围查找和排序则要对树进行递归遍历 B树与B&#43;树比较
-B&#43;树层级更少，查找更快 B&#43;树查询速度稳定：由于B&#43;树所有数据都存储在叶子节点，所以查询任意数据的次数都是树的高度h B&#43;树有利于范围查找 B&#43;树全节点遍历更快：所有叶子节点构成链表，全节点扫描，只需遍历这个链表即可 B树优点：如果在B树中查找的数据离根节点近，由于B树节点中保存有数据，那么这时查询速度比B&#43;树快。 为什么不使用红黑树（自平衡二叉搜索树）？
-如果使用红黑树，会使树的高度更高，增加IO消耗
-为什么不使用哈希表
-哈希表对于范围查找和排序效率低，但对于单个数据的查询效率很高。
-参考" />
+    B&#43;树
+  图示
+  特征
+ 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" /><meta property="article:section" content="db" />
 <meta property="article:published_time" content="2022-11-24T19:34:15+08:00" />
 <meta property="article:modified_time" content="2022-11-24T19:34:15+08:00" />
 
+
 		<meta itemprop="name" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？">
 <meta itemprop="description" content="B树（平衡多路搜索树）
-图示
-特征
-每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度 查询伪代码
-BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key); 时间复杂度
+  图示
+  特征
+ 每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key);   时间复杂度
 O(log n)
-B&#43;树
-图示
-特征
-子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表 时间复杂度
-O(log n)
-局部性原理与磁盘预读
-局部性原理
-当一个数据被用到时，其附近的数据通常也会被用到
-磁盘预读
-磁盘不是按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置向后读取一定长度放到内存。 预读的长度一般为页（页的大小通常为4k）的整数倍 mysql为什么使用B&#43;树而不是B树作为索引？
-由于mysql通常将数据存放在磁盘中，读取数据就会产生磁盘IO消耗。而B&#43;树的非叶子节点中不保存数据，B树中非叶子节点会保存数据，通常一个节点大小会设置为磁盘页大小，这样B&#43;树每个节点可放更多的key，B树则更少。这样就造成了，B树的高度会比B&#43;树更高，从而会产生更多的磁盘IO消耗。 B&#43;树叶子节点构成链表，更利用范围查找和排序。而B树进行范围查找和排序则要对树进行递归遍历 B树与B&#43;树比较
-B&#43;树层级更少，查找更快 B&#43;树查询速度稳定：由于B&#43;树所有数据都存储在叶子节点，所以查询任意数据的次数都是树的高度h B&#43;树有利于范围查找 B&#43;树全节点遍历更快：所有叶子节点构成链表，全节点扫描，只需遍历这个链表即可 B树优点：如果在B树中查找的数据离根节点近，由于B树节点中保存有数据，那么这时查询速度比B&#43;树快。 为什么不使用红黑树（自平衡二叉搜索树）？
-如果使用红黑树，会使树的高度更高，增加IO消耗
-为什么不使用哈希表
-哈希表对于范围查找和排序效率低，但对于单个数据的查询效率很高。
-参考"><meta itemprop="datePublished" content="2022-11-24T19:34:15+08:00" />
+    B&#43;树
+  图示
+  特征
+ 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度"><meta itemprop="datePublished" content="2022-11-24T19:34:15+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T19:34:15+08:00" />
 <meta itemprop="wordCount" content="70">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MySQL 为什么使用 B&#43; 树来作索引，对比 B 树它的优点和缺点是什么？"/>
 <meta name="twitter:description" content="B树（平衡多路搜索树）
-图示
-特征
-每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度 查询伪代码
-BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key); 时间复杂度
+  图示
+  特征
+ 每个节点可有多棵子树 每个非叶子节点有n个key，并有n&#43;1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &gt; key) return BTree_Search(point[i]-&gt;node); } return BTree_Search(point[i&#43;1]-&gt;node); } data = BTree_Search(root, my_key);   时间复杂度
 O(log n)
-B&#43;树
-图示
-特征
-子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表 时间复杂度
-O(log n)
-局部性原理与磁盘预读
-局部性原理
-当一个数据被用到时，其附近的数据通常也会被用到
-磁盘预读
-磁盘不是按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置向后读取一定长度放到内存。 预读的长度一般为页（页的大小通常为4k）的整数倍 mysql为什么使用B&#43;树而不是B树作为索引？
-由于mysql通常将数据存放在磁盘中，读取数据就会产生磁盘IO消耗。而B&#43;树的非叶子节点中不保存数据，B树中非叶子节点会保存数据，通常一个节点大小会设置为磁盘页大小，这样B&#43;树每个节点可放更多的key，B树则更少。这样就造成了，B树的高度会比B&#43;树更高，从而会产生更多的磁盘IO消耗。 B&#43;树叶子节点构成链表，更利用范围查找和排序。而B树进行范围查找和排序则要对树进行递归遍历 B树与B&#43;树比较
-B&#43;树层级更少，查找更快 B&#43;树查询速度稳定：由于B&#43;树所有数据都存储在叶子节点，所以查询任意数据的次数都是树的高度h B&#43;树有利于范围查找 B&#43;树全节点遍历更快：所有叶子节点构成链表，全节点扫描，只需遍历这个链表即可 B树优点：如果在B树中查找的数据离根节点近，由于B树节点中保存有数据，那么这时查询速度比B&#43;树快。 为什么不使用红黑树（自平衡二叉搜索树）？
-如果使用红黑树，会使树的高度更高，增加IO消耗
-为什么不使用哈希表
-哈希表对于范围查找和排序效率低，但对于单个数据的查询效率很高。
-参考"/>
+    B&#43;树
+  图示
+  特征
+ 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -231,17 +196,17 @@ B&#43;树层级更少，查找更快 B&#43;树查询速度稳定：由于B&#43;�
 </li>
 <li>
 <p>查询伪代码</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">node</span>, <span style="color:#a6e22e">key</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">foreach</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>)
-</span></span><span style="display:flex;"><span>    {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>[<span style="color:#a6e22e">i</span>] <span style="color:#f92672">==</span> <span style="color:#a6e22e">key</span>) <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">data</span>[<span style="color:#a6e22e">i</span>];
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>[<span style="color:#a6e22e">i</span>] <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">key</span>) <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">point</span>[<span style="color:#a6e22e">i</span>]<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">node</span>);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">point</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">node</span>);
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">my_key</span>);
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">node</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
+    <span style="color:#a6e22e">foreach</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>)
+    {
+        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>[<span style="color:#a6e22e">i</span>] <span style="color:#f92672">==</span> <span style="color:#a6e22e">key</span>) <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">data</span>[<span style="color:#a6e22e">i</span>];
+            <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">key</span>[<span style="color:#a6e22e">i</span>] <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">key</span>) <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">point</span>[<span style="color:#a6e22e">i</span>]<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">node</span>);
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">point</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">node</span>);
+}
+<span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">BTree_Search</span>(<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">my_key</span>);
+</code></pre></div></li>
 <li>
 <p>时间复杂度</p>
 <p>O(log n)</p>

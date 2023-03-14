@@ -10,49 +10,38 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="IO多路复用，select、poll、epoll区别" />
 <meta property="og:description" content="IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-select
-fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif } fd_set; 执行过程
+  select
+ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif  } fd_set;   执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-优点
-所有平台都支持，良好的跨平台性 缺点
-每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
-数据结构
-数据结构定义如下，链表存储
-/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll." />
+  优点
+ 所有平台都支持，良好的跨平台性    缺点" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/os/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" /><meta property="article:section" content="os" />
 <meta property="article:published_time" content="2022-11-24T19:28:33+08:00" />
 <meta property="article:modified_time" content="2022-11-24T19:28:33+08:00" />
 
+
 		<meta itemprop="name" content="IO多路复用，select、poll、epoll区别">
 <meta itemprop="description" content="IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-select
-fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif } fd_set; 执行过程
+  select
+ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif  } fd_set;   执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-优点
-所有平台都支持，良好的跨平台性 缺点
-每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
-数据结构
-数据结构定义如下，链表存储
-/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll."><meta itemprop="datePublished" content="2022-11-24T19:28:33+08:00" />
+  优点
+ 所有平台都支持，良好的跨平台性    缺点"><meta itemprop="datePublished" content="2022-11-24T19:28:33+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T19:28:33+08:00" />
 <meta itemprop="wordCount" content="233">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IO多路复用，select、poll、epoll区别"/>
 <meta name="twitter:description" content="IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-select
-fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif } fd_set; 执行过程
+  select
+ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif  } fd_set;   执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-优点
-所有平台都支持，良好的跨平台性 缺点
-每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
-数据结构
-数据结构定义如下，链表存储
-/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll."/>
+  优点
+ 所有平台都支持，良好的跨平台性    缺点"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -187,20 +176,20 @@ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用�
 <ul>
 <li>fd_set数据结构定义如下，可以看出fd_set是一个整型<strong>数组</strong>，用于保存socket文件描述符</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">int</span> __fd_mask;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">/* fd_set for select and pselect.  */</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span>
-</span></span><span style="display:flex;"><span>  {
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#ifdef __USE_XOPEN
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    __fd_mask fds_bits[__FD_SETSIZE <span style="color:#f92672">/</span> __NFDBITS];
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># define __FDS_BITS(set) ((set)-&gt;fds_bits)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#else
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    __fd_mask __fds_bits[__FD_SETSIZE <span style="color:#f92672">/</span> __NFDBITS];
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># define __FDS_BITS(set) ((set)-&gt;__fds_bits)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  } fd_set;
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">int</span> __fd_mask;
+
+<span style="color:#75715e">/* fd_set for select and pselect.  */</span>
+<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span>
+  {
+<span style="color:#75715e">#ifdef __USE_XOPEN
+</span><span style="color:#75715e"></span>    __fd_mask fds_bits[__FD_SETSIZE <span style="color:#f92672">/</span> __NFDBITS];
+<span style="color:#75715e"># define __FDS_BITS(set) ((set)-&gt;fds_bits)
+</span><span style="color:#75715e">#else
+</span><span style="color:#75715e"></span>    __fd_mask __fds_bits[__FD_SETSIZE <span style="color:#f92672">/</span> __NFDBITS];
+<span style="color:#75715e"># define __FDS_BITS(set) ((set)-&gt;__fds_bits)
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>  } fd_set;
+</code></pre></div><ul>
 <li>
 <p>执行过程</p>
 <p><img src="/images/select_process.png" alt=""></p>
@@ -234,14 +223,14 @@ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用�
 <li>
 <p>数据结构</p>
 <p>数据结构定义如下，<strong>链表</strong>存储</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* Data structure describing a polling request.  */</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> pollfd
-</span></span><span style="display:flex;"><span>  {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> fd;			<span style="color:#75715e">/* File descriptor to poll.  */</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span> events;		<span style="color:#75715e">/* Types of events poller cares about.  */</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span> revents;		<span style="color:#75715e">/* Types of events that actually occurred.  */</span>
-</span></span><span style="display:flex;"><span>  };
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/* Data structure describing a polling request.  */</span>
+<span style="color:#66d9ef">struct</span> pollfd
+  {
+    <span style="color:#66d9ef">int</span> fd;			<span style="color:#75715e">/* File descriptor to poll.  */</span>
+    <span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span> events;		<span style="color:#75715e">/* Types of events poller cares about.  */</span>
+    <span style="color:#66d9ef">short</span> <span style="color:#66d9ef">int</span> revents;		<span style="color:#75715e">/* Types of events that actually occurred.  */</span>
+  };
+</code></pre></div></li>
 <li>
 <p>与select的异同点</p>
 <p>相同点：</p>
@@ -273,26 +262,27 @@ fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用�
 <ul>
 <li>
 <p>核心代码</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/epoll.h&gt;</span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 数据结构
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 每一个epoll对象都有一个独立的eventpoll结构体
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 红黑树用于存放通过epoll_ctl方法向epoll对象中添加进来的事件
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// epoll_wait检查是否有事件发生时，只需要检查eventpoll对象中的rdlist双链表中是否有epitem元素即可
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> eventpoll {
-</span></span><span style="display:flex;"><span>    ...
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/*红黑树的根节点，这颗树存储着所有添加到epoll中的需要监控的事件*/</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> rb_root  rbr;
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/*双链表存储所有就绪的文件描述符*/</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> list_head rdlist;
-</span></span><span style="display:flex;"><span>    ...
-</span></span><span style="display:flex;"><span>};
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// API
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_create</span>(<span style="color:#66d9ef">int</span> size); <span style="color:#75715e">// 内核中间加一个 eventpoll 对象，把所有需要监听的 socket 都放到 eventpoll 对象中
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_ctl</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">int</span> op, <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span>event); <span style="color:#75715e">// epoll_ctl 负责把 socket 增加、删除到内核红黑树
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_wait</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span> events, <span style="color:#66d9ef">int</span> maxevents, <span style="color:#66d9ef">int</span> timeout);<span style="color:#75715e">// epoll_wait 检测双链表中是否有就绪的文件描述符，如果有，则返回
-</span></span></span></code></pre></div><p>核心点：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/epoll.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 数据结构
+</span><span style="color:#75715e">// 每一个epoll对象都有一个独立的eventpoll结构体
+</span><span style="color:#75715e">// 红黑树用于存放通过epoll_ctl方法向epoll对象中添加进来的事件
+</span><span style="color:#75715e">// epoll_wait检查是否有事件发生时，只需要检查eventpoll对象中的rdlist双链表中是否有epitem元素即可
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> eventpoll {
+    ...
+    <span style="color:#75715e">/*红黑树的根节点，这颗树存储着所有添加到epoll中的需要监控的事件*/</span>
+    <span style="color:#66d9ef">struct</span> rb_root  rbr;
+    <span style="color:#75715e">/*双链表存储所有就绪的文件描述符*/</span>
+    <span style="color:#66d9ef">struct</span> list_head rdlist;
+    ...
+};
+
+<span style="color:#75715e">// API
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_create</span>(<span style="color:#66d9ef">int</span> size); <span style="color:#75715e">// 内核中间加一个 eventpoll 对象，把所有需要监听的 socket 都放到 eventpoll 对象中
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_ctl</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">int</span> op, <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span>event); <span style="color:#75715e">// epoll_ctl 负责把 socket 增加、删除到内核红黑树
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_wait</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span> events, <span style="color:#66d9ef">int</span> maxevents, <span style="color:#66d9ef">int</span> timeout);<span style="color:#75715e">// epoll_wait 检测双链表中是否有就绪的文件描述符，如果有，则返回
+</span><span style="color:#75715e"></span>
+</code></pre></div><p>核心点：</p>
 <ol>
 <li>epoll_create创建eventpoll对象（红黑树，双链表）</li>
 <li>一棵红黑树，存储监听的所有文件描述符，并且通过epoll_ctl将文件描述符添加、删除到红黑树</li>

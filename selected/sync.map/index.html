@@ -10,22 +10,23 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="通过实例深入理解sync.Map的工作原理" />
 <meta property="og:description" content="Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
-原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读 go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：" />
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读  go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/selected/sync.map/" /><meta property="article:section" content="selected" />
 <meta property="article:published_time" content="2022-12-27T18:25:06+08:00" />
 <meta property="article:modified_time" content="2022-12-27T18:25:06+08:00" />
 
+
 		<meta itemprop="name" content="通过实例深入理解sync.Map的工作原理">
 <meta itemprop="description" content="Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
-原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读 go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子："><meta itemprop="datePublished" content="2022-12-27T18:25:06+08:00" />
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读  go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子："><meta itemprop="datePublished" content="2022-12-27T18:25:06+08:00" />
 <meta itemprop="dateModified" content="2022-12-27T18:25:06+08:00" />
 <meta itemprop="wordCount" content="885">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="通过实例深入理解sync.Map的工作原理"/>
 <meta name="twitter:description" content="Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
-原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读 go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子："/>
+ 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i&#43;&#43; { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i&#43;&#43; { // 并发读  go func(i int) { for j := 0; j &lt; 100; j&#43;&#43; { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子："/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -155,470 +156,480 @@
 <p>Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。</p>
 </blockquote>
 <h2 id="原生map的先天不足">原生map的“先天不足”</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">i</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">10</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 并发读
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">j</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">j</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">100</span>)
-</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;goroutine[%d] read m[%d]: %d\n&#34;</span>, <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">n</span>])
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
-</span></span><span style="display:flex;"><span>        }(<span style="color:#a6e22e">i</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">i</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">10</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 并发写
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
-</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">n</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">n</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>                                <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">100</span>)
-</span></span><span style="display:flex;"><span>                                <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">n</span>] = <span style="color:#a6e22e">n</span>
-</span></span><span style="display:flex;"><span>                        }
-</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
-</span></span><span style="display:flex;"><span>                }(<span style="color:#a6e22e">i</span>)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>运行上面这个并发写的例子，我们很大可能会得到下面panic：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$go run concurrent_builtin_map_write.go
-</span></span><span style="display:flex;"><span>fatal error: concurrent map writes
-</span></span></code></pre></div><p>原生map的“先天不足”让其无法直接胜任某些场合的要求，于是gopher们便寻求其他路径。一种路径无非是基于原生map包装出一个支持并发读写的自定义map类型，比如，最简单的方式就是用一把互斥锁(sync.Mutex)同步各个goroutine对map内数据的访问；如果读多写少，还可以利用读写锁(sync.RWMutex)来保护map内数据，减少锁竞争，提高并发读的性能。很多第三方map的实现原理也大体如此。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
+
+    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+        <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">i</span>
+    }
+
+    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">10</span>)
+    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+        <span style="color:#75715e">// 并发读
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
+            <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">j</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">j</span><span style="color:#f92672">++</span> {
+                <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">100</span>)
+                <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;goroutine[%d] read m[%d]: %d\n&#34;</span>, <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">n</span>])
+            }
+            <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+        }(<span style="color:#a6e22e">i</span>)
+    }
+    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+</code></pre></div><p>但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
+
+        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+                <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">i</span>
+        }
+
+        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">10</span>)
+        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+                <span style="color:#75715e">// 并发写
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
+                        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">n</span> &lt; <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">n</span><span style="color:#f92672">++</span> {
+                                <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">100</span>)
+                                <span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">n</span>] = <span style="color:#a6e22e">n</span>
+                        }
+                        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+                }(<span style="color:#a6e22e">i</span>)
+        }
+        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+</code></pre></div><p>运行上面这个并发写的例子，我们很大可能会得到下面panic：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$go run concurrent_builtin_map_write.go
+fatal error: concurrent map writes
+</code></pre></div><p>原生map的“先天不足”让其无法直接胜任某些场合的要求，于是gopher们便寻求其他路径。一种路径无非是基于原生map包装出一个支持并发读写的自定义map类型，比如，最简单的方式就是用一把互斥锁(sync.Mutex)同步各个goroutine对map内数据的访问；如果读多写少，还可以利用读写锁(sync.RWMutex)来保护map内数据，减少锁竞争，提高并发读的性能。很多第三方map的实现原理也大体如此。</p>
 <h2 id="syncmap的原理简述">sync.Map的原理简述</h2>
 <p>按照官方文档，sync.Map是goroutine-safe的，即多个goroutine同时对其读写都是ok的。和第一种路径的最大区别在于，sync.Map对特定场景做了性能优化，一种是读多写少的场景，另外一种多个goroutine读/写/修改的key集合没有交集。</p>
 <p>下面是两种技术路径的性能基准测试结果对比(macOS(4核8线程) go 1.14)：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$go test -bench .
-</span></span><span style="display:flex;"><span>goos: darwin
-</span></span><span style="display:flex;"><span>goarch: amd64
-</span></span><span style="display:flex;"><span>pkg: github.com/bigwhite/experiments/go19-examples/benchmark-for-map
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinMapStoreParalell-8           <span style="color:#ae81ff">7945152</span>           <span style="color:#ae81ff">179</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkSyncMapStoreParalell-8              <span style="color:#ae81ff">3523468</span>           <span style="color:#ae81ff">387</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinRwMapStoreParalell-8         <span style="color:#ae81ff">7622342</span>           <span style="color:#ae81ff">190</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinMapLookupParalell-8          <span style="color:#ae81ff">7319148</span>           <span style="color:#ae81ff">163</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinRwMapLookupParalell-8       <span style="color:#ae81ff">21800383</span>            55.2 ns/op
-</span></span><span style="display:flex;"><span>BenchmarkSyncMapLookupParalell-8            <span style="color:#ae81ff">70512406</span>            18.5 ns/op
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinMapDeleteParalell-8          <span style="color:#ae81ff">8773206</span>           <span style="color:#ae81ff">174</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkBuiltinRwMapDeleteParalell-8        <span style="color:#ae81ff">5424912</span>           <span style="color:#ae81ff">214</span> ns/op
-</span></span><span style="display:flex;"><span>BenchmarkSyncMapDeleteParalell-8            <span style="color:#ae81ff">49899008</span>            23.7 ns/op
-</span></span><span style="display:flex;"><span>PASS
-</span></span><span style="display:flex;"><span>ok      github.com/bigwhite/experiments/go19-examples/benchmark-for-map    15.727s
-</span></span></code></pre></div><p>我们看到：sync.Map在读和删除两项性能基准测试上的数据都大幅领先使用sync.Mutex或RWMutex包装的原生map，仅在写入一项上存在一倍的差距。sync.Map是如何实现如此高的读取性能的呢？简单说：空间换时间+读写分离+原子操作(快路径)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$go test -bench .
+goos: darwin
+goarch: amd64
+pkg: github.com/bigwhite/experiments/go19-examples/benchmark-for-map
+BenchmarkBuiltinMapStoreParalell-8           <span style="color:#ae81ff">7945152</span>           <span style="color:#ae81ff">179</span> ns/op
+BenchmarkSyncMapStoreParalell-8              <span style="color:#ae81ff">3523468</span>           <span style="color:#ae81ff">387</span> ns/op
+BenchmarkBuiltinRwMapStoreParalell-8         <span style="color:#ae81ff">7622342</span>           <span style="color:#ae81ff">190</span> ns/op
+BenchmarkBuiltinMapLookupParalell-8          <span style="color:#ae81ff">7319148</span>           <span style="color:#ae81ff">163</span> ns/op
+BenchmarkBuiltinRwMapLookupParalell-8       <span style="color:#ae81ff">21800383</span>            55.2 ns/op
+BenchmarkSyncMapLookupParalell-8            <span style="color:#ae81ff">70512406</span>            18.5 ns/op
+BenchmarkBuiltinMapDeleteParalell-8          <span style="color:#ae81ff">8773206</span>           <span style="color:#ae81ff">174</span> ns/op
+BenchmarkBuiltinRwMapDeleteParalell-8        <span style="color:#ae81ff">5424912</span>           <span style="color:#ae81ff">214</span> ns/op
+BenchmarkSyncMapDeleteParalell-8            <span style="color:#ae81ff">49899008</span>            23.7 ns/op
+PASS
+ok      github.com/bigwhite/experiments/go19-examples/benchmark-for-map    15.727s
+
+</code></pre></div><p>我们看到：sync.Map在读和删除两项性能基准测试上的数据都大幅领先使用sync.Mutex或RWMutex包装的原生map，仅在写入一项上存在一倍的差距。sync.Map是如何实现如此高的读取性能的呢？简单说：空间换时间+读写分离+原子操作(快路径)。</p>
 <p>sync.Map底层使用了两个原生map，一个叫read，仅用于读；一个叫dirty，用于在特定情况下存储最新写入的key-value数据:
 <img src="/images/syncmap.png" alt=""></p>
 <p>read(这个map)好比整个sync.Map的一个“高速缓存”，当goroutine从sync.Map中读取数据时，sync.Map会首先查看read这个缓存层是否有用户需要的数据(key是否命中)，如果有(命中)，则通过原子操作将数据读取并返回，这是sync.Map推荐的快路径(fast path)，也是为何上面基准测试结果中读操作性能极高的原因。</p>
 <h2 id="通过实例深入理解syncmap的原理">通过实例深入理解sync.Map的原理</h2>
 <p>sync.Map源码(Go 1.14版本)不到400行，应该算是比较简单的了。但对于那些有着“阅读源码恐惧症”的gopher来说，我们可以通过另外一种研究方法：实例法，并结合些许源码来从“黑盒”角度理解sync.Map的工作原理。这种方法十分适合那些相对独立、可以从标准库中“单独”取出来的包，而sync.Map就是这样的包。</p>
 <p>首先，我们将sync.Map从标准库源码目录中拷贝一份，放入本地~/go/src/github.com/bigwhite/experiments/inside-syncmap/syncmap/sync下面，得益于go module的引入，我们在~/go/src/github.com/bigwhite/experiments/inside-syncmap/syncmap目录下面建立go.mod文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">bigwhite</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#ae81ff">1.14</span>
-</span></span></code></pre></div><p>这样我们就可以通过github.com/bigwhite/go/sync包路径导入module：github.com/bigwhite/go下面的sync包了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">bigwhite</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span>
+
+<span style="color:#66d9ef">go</span> <span style="color:#ae81ff">1.14</span>
+</code></pre></div><p>这样我们就可以通过github.com/bigwhite/go/sync包路径导入module：github.com/bigwhite/go下面的sync包了。</p>
 <p>接下来，我们给位于~/go/src/github.com/bigwhite/experiments/inside-syncmap/syncmap/sync下面的map.go中(sync.Map包的副本)添加一个Map类型的新方法Dump：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">Dump</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;=====&gt; sync.Map:\n&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dump read
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">read</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Load</span>().(<span style="color:#a6e22e">readOnly</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t read(amended=%v):\n&#34;</span>, <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">amended</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ok</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// dump readOnly&#39;s map
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span> {
-</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t\t %#v:%#v\n&#34;</span>, <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span>)
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dump dirty
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t dirty:\n&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t\t %#v:%#v\n&#34;</span>, <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span>)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dump miss
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t misses:%d\n&#34;</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dump expunged
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t expunged:%#v\n&#34;</span>, <span style="color:#a6e22e">expunged</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;&lt;===== sync.Map\n&#34;</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这个方法将打印Map的内部状态以及read、dirty两个原生map中的所有key-value对，这样我们在初始状态、store key-value后、load key以及delete key后通过Dump方法输出sync.Map状态便可以看到不同操作后sync.Map内部的状态变化，从而间接了解sync.Map的工作原理。下面我们就分情况剖析sync.Map的行为特征。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">Dump</span>() {
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;=====&gt; sync.Map:\n&#34;</span>)
+        <span style="color:#75715e">// dump read
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">read</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Load</span>().(<span style="color:#a6e22e">readOnly</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t read(amended=%v):\n&#34;</span>, <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">amended</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ok</span> {
+                <span style="color:#75715e">// dump readOnly&#39;s map
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span> {
+                        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t\t %#v:%#v\n&#34;</span>, <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span>)
+                }
+        }
+
+        <span style="color:#75715e">// dump dirty
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t dirty:\n&#34;</span>)
+        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> {
+                <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t\t %#v:%#v\n&#34;</span>, <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span>)
+        }
+
+        <span style="color:#75715e">// dump miss
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t misses:%d\n&#34;</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span>)
+
+        <span style="color:#75715e">// dump expunged
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;\t expunged:%#v\n&#34;</span>, <span style="color:#a6e22e">expunged</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;&lt;===== sync.Map\n&#34;</span>)
+}
+</code></pre></div><p>这个方法将打印Map的内部状态以及read、dirty两个原生map中的所有key-value对，这样我们在初始状态、store key-value后、load key以及delete key后通过Dump方法输出sync.Map状态便可以看到不同操作后sync.Map内部的状态变化，从而间接了解sync.Map的工作原理。下面我们就分情况剖析sync.Map的行为特征。</p>
 <h3 id="初始状态">初始状态</h3>
 <p>sync.Map是零值可用的，我们可以像下面这样定义一个sync.Map类型变量，并无需做显式初始化。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Map</span>
-</span></span></code></pre></div><p>我们通过Dump输出初始状态下的sync.Map的内部状态：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Map</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;sync.Map init status:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>运行后，输出如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sync.Map init status:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001101e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>在初始状态下，dirty和read两个内置map内都无数据。expunged是一个哨兵变量(也是一个包内的非导出变量)，它在sync.Map包初始化时就有了一个固定的值。该变量在后续用于元素删除场景(删除的key并不立即从map中删除，而是将其value置为expunged)以及load场景。如果哪个key值对应的value值与explunged一致，说明该key已经被map删除了（即便该key所占用的内存资源尚未释放）。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">expunged</span> = <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(new(<span style="color:#66d9ef">interface</span>{}))
-</span></span></code></pre></div><h3 id="写入数据store">写入数据(store)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Map</span>
+</code></pre></div><p>我们通过Dump输出初始状态下的sync.Map的内部状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Map</span>
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;sync.Map init status:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
+
+}
+</code></pre></div><p>运行后，输出如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sync.Map init status:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001101e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+</code></pre></div><p>在初始状态下，dirty和read两个内置map内都无数据。expunged是一个哨兵变量(也是一个包内的非导出变量)，它在sync.Map包初始化时就有了一个固定的值。该变量在后续用于元素删除场景(删除的key并不立即从map中删除，而是将其value置为expunged)以及load场景。如果哪个key值对应的value值与explunged一致，说明该key已经被map删除了（即便该key所占用的内存资源尚未释放）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">expunged</span> = <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(new(<span style="color:#66d9ef">interface</span>{}))
+
+</code></pre></div><h3 id="写入数据store">写入数据(store)</h3>
 <p>下面，我们向Map写入一条数据：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">val1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val1&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key1&#34;</span>, <span style="color:#a6e22e">val1</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key1:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>我们看一下存入新数据后，Map内部的状态：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after store key1:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000108080<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000108040<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到写入(key1,value1)后，Map中有两处变化，一处是dirty map，新写入的数据存储在dirty map中；第二处是read中的amended值由false变为了true，表示dirty map中存在某些read map还没有的key。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">struct</span> {
+        <span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
+        <span style="color:#a6e22e">val1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val1&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key1&#34;</span>, <span style="color:#a6e22e">val1</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key1:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#f92672">...</span> <span style="color:#f92672">...</span>
+
+}
+</code></pre></div><p>我们看一下存入新数据后，Map内部的状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after store key1:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000108080<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000108040<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>我们看到写入(key1,value1)后，Map中有两处变化，一处是dirty map，新写入的数据存储在dirty map中；第二处是read中的amended值由false变为了true，表示dirty map中存在某些read map还没有的key。</p>
 <h3 id="dirty提升promoted为read">dirty提升(promoted)为read</h3>
 <p>此时，如果我们调用一次sync.Map的Load方法，无论传给Load的key值是否为”key1″还是其他，sync.Map内部都会发生较大变化，我们来看一下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>   <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>) <span style="color:#75715e">//这里我们尝试load key=&#34;key2&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2:&#34;</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>下面是Load方法调用后Dump方法输出的内容：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after load key2:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到：原dirty map中的数据被提升(promoted)到read map中了，提升后amended值重新变回false。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">   <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>) <span style="color:#75715e">//这里我们尝试load key=&#34;key2&#34;
+</span><span style="color:#75715e"></span>   <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2:&#34;</span>)
+   <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+</code></pre></div><p>下面是Load方法调用后Dump方法输出的内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after load key2:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+</code></pre></div><p>我们看到：原dirty map中的数据被提升(promoted)到read map中了，提升后amended值重新变回false。</p>
 <p>结合sync.Map中Load方法的源码，我们得出如下sync.Map的工作原理：当Load方法在read map中没有命中（miss)传入的key时，该方法会再次尝试在dirty中继续匹配key；无论是否匹配到，Load方法都会在锁保护下调用missLocked方法增加misses的计数(+1)；如果增加完计数的misses值大于等于dirty map中的元素个数，则会将dirty中的元素整体提升到read：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">missLocked</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span><span style="color:#f92672">++</span>  <span style="color:#75715e">//计数+1
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span> &lt; len(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>) {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#a6e22e">readOnly</span>{<span style="color:#a6e22e">m</span>: <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>})  <span style="color:#75715e">// dirty提升到read
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// dirty置为nil
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span> = <span style="color:#ae81ff">0</span> <span style="color:#75715e">// misses计数器清零
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p>为了验证上述promoted的条件，我们再来做一组实验：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">val2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val2&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key2&#34;</span>, <span style="color:#a6e22e">val2</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key2:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">val3</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val3&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key3&#34;</span>, <span style="color:#a6e22e">val3</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key3:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key1&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key1:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2 2nd:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2 3rd:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>在完成一次promoted动作之后，我们又向sync.Map中写入两个key：key2和key3，并在后续Load一次key1并连续三次Load key2，下面是Dump方法的输出结果：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after store key2:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after store key3:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after load key1:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after load key2:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:1
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after load key2 2nd:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:2
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after load key2 3rd:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到在写入key2这条数据后，dirty中不仅存储了key2这条数据，原read中的key1数据也被复制了一份存入到dirty中。这个操作是由sync.Map的dirtyLocked方法完成的：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">dirtyLocked</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">read</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Load</span>().(<span style="color:#a6e22e">readOnly</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>, len(<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span>))
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">e</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">tryExpungeLocked</span>() {
-</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>[<span style="color:#a6e22e">k</span>] = <span style="color:#a6e22e">e</span>
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>前面我们提到过，promoted(dirty -&gt; read)是一个整体的指针交换操作，promoted时，sync.Map直接将原dirty指针store给read并将自身置为nil，因此sync.Map要保证amended=true时，dirty中拥有整个Map的全量数据，这样在下一次promoted(dirty -&gt; read)时才不会丢失数据。不过dirtyLocked是通过一个迭代实现的元素从read到dirty的复制，如果Map中元素规模很大，这个过程付出的损耗将很大，并且这个过程是在锁保护下的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">missLocked</span>() {
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span><span style="color:#f92672">++</span>  <span style="color:#75715e">//计数+1
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span> &lt; len(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>) {
+                <span style="color:#66d9ef">return</span>
+        }
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#a6e22e">readOnly</span>{<span style="color:#a6e22e">m</span>: <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>})  <span style="color:#75715e">// dirty提升到read
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// dirty置为nil
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">misses</span> = <span style="color:#ae81ff">0</span> <span style="color:#75715e">// misses计数器清零
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>为了验证上述promoted的条件，我们再来做一组实验：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">val2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val2&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key2&#34;</span>, <span style="color:#a6e22e">val2</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key2:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">val3</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val3&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key3&#34;</span>, <span style="color:#a6e22e">val3</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key3:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key1&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key1:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2 2nd:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key2 3rd:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+</code></pre></div><p>在完成一次promoted动作之后，我们又向sync.Map中写入两个key：key2和key3，并在后续Load一次key1并连续三次Load key2，下面是Dump方法的输出结果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after store key2:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after store key3:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after load key1:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after load key2:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     misses:1
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after load key2 2nd:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     misses:2
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after load key2 3rd:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010290<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+</code></pre></div><p>我们看到在写入key2这条数据后，dirty中不仅存储了key2这条数据，原read中的key1数据也被复制了一份存入到dirty中。这个操作是由sync.Map的dirtyLocked方法完成的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Map</span>) <span style="color:#a6e22e">dirtyLocked</span>() {
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+                <span style="color:#66d9ef">return</span>
+        }
+
+        <span style="color:#a6e22e">read</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">Load</span>().(<span style="color:#a6e22e">readOnly</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">interface</span>{}]<span style="color:#f92672">*</span><span style="color:#a6e22e">entry</span>, len(<span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span>))
+        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">e</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">read</span>.<span style="color:#a6e22e">m</span> {
+                <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">tryExpungeLocked</span>() {
+                        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">dirty</span>[<span style="color:#a6e22e">k</span>] = <span style="color:#a6e22e">e</span>
+                }
+        }
+}
+
+</code></pre></div><p>前面我们提到过，promoted(dirty -&gt; read)是一个整体的指针交换操作，promoted时，sync.Map直接将原dirty指针store给read并将自身置为nil，因此sync.Map要保证amended=true时，dirty中拥有整个Map的全量数据，这样在下一次promoted(dirty -&gt; read)时才不会丢失数据。不过dirtyLocked是通过一个迭代实现的元素从read到dirty的复制，如果Map中元素规模很大，这个过程付出的损耗将很大，并且这个过程是在锁保护下的。</p>
 <p>在存入key3后，我们调用Load方法先load了key1，由于key1在read中有记录，因此此次load命中了，走的是快路径，对Map状态没有任何影响。</p>
 <p>之后，我们又Load了key2，key2不在read中，因此产生了一次miss。misses增加计数后的值为1，而此时dirty中的元素数量为3，不满足promote的条件，于是没有执行promote操作。后续我们又连续进行了两次key2的Load操作，产生了两次miss事件后，misses的计数值等于了dirty中的元素数量，于是promote操作被执行，dirty map整体被置换给read，自己则变成了nil。</p>
 <h3 id="更新已存在的key">更新已存在的key</h3>
 <p>我们再来看一下更新已存在的key的值的情况。首先是该key仅存在于read中(刚刚promote完毕)，而不在dirty中。我们更新这时仅在read中存在的key2的值：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">val2_1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val2_1&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key2&#34;</span>, <span style="color:#a6e22e">val2_1</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter update key2(in read, not in dirty):&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>下面是Dump输出的结果：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after update key2<span style="color:#f92672">(</span>in read, not in dirty<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到sync.Map直接更新了位于read中的key2的值(entry.storeLocked方法实现的)，dirty和其他字段没有受到影响。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">val2_1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val2_1&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key2&#34;</span>, <span style="color:#a6e22e">val2_1</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter update key2(in read, not in dirty):&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+</code></pre></div><p>下面是Dump输出的结果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after update key2<span style="color:#f92672">(</span>in read, not in dirty<span style="color:#f92672">)</span>:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+</code></pre></div><p>我们看到sync.Map直接更新了位于read中的key2的值(entry.storeLocked方法实现的)，dirty和其他字段没有受到影响。</p>
 <p>第二种情况是该key刚store到dirty中，尚未promote，不在read中。我们新增一个key4，并更新其值：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">val4</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key4:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">val4_1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4_1&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4_1</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter update key4(not in read, in dirty):&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>        
-</span></span></code></pre></div><p>dump方法的输出结果如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after store key4:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e310<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after update key4<span style="color:#f92672">(</span>not in read, in dirty<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e330<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到，sync.Map同样是直接将key4对应的value重新设置为新值(val4_1)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">val4</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key4:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">val4_1</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4_1&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4_1</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter update key4(not in read, in dirty):&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+        
+</code></pre></div><p>dump方法的输出结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after store key4:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e310<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after update key4<span style="color:#f92672">(</span>not in read, in dirty<span style="color:#f92672">)</span>:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2d0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e330<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>我们看到，sync.Map同样是直接将key4对应的value重新设置为新值(val4_1)。</p>
 <h3 id="删除key">删除key</h3>
 <p>为了方便查看，我们将上述Map状态回滚到刚刚promote(dirty -&gt; read)完的时刻，即：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after load key2 3rd:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e270<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>删除key也有几种情况，我们分别来看一下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after load key2 3rd:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e270<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e2a0<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc00008e1e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>删除key也有几种情况，我们分别来看一下：</p>
 <h4 id="删除的key仅存在于read中">删除的key仅存在于read中</h4>
 <p>我们删除上面Map中仅存在于read中的key2：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Delete</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter delete key2:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>删除后的Dump结果如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after delete key2:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到sync.Map并没有删除key2，而是将其value置为nil。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Delete</span>(<span style="color:#e6db74">&#34;key2&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter delete key2:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+</code></pre></div><p>删除后的Dump结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after delete key2:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010240<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>我们看到sync.Map并没有删除key2，而是将其value置为nil。</p>
 <h4 id="删除的key仅存在于dirty中">删除的key仅存在于dirty中</h4>
 <p>为了构造初仅存在于dirty中的key，我们向sync.Map写入新数据key4，然后再立刻删除它</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">val4</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4&#34;</span>}
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key4:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Delete</span>(<span style="color:#e6db74">&#34;key4&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter delete key4:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>上述代码的Dump结果如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after store key4:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042f0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after delete key4:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到：和仅在read中的情况不同(仅将value设置为nil)，仅存在于dirty中的key被删除后，该key就不再存在了。这里还有一点值得注意的是：当向dirty写入key4时，dirty会复制read中的未被删除的元素，由于key2已经被删除，因此顺带将read中的key2对应的value设置为哨兵(expunged)，并且该key不会被加入到dirty中。直到下一次promote，该key才会被回收（因为read被交换指向新的dirty，原read指向的内存将被GC）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">val4</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">val</span>{<span style="color:#e6db74">&#34;val4&#34;</span>}
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#e6db74">&#34;key4&#34;</span>, <span style="color:#a6e22e">val4</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter store key4:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Delete</span>(<span style="color:#e6db74">&#34;key4&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter delete key4:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+</code></pre></div><p>上述代码的Dump结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after store key4:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key4&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042f0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after delete key4:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000104220<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+</code></pre></div><p>我们看到：和仅在read中的情况不同(仅将value设置为nil)，仅存在于dirty中的key被删除后，该key就不再存在了。这里还有一点值得注意的是：当向dirty写入key4时，dirty会复制read中的未被删除的元素，由于key2已经被删除，因此顺带将read中的key2对应的value设置为哨兵(expunged)，并且该key不会被加入到dirty中。直到下一次promote，该key才会被回收（因为read被交换指向新的dirty，原read指向的内存将被GC）。</p>
 <h4 id="删除的key既存在于read也存在于dirty中">删除的key既存在于read，也存在于dirty中</h4>
 <p>目前上述sync.Map实例中既存在于read，也存在于dirty中的key有key1和key3（key2已经被删除），我们这里以删除key1为例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after delete key1:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到删除key1后，read和dirty两个map中的key1均没有真正删除，而是将其value设置为nil。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after delete key1:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001042a0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0001041e0<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>我们看到删除key1后，read和dirty两个map中的key1均没有真正删除，而是将其value设置为nil。</p>
 <p>我们再触发一次promote：连续调用两次导致read miss的LOAD：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key5&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key5:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key5&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key5 2nd:&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
-</span></span></code></pre></div><p>调用后的Dump输出如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>after load key5:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     misses:1
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>after load key5 2nd:
-</span></span><span style="display:flex;"><span><span style="color:#f92672">=====</span>&gt; sync.Map:
-</span></span><span style="display:flex;"><span>     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
-</span></span><span style="display:flex;"><span>     dirty:
-</span></span><span style="display:flex;"><span>     misses:0
-</span></span><span style="display:flex;"><span>     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">=====</span> sync.Map
-</span></span></code></pre></div><p>我们看到虽然dirty中的key1已经处于被删除状态，但它仍算作dirty元素的个数，因此第二次miss才会触发promote。promote后，dirty被赋值给read，因此原dirty中的key1元素就顺带进入到read中，只能等下次写入一个不存在的新key时才能被置为哨兵值，并在下一次promote时才能被真正删除释放。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key5&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key5:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;key5&#34;</span>)
+        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;\nafter load key5 2nd:&#34;</span>)
+        <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Dump</span>()
+</code></pre></div><p>调用后的Dump输出如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">after load key5:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>true<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key2&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     dirty:
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+     misses:1
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+after load key5 2nd:
+<span style="color:#f92672">=====</span>&gt; sync.Map:
+     read<span style="color:#f92672">(</span>amended<span style="color:#f92672">=</span>false<span style="color:#f92672">)</span>:
+         <span style="color:#e6db74">&#34;key1&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>nil<span style="color:#f92672">)}</span>
+         <span style="color:#e6db74">&#34;key3&#34;</span>:&amp;smap.entry<span style="color:#f92672">{</span>p:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc0000102c0<span style="color:#f92672">)}</span>
+     dirty:
+     misses:0
+     expunged:<span style="color:#f92672">(</span>unsafe.Pointer<span style="color:#f92672">)(</span>0xc000010200<span style="color:#f92672">)</span>
+&lt;<span style="color:#f92672">=====</span> sync.Map
+
+</code></pre></div><p>我们看到虽然dirty中的key1已经处于被删除状态，但它仍算作dirty元素的个数，因此第二次miss才会触发promote。promote后，dirty被赋值给read，因此原dirty中的key1元素就顺带进入到read中，只能等下次写入一个不存在的新key时才能被置为哨兵值，并在下一次promote时才能被真正删除释放。</p>
 <h2 id="小结">小结</h2>
 <p><img src="/images/sync_map.jpeg" alt=""></p>
 <p><code>sync.Map</code> 的实现原理可概括为：</p>

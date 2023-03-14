@@ -10,61 +10,53 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="Http2.0与http3.0" />
 <meta property="og:description" content="http1.0
-连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输 http1.1
-连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3 明文传输
-无状态：导致每次都需要传递重复的header，协议开销大
-http2.0
-二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端 http3.0
-基于QUIC协议（QUIC协议基于UDP实现） 实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题 http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
 http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。
-参考
-https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ
-https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7" />
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/" /><meta property="article:section" content="net" />
 <meta property="article:published_time" content="2019-10-24T17:35:04+08:00" />
 <meta property="article:modified_time" content="2019-10-24T17:35:04+08:00" />
 
+
 		<meta itemprop="name" content="Http2.0与http3.0">
 <meta itemprop="description" content="http1.0
-连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输 http1.1
-连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3 明文传输
-无状态：导致每次都需要传递重复的header，协议开销大
-http2.0
-二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端 http3.0
-基于QUIC协议（QUIC协议基于UDP实现） 实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题 http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
 http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。
-参考
-https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ
-https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7"><meta itemprop="datePublished" content="2019-10-24T17:35:04+08:00" />
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。"><meta itemprop="datePublished" content="2019-10-24T17:35:04+08:00" />
 <meta itemprop="dateModified" content="2019-10-24T17:35:04+08:00" />
 <meta itemprop="wordCount" content="42">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Http2.0与http3.0"/>
 <meta name="twitter:description" content="http1.0
-连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输 http1.1
-连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3 明文传输
-无状态：导致每次都需要传递重复的header，协议开销大
-http2.0
-二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端 http3.0
-基于QUIC协议（QUIC协议基于UDP实现） 实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题 http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+ 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
+  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3   明文传输
+  无状态：导致每次都需要传递重复的header，协议开销大
+    http2.0
+ 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
+ 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
 http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。
-参考
-https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ
-https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7"/>
+  为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">
@@ -209,8 +201,8 @@ https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%
 </li>
 <li>
 <p><strong>pipeline</strong>：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">请求1 --&gt; 请求2 --&gt; 请求3 &gt; 响应1 --&gt; 响应2 --&gt; 响应3
+</code></pre></div></li>
 <li>
 <p><strong>明文传输</strong></p>
 </li>

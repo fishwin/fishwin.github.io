@@ -9,22 +9,23 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="select，select是随机的还是顺序的？" />
-<meta property="og:description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。 参考：
+<meta property="og:description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。  参考：
 https://wudaijun.com/2017/10/go-select/" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/golang/select/" /><meta property="article:section" content="golang" />
 <meta property="article:published_time" content="2022-11-24T17:10:09+08:00" />
 <meta property="article:modified_time" content="2022-11-24T17:10:09+08:00" />
 
+
 		<meta itemprop="name" content="select，select是随机的还是顺序的？">
-<meta itemprop="description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。 参考：
+<meta itemprop="description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。  参考：
 https://wudaijun.com/2017/10/go-select/"><meta itemprop="datePublished" content="2022-11-24T17:10:09+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T17:10:09+08:00" />
 <meta itemprop="wordCount" content="8">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="select，select是随机的还是顺序的？"/>
-<meta name="twitter:description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。 参考：
+<meta name="twitter:description" content="select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。  参考：
 https://wudaijun.com/2017/10/go-select/"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
