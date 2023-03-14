@@ -9,21 +9,20 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="进程线程协程" />
-<meta property="og:description" content=" 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    " />
+<meta property="og:description" content=" 进程 操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信 线程 CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信 协程 用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/" /><meta property="article:section" content="os" />
 <meta property="article:published_time" content="2022-11-24T19:24:11+08:00" />
 <meta property="article:modified_time" content="2022-11-24T19:24:11+08:00" />
 
-
 		<meta itemprop="name" content="进程线程协程">
-<meta itemprop="description" content=" 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    "><meta itemprop="datePublished" content="2022-11-24T19:24:11+08:00" />
+<meta itemprop="description" content=" 进程 操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信 线程 CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信 协程 用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度 "><meta itemprop="datePublished" content="2022-11-24T19:24:11+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T19:24:11+08:00" />
 <meta itemprop="wordCount" content="15">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="进程线程协程"/>
-<meta name="twitter:description" content=" 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    "/>
+<meta name="twitter:description" content=" 进程 操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信 线程 CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信 协程 用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度 "/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">

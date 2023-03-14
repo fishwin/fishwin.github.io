@@ -11,61 +11,88 @@
 		<meta property="og:title" content="Http 常见错误码" />
 <meta property="og:description" content="1xx
 ​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
-  2xx
+2xx
 ​	2xx类状态码表示服务器成功处理了客户端的请求
-  200 ok
+200 ok
 表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
-  204 no content
+204 no content
 与200基本基本相同，但响应头没有body数据
-  206 partial content
+206 partial content
 一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
-    3xx
+3xx
 ​	3xx表示重定向
-  301 moved permanently
+301 moved permanently
 永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
-  302 found
+302 found
 临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
-  304 not modified
+304 not modified
 不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
-    4xx
+4xx
 ​	4xx表示客户端发送的报文有误，服务端无法处理
-  400 bad request
+400 bad request
 表示客户端请求的报文有错误,是一个笼统的错误
-  401 Unauthorized
+401 Unauthorized
 请求未经授权
-  403 forbidden" />
+403 forbidden
+服务器禁止客户端访问相应的资源
+404 not found
+请求的资源不存在
+5xx
+​	5xx表示服务端错误
+500 internal server error
+服务器内部错误，和400一样是一个笼统的错误
+501 not implemented
+表示客户端的请求服务端还不支持
+502 bad gateway
+一般是服务端进程异常或挂掉
+503 service unavailable
+表示服务器当前繁忙，无法响应
+参考" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/net/http%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%A0%81/" /><meta property="article:section" content="net" />
 <meta property="article:published_time" content="2022-11-24T17:31:48+08:00" />
 <meta property="article:modified_time" content="2022-11-24T17:31:48+08:00" />
 
-
 		<meta itemprop="name" content="Http 常见错误码">
 <meta itemprop="description" content="1xx
 ​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
-  2xx
+2xx
 ​	2xx类状态码表示服务器成功处理了客户端的请求
-  200 ok
+200 ok
 表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
-  204 no content
+204 no content
 与200基本基本相同，但响应头没有body数据
-  206 partial content
+206 partial content
 一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
-    3xx
+3xx
 ​	3xx表示重定向
-  301 moved permanently
+301 moved permanently
 永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
-  302 found
+302 found
 临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
-  304 not modified
+304 not modified
 不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
-    4xx
+4xx
 ​	4xx表示客户端发送的报文有误，服务端无法处理
-  400 bad request
+400 bad request
 表示客户端请求的报文有错误,是一个笼统的错误
-  401 Unauthorized
+401 Unauthorized
 请求未经授权
-  403 forbidden"><meta itemprop="datePublished" content="2022-11-24T17:31:48+08:00" />
+403 forbidden
+服务器禁止客户端访问相应的资源
+404 not found
+请求的资源不存在
+5xx
+​	5xx表示服务端错误
+500 internal server error
+服务器内部错误，和400一样是一个笼统的错误
+501 not implemented
+表示客户端的请求服务端还不支持
+502 bad gateway
+一般是服务端进程异常或挂掉
+503 service unavailable
+表示服务器当前繁忙，无法响应
+参考"><meta itemprop="datePublished" content="2022-11-24T17:31:48+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T17:31:48+08:00" />
 <meta itemprop="wordCount" content="70">
 <meta itemprop="keywords" content="" />
@@ -73,29 +100,43 @@
 <meta name="twitter:title" content="Http 常见错误码"/>
 <meta name="twitter:description" content="1xx
 ​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
-  2xx
+2xx
 ​	2xx类状态码表示服务器成功处理了客户端的请求
-  200 ok
+200 ok
 表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
-  204 no content
+204 no content
 与200基本基本相同，但响应头没有body数据
-  206 partial content
+206 partial content
 一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
-    3xx
+3xx
 ​	3xx表示重定向
-  301 moved permanently
+301 moved permanently
 永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
-  302 found
+302 found
 临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
-  304 not modified
+304 not modified
 不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
-    4xx
+4xx
 ​	4xx表示客户端发送的报文有误，服务端无法处理
-  400 bad request
+400 bad request
 表示客户端请求的报文有错误,是一个笼统的错误
-  401 Unauthorized
+401 Unauthorized
 请求未经授权
-  403 forbidden"/>
+403 forbidden
+服务器禁止客户端访问相应的资源
+404 not found
+请求的资源不存在
+5xx
+​	5xx表示服务端错误
+500 internal server error
+服务器内部错误，和400一样是一个笼统的错误
+501 not implemented
+表示客户端的请求服务端还不支持
+502 bad gateway
+一般是服务端进程异常或挂掉
+503 service unavailable
+表示服务器当前繁忙，无法响应
+参考"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">

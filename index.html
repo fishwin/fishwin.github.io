@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="zh-CN">
 <head>
-	<meta name="generator" content="Hugo 0.92.0" />
+	<meta name="generator" content="Hugo 0.111.3">
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,6 @@
 <meta property="og:description" content="张海余的个人博客" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fishwin.github.io/" />
-
 
 		<meta itemprop="name" content="张海余的主页">
 <meta itemprop="description" content="张海余的个人博客">
@@ -131,11 +130,11 @@
 					<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/channel/">Channel实现原理</a></h1>
-	<div class="entry__content">Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
+	<div class="entry__content">Go语言并发哲学 Do not communicate by sharing memory; instead, share memory by communicating.
 不要通过共享内存来通信，而要通过通信来实现内存共享。
- channel 的底层就是通过 mutex 来控制并发的。
+channel 的底层就是通过 mutex 来控制并发的。
 只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
- 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</div>
+数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 循环队列中每个数组元素的大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 循环队列中每个数组元素的类型 sendx uint // 记录循环队列中发送操作处理到的位置下标 recvx uint // 记录循环队列中接收操作处理到的位置下标 recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine next *sudog // 指向双向链表的下一个节点 prev *sudog // 指向双向链表的前一个节点 elem unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2023-01-08T18:27:55&#43;08:00">2023年01月08日</time>
 	</div>
@@ -145,7 +144,7 @@
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/sync.map/">通过实例深入理解sync.Map的工作原理</a></h1>
 	<div class="entry__content">Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
- 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
+原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &lt; 10; i++ { // 并发读 go func(i int) { for j := 0; j &lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&#34;goroutine[%d] read m[%d]: %d\n&#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-12-27T18:25:06&#43;08:00">2022年12月27日</time>
 	</div>
@@ -154,9 +153,13 @@
 					<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">浅析Mysql事务ACID原理</a></h1>
-	<div class="entry__content">innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
- ACID 事务的四大特性，简称ACID
- 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</div>
+	<div class="entry__content">innodb与myisam 区别项 innodb myisam 是否支持事务 支持 不支持 锁粒度 行锁，适合高并发 表锁，不适合高并发 默认 是 否 支持外键 支持 不支持 全文索引 不支持，可通过插件（elasticSearch）实现 支持 聚簇索引 是，主键索引 否 count 速度慢 使用一个变量保存，速度快 事务 事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败； 比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ACID 事务的四大特性，简称ACID
+原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。 事务隔离级别 read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。 从上而下，隔离安全性从低变高，但性能从高变低。
+脏读：一个事务读取到另一个事务还未提交的数据； 如图中，事务2第(3)步读到v=0，事务1执行(3)set=100，事务2第(4)步可读到v=100，那么当事务1回滚后，那么事务2读到的v=100就是脏数据。
+不可重复读：在一个事务内，先后读取同一条数据，但是两次读取到的值不同，叫做不可重复读； 如图中，事务2在前四步读到的都是v=0，在事务1修改并commit之后，第(5)步读到的就是100，重复读取不一致，即不可重复读。
+幻读：在一个事务内，读到的数据可能不是最新的数据，可能已经由其他事务修改了。 如图中，事务2前五步读到的数据都是v=0，但实际已经变成了v=100。还有可能其他事务已经将id=1的数据删除了。
+隔离级别 脏读 不可重复读 幻读 read uncommit yes yes yes read commit no yes yes repeatable read no no yes serializable no no no 读锁、写锁 读锁（并发读，不可并发写） select * from table lock in share mode; 写锁（不可并发读，不可并发写） select * from table for update; serializable实现原理就是在所有读操作加隐式的读锁，写操作数据库会默认加写锁。从而实现顺序执行事务。 read uncommit实现原理就是不加锁，并且没有任何并发控制。</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-12-11T09:51:43&#43;08:00">2022年12月11日</time>
 	</div>
@@ -169,10 +172,10 @@
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-12-03T17:02:57&#43;08:00">2022年12月03日</time>
@@ -183,26 +186,35 @@ RDB持久化方式分为手动触发和自动触发。
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/">聚簇索引和非聚簇索引有什么区别？什么情况用聚集索引？</a></h1>
 	<div class="entry__content">MyISAM索引实现
-  使用B+树
-  叶子节点的data域存储数据记录的地址（非聚簇索引）
-  主键索引与普通索引结构一样
-  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
-  图示
-    InnoDB的索引实现
-  使用B+树
-  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
-  普通索引叶子节点data域保存着主键值（非聚簇索引）
-  每个表只能有一个聚簇索引
-  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
-  图示
-  主键索引
-  辅助索引
-    聚簇索引与非聚簇索引定义
+使用B+树
+叶子节点的data域存储数据记录的地址（非聚簇索引）
+主键索引与普通索引结构一样
+查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+图示
+InnoDB的索引实现
+使用B+树
+主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+普通索引叶子节点data域保存着主键值（非聚簇索引）
+每个表只能有一个聚簇索引
+主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+图示
+主键索引
+辅助索引
+聚簇索引与非聚簇索引定义
 叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
-  什么是回表
+什么是回表
 通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
-  什么是索引覆盖
- 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &lsquo;jack&rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &lsquo;jack&rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</div>
+什么是索引覆盖
+当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &lsquo;jack&rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &lsquo;jack&rsquo;; 可对name和age建立联合索引，从而避免回表。 什么是索引下推
+TODO
+为什么尽量使用短的字段作为索引
+由于每个B+树的节点大小是固定的，过大的字段会导致每个节点存储的key数量表少，从而使树的层级变高，增加IO消耗 如果使用长的字段作为主键，则也会使辅助索引占用空间变大，因为辅助索引叶子节点data域存储的是主键值 为什么尽量使用单调递增的字段作为主键
+非单调的主键会使在插入新数据时，为了维护B+树的特性而频繁的分裂调整，十分低效。
+如果没有设置主键，innodb会怎么处理？
+如果表定义了主键，则会以这个主键作为key，进行构建聚簇索引 如果没有定义主键，则会选择一个唯一索引作为key，进行构建聚簇索引 如果没有主键也没有唯一索引，那么就会创建一个隐藏的row-id作为key，进行构建聚簇索引。 参考
+https://blog.codinglabs.org/articles/theory-of-mysql-index.html
+https://draveness.me/whys-the-design-mysql-b-plus-tree/
+https://www.jianshu.com/p/bdc9e57ccf8b</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:42:15&#43;08:00">2022年11月24日</time>
 	</div>
@@ -213,11 +225,16 @@ RDB持久化方式分为手动触发和自动触发。
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a></h1>
 	<div class="entry__content">DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-  传统文件传输过程
- 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap+write实现零拷贝
- 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
-  函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程</div>
+传统文件传输过程
+应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap+write实现零拷贝
+应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
+函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
+应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
+前提
+网卡支持SG-DMA技术
+执行过程
+应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:29:38&#43;08:00">2022年11月24日</time>
 	</div>
@@ -227,12 +244,16 @@ RDB持久化方式分为手动触发和自动触发。
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">IO多路复用，select、poll、epoll区别</a></h1>
 	<div class="entry__content">IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-  select
- fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif  } fd_set;   执行过程
+select
+fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&gt;__fds_bits) #endif } fd_set; 执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-  优点
- 所有平台都支持，良好的跨平台性    缺点</div>
+优点
+所有平台都支持，良好的跨平台性 缺点
+每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
+数据结构
+数据结构定义如下，链表存储
+/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:28:33&#43;08:00">2022年11月24日</time>
 	</div>
@@ -241,12 +262,12 @@ RDB持久化方式分为手动触发和自动触发。
 					<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">TCP四次挥手</a></h1>
-	<div class="entry__content">TCP四次挥手过程   执行流程图
- 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+	<div class="entry__content">TCP四次挥手过程 执行流程图
+执行过程 客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态 参考：
 https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
-线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </div>
+线上出现大量CLOSE_WAIT原因 原因 被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙 危害 资源占用（文件描述符，端口等），无法响应建立新连接 解决方法 排查代码，是否能正常close连接 TIME_WAIT原因，为什么要等待2MSL 为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文 线上出现很多TIME_WAIT为什么？ 原因 服务端主动关闭连接，tcp连接进入TIME_WAIT状态 解决方法 内核参数调优（修改TIME_WAIT等待时间），但只治标不治本 </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:38:54&#43;08:00">2022年11月24日</time>
 	</div>
@@ -256,7 +277,7 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">Chanel底层原理</a></h1>
 	<div class="entry__content">数据结构
-type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 元素大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 元素类型 	sendx uint // 记录循环队列中发送操作处理到的位置（索引） 	recvx uint // 记录循环队列中接收操作处理到的位置（索引） 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 	last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 	prev *sudog // 双向链表前指针 	elem unsafe.</div>
+type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 元素大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 元素类型 sendx uint // 记录循环队列中发送操作处理到的位置（索引） recvx uint // 记录循环队列中接收操作处理到的位置（索引） recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 prev *sudog // 双向链表前指针 elem unsafe.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:48&#43;08:00">2022年11月24日</time>
 	</div>
@@ -266,7 +287,9 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">Sync.Map 实现原理</a></h1>
 	<div class="entry__content">数据结构
-type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</div>
+type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
+sync.Map 的实现原理可概括为：
+两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考：</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:07:00&#43;08:00">2022年11月24日</time>
 	</div>

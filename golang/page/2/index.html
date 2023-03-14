@@ -13,7 +13,6 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fishwin.github.io/golang/" />
 
-
 		<meta itemprop="name" content="Golangs">
 <meta itemprop="description" content="张海余的个人博客">
 		<meta name="twitter:card" content="summary"/>
@@ -145,7 +144,7 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/">nil可与哪些类型比较?</a></h1>
-	<div class="entry__content">引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</div>
+	<div class="entry__content">引用类型：channel、slice、map、接口、函数、指针 只有引用类型才可以与nil进行比较</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2021-11-24T17:06:14&#43;08:00">2021年11月24日</time>
 	</div>
@@ -160,26 +159,29 @@
 一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
 一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
 gorutine 与 内核线程 N:M映射
-  全局运行队列
+全局运行队列
 go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
 全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
-  本地运行队列
+本地运行队列
 每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
-  netpoll（网络轮询器）
+netpoll（网络轮询器）
 比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
-  调度过程
+调度过程
 p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
-  sysmon
+sysmon
 go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
- 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P； 抢占式调度
 当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
 基于协作的抢占式调度器 - 1.2 ~ 1.13
 基于信号的抢占式调度器 - 1.14 ~ 至今
-  channel
+channel
 试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
-  总结
+总结
 goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
-  参考：</div>
+参考：
+https://tonybai.com/2020/03/21/illustrated-tales-of-go-runtime-scheduler/
+https://tonybai.com/2017/06/23/an-intro-about-goroutine-scheduler/
+https://wudaijun.com/2018/01/go-scheduler/</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2021-11-23T21:35:41&#43;08:00">2021年11月23日</time>
 	</div>
@@ -189,7 +191,7 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">Init函数执行顺序</a></h1>
-	<div class="entry__content">在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</div>
+	<div class="entry__content">在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init() 下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2020-11-24T17:04:48&#43;08:00">2020年11月24日</time>
 	</div>
@@ -201,8 +203,8 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/">垃圾回收机制及运行原理</a></h1>
 	<div class="entry__content">使用算法：三色标记+混合写屏障+辅助gc
 触发时机：
- 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
- gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()） 执行流程：
+gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行） 辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
 写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
 A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
 写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
@@ -220,7 +222,7 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</div>
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/">New和make的区别</a></h1>
-	<div class="entry__content"> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </div>
+	<div class="entry__content"> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2019-11-24T17:05:42&#43;08:00">2019年11月24日</time>
 	</div>
@@ -230,17 +232,21 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</div>
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">Slice底层数据结构及实现原理</a></h1>
-	<div class="entry__content">// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
+	<div class="entry__content">// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组） len int // 长度 cap int // 容量 } 切片长度
 切片长度是切片引用的元素数目
-  切片容量
+切片容量
 容量是底层数组的长度
-  slice作为参数传递
+slice作为参数传递
 当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
+func appendSlice(s *[]int) { for i := 0; i &lt; 1000; i ++ { *s = append(*s, i) } } 扩容机制
 当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-  nil 切片
+nil 切片
 var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-  空切片</div>
+空切片
+slice2 := make([]int,0) slice2 与 nil比较结果为false，json.Marshal结果为[]
+切片的切片操作
+切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：
+func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6,7,8,9} s2 := s[2:5] fmt.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2019-11-23T21:36:33&#43;08:00">2019年11月23日</time>
 	</div>

@@ -9,21 +9,20 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？" />
-<meta property="og:description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  " />
+<meta property="og:description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/golang/%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstruct/" /><meta property="article:section" content="golang" />
 <meta property="article:published_time" content="2022-11-24T17:02:53+08:00" />
 <meta property="article:modified_time" content="2022-11-24T17:02:53+08:00" />
 
-
 		<meta itemprop="name" content="同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？">
-<meta itemprop="description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  "><meta itemprop="datePublished" content="2022-11-24T17:02:53+08:00" />
+<meta itemprop="description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行 "><meta itemprop="datePublished" content="2022-11-24T17:02:53+08:00" />
 <meta itemprop="dateModified" content="2022-11-24T17:02:53+08:00" />
 <meta itemprop="wordCount" content="3">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="同一个struct的两个实例可否用==比较？不同struct的两个实例可否用==比较？struct类型可否作为map的key？"/>
-<meta name="twitter:description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  "/>
+<meta name="twitter:description" content=" 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行 "/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">

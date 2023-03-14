@@ -13,7 +13,6 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fishwin.github.io/net/" />
 
-
 		<meta itemprop="name" content="Nets">
 <meta itemprop="description" content="张海余的个人博客">
 		<meta name="twitter:card" content="summary"/>
@@ -184,15 +183,15 @@ TCP/IP协议 应用层、传输层、网络层、网络接口层</div>
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/tcp%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E5%92%8C%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/">Tcp 滑动窗口、流量控制和拥塞控制</a></h1>
 	<div class="entry__content">滑动窗口
- 为了解决发送一个分组必须等待确认才能发送下一个分组的性能不高的问题 引入窗口的概念，一次可发送多个数组，累计确认，提高通信效率 窗口大小由接收端决定，接收端通过tcp头部的window字段告知发送端还有多大缓冲区可以接收数据 发送方和接收方都有窗口，并且不断向前滑动    流量控制
-  接收方通过TCP头部的window字段，来不断告知还可以接收的数据量，来控制发送数据量，这期间发送窗口的大小会随接收窗口大小不断变化
-  窗口关闭问题
+为了解决发送一个分组必须等待确认才能发送下一个分组的性能不高的问题 引入窗口的概念，一次可发送多个数组，累计确认，提高通信效率 窗口大小由接收端决定，接收端通过tcp头部的window字段告知发送端还有多大缓冲区可以接收数据 发送方和接收方都有窗口，并且不断向前滑动 流量控制
+接收方通过TCP头部的window字段，来不断告知还可以接收的数据量，来控制发送数据量，这期间发送窗口的大小会随接收窗口大小不断变化
+窗口关闭问题
 窗口关闭问题即发送窗口为0，这时发送窗口不会再发送数据，但是当接收窗口变大可接收数据时，发送方并不知道，为解决这一问题，发送方会定时进行窗口探测，接收方在收到探测报文之后，会告知自己的窗口大小。
-    拥塞控制
- 避免大数量数据传输导致网络拥堵，进而导致数据报丢失 拥塞窗口：为了实现拥塞控制，在发送端设置的窗口，发送窗口大小=min(拥塞窗口大小，接收窗口大小) 如果发送方在规定时间内没有收到接收方的确认消息，就认为网络拥堵 控制算法  慢启动：tcp刚建立连接时，发送方每收到一个ack，拥塞窗口就乘2，直到增加到ssthresh（慢启动门限）&mdash;-指数增长 拥塞避免算法：当拥塞窗口大小超过ssthresh（慢启动门限）时，就会进入拥塞避免，即每当收到一个ack，拥塞窗口大小增加1/拥塞窗口大小&mdash;-线性增长，窗口大小增速减缓 拥塞发生&mdash;变化拥塞窗口大小  发生超时重传的拥塞发生算法：慢启动门限设置为拥塞窗口的一半，拥塞窗口大小设置为1 发生快速重传的拥塞发生算法：拥塞窗口大小减半，慢启动门限设置为原拥塞窗口大小，快速恢复算法   快速恢复：当发送端连续收到三个连续确认，执行快速重传，并进入快速恢复阶段，慢启动门限和拥塞窗口大小都减为当前拥塞窗口的一半。      流量控制与拥塞控制比较
- 流量控制是发送方根据接收方窗口大小来变化发送窗口大小 拥塞控制是针对整个网络拥堵情况，进行调整拥塞窗口的大小    参考
+拥塞控制
+避免大数量数据传输导致网络拥堵，进而导致数据报丢失 拥塞窗口：为了实现拥塞控制，在发送端设置的窗口，发送窗口大小=min(拥塞窗口大小，接收窗口大小) 如果发送方在规定时间内没有收到接收方的确认消息，就认为网络拥堵 控制算法 慢启动：tcp刚建立连接时，发送方每收到一个ack，拥塞窗口就乘2，直到增加到ssthresh（慢启动门限）&mdash;-指数增长 拥塞避免算法：当拥塞窗口大小超过ssthresh（慢启动门限）时，就会进入拥塞避免，即每当收到一个ack，拥塞窗口大小增加1/拥塞窗口大小&mdash;-线性增长，窗口大小增速减缓 拥塞发生&mdash;变化拥塞窗口大小 发生超时重传的拥塞发生算法：慢启动门限设置为拥塞窗口的一半，拥塞窗口大小设置为1 发生快速重传的拥塞发生算法：拥塞窗口大小减半，慢启动门限设置为原拥塞窗口大小，快速恢复算法 快速恢复：当发送端连续收到三个连续确认，执行快速重传，并进入快速恢复阶段，慢启动门限和拥塞窗口大小都减为当前拥塞窗口的一半。 流量控制与拥塞控制比较
+流量控制是发送方根据接收方窗口大小来变化发送窗口大小 拥塞控制是针对整个网络拥堵情况，进行调整拥塞窗口的大小 参考
 https://www.cnblogs.com/xiaolincoding/p/12732052.html
-  TCP 累计确认 ack=n表示n之前的数据已经正确收到
+TCP 累计确认 ack=n表示n之前的数据已经正确收到
 TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这个时候就会重发这个序列号之后的数据，不需要等待超时，提高效率</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:44:14&#43;08:00">2022年11月24日</time>
@@ -203,12 +202,14 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/">TCP与UDP头部</a></h1>
-	<div class="entry__content">UDP头部   示意图
-  数据字典
- 目标和源端口：标识进程 包长度：UDP头部和数据的长度之和 校验和：提供可靠的UDP头部和数据(相当于对数据进行签名，发送端计算一个校验和，再接收端再计算一次，并与头部的校验和进行比对)    代码定义
-/*UDP头定义，共8个字节*/ typedef struct _UDP_HEADER { unsigned short m_usSourPort; // 源端口号16bit  unsigned short m_usDestPort; // 目的端口号16bit  unsigned short m_usLength; // 数据包长度16bit  unsigned short m_usCheckSum; // 校验和16bit }__attribute__((packed))UDP_HEADER, *PUDP_HEADER;     TCP头部   示意图
-  词典
- 序列号：随机生成，用来解决包重复、乱序、重传等问题 确认应答号：解决不丢包的问题 控制位  ACK：确认应答，该位为1时，确认应答号字段有效 RST：该位为1时，表示TCP连接异常必须强制断开连接 SYN：该位为1时，表示希望建立连接，并完成序列号的初始化 FIN：该位为1时，表示希望断开连接      校验和：类似于对数据进行签名，在接收端进行校验</div>
+	<div class="entry__content">UDP头部 示意图
+数据字典
+目标和源端口：标识进程 包长度：UDP头部和数据的长度之和 校验和：提供可靠的UDP头部和数据(相当于对数据进行签名，发送端计算一个校验和，再接收端再计算一次，并与头部的校验和进行比对) 代码定义
+/*UDP头定义，共8个字节*/ typedef struct _UDP_HEADER { unsigned short m_usSourPort; // 源端口号16bit unsigned short m_usDestPort; // 目的端口号16bit unsigned short m_usLength; // 数据包长度16bit unsigned short m_usCheckSum; // 校验和16bit }__attribute__((packed))UDP_HEADER, *PUDP_HEADER; TCP头部 示意图
+词典
+序列号：随机生成，用来解决包重复、乱序、重传等问题 确认应答号：解决不丢包的问题 控制位 ACK：确认应答，该位为1时，确认应答号字段有效 RST：该位为1时，表示TCP连接异常必须强制断开连接 SYN：该位为1时，表示希望建立连接，并完成序列号的初始化 FIN：该位为1时，表示希望断开连接 校验和：类似于对数据进行签名，在接收端进行校验
+代码定义
+/*TCP头定义，共20个字节*/ typedef struct _TCP_HEADER { short m_sSourPort; // 源端口号16bit short m_sDestPort; // 目的端口号16bit unsigned int m_uiSequNum; // 序列号32bit unsigned int m_uiAcknowledgeNum; // 确认号32bit short m_sHeaderLenAndFlag; // 前4位：TCP头长度；中6位：保留；后6位：标志位 short m_sWindowSize; // 窗口大小16bit short m_sCheckSum; // 检验和16bit short m_surgentPointer; // 紧急数据偏移量16bit }__attribute__((packed))TCP_HEADER, *PTCP_HEADER; 为什么UDP头部结构没有首部长度，而TCP头部有首部长度字段 因为TCP头部中有选项字段，头部大小不固定，而UDP头部大小是固定的</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:41:15&#43;08:00">2022年11月24日</time>
 	</div>
@@ -228,12 +229,12 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">TCP四次挥手</a></h1>
-	<div class="entry__content">TCP四次挥手过程   执行流程图
- 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+	<div class="entry__content">TCP四次挥手过程 执行流程图
+执行过程 客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态 参考：
 https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
-线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </div>
+线上出现大量CLOSE_WAIT原因 原因 被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙 危害 资源占用（文件描述符，端口等），无法响应建立新连接 解决方法 排查代码，是否能正常close连接 TIME_WAIT原因，为什么要等待2MSL 为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文 线上出现很多TIME_WAIT为什么？ 原因 服务端主动关闭连接，tcp连接进入TIME_WAIT状态 解决方法 内核参数调优（修改TIME_WAIT等待时间），但只治标不治本 </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:38:54&#43;08:00">2022年11月24日</time>
 	</div>
@@ -245,28 +246,27 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/tcp/">Tcp</a></h1>
 	<div class="entry__content">1. TCP定义 TCP是面向连接的、可靠的、基于字节流的传输层通信协议 。
 2. 什么是TCP连接 用于保证可靠性和流量控制的某些状态信息的组合，包括socket、序列号、窗口大小等
-3. TCP与UDP区别，UDP优点，适用场景   区别
-  连接
+3. TCP与UDP区别，UDP优点，适用场景 区别
+连接
 TCP是面向连接的传输层协议，通信之前需要建立连接
 UDP传输时不需要建立连接
-  服务对象
+服务对象
 TCP只能一对一通信
 UDP支持一对一、一对多、多对多
-  可靠性
+可靠性
 TCP保证数据传输的可靠性
 UDP不保证传输的可靠性
-  拥塞控制、流量控制
+拥塞控制、流量控制
 TCP有拥塞控制和流量控制的机制
 UDP没有
-  首部开销
+首部开销
 TCP首部20个字节（不使用选项字段20字节、使用时更长），UDP首部只有8个字节，长度固定
-    应用案例
- TCP  FTP文件传输 HTTP/HTTPS   UDP  DNS 视频、音频等多媒体通信      参考：
+应用案例
+TCP FTP文件传输 HTTP/HTTPS UDP DNS 视频、音频等多媒体通信 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
-4. Linux查看TCP连接状态   命令
+4. Linux查看TCP连接状态 命令
 netstat -napt
-  图
-  </div>
+图</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:36:10&#43;08:00">2022年11月24日</time>
 	</div>
@@ -276,16 +276,15 @@ netstat -napt
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/https%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B/">Https原理及握手过程</a></h1>
-	<div class="entry__content">  原理
+	<div class="entry__content">原理
 https本质是在原http与tcp之间加入了SSL/TLS协议
 https = http + ssl/tls
-  https七次握手过程
- 客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输  注意：主密钥由双方产生的随机数和预主密钥生成
-master_secret = PRF(pre_master_secret,&#34;master secret&#34;,ClientHello.random+ServerHello.random)   参考
+https七次握手过程
+客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输 注意：主密钥由双方产生的随机数和预主密钥生成
+master_secret = PRF(pre_master_secret,&#34;master secret&#34;,ClientHello.random+ServerHello.random) 参考
 https://draveness.me/whys-the-design-https-latency/
 https://razeencheng.com/post/ssl-handshake-detail
-https://segmentfault.com/a/1190000021494676
-  </div>
+https://segmentfault.com/a/1190000021494676</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:33:44&#43;08:00">2022年11月24日</time>
 	</div>
@@ -296,7 +295,7 @@ https://segmentfault.com/a/1190000021494676
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/net/%E5%B8%B8%E8%A7%81httpheader/">常见http header</a></h1>
 	<div class="entry__content">常见的http请求头
-   协议头 说明 示例     Accept 可接受的响应内容类型（Content-Types） Accept:text/plain   Accept-Charset 可接受的字符集 Accept-Charset:utf-8   Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate   Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US   Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==   Cache-Control 是否使用缓存机制 Cache-Control: no-cache   Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade   Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new;   Content-Length 以8进制表示的请求体的长度 Content-Length: 348   Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded   Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT   Host 服务器域名 Host: www.</div>
+协议头 说明 示例 Accept 可接受的响应内容类型（Content-Types） Accept:text/plain Accept-Charset 可接受的字符集 Accept-Charset:utf-8 Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE== Cache-Control 是否使用缓存机制 Cache-Control: no-cache Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new; Content-Length 以8进制表示的请求体的长度 Content-Length: 348 Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT Host 服务器域名 Host: www.itbilu.com:80 Host: www.itbilu.com Origin 发起一个针对跨域资源共享的请求 Origin: http://www.itbilu.com Referer 表示浏览器所访问的前一个页面 Referer: http://itbilu.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T17:33:08&#43;08:00">2022年11月24日</time>
 	</div>

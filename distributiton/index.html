@@ -13,7 +13,6 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fishwin.github.io/distributiton/" />
 
-
 		<meta itemprop="name" content="Distributitons">
 <meta itemprop="description" content="张海余的个人博客">
 		<meta name="twitter:card" content="summary"/>
@@ -145,7 +144,7 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/">为什么不能将写入MQ与数据库操作放在一起实现分布式事务？</a></h1>
-	<div class="entry__content">[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] }  如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚  </div>
+	<div class="entry__content">[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] } 如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚 </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:39:37&#43;08:00">2022年11月24日</time>
 	</div>
@@ -155,7 +154,7 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/">为什么不能将rpc调用与数据库操作放在一起实现分布式事务？</a></h1>
-	<div class="entry__content">[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] }  整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </div>
+	<div class="entry__content">[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] } 整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。 </div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T19:38:37&#43;08:00">2022年11月24日</time>
 	</div>
@@ -169,19 +168,24 @@
 2. docker 镜像 docker镜像是docker容器的静态模板，用于创建容器。
 3. docker 容器 docker 容器包含应用程序及其所有的依赖项，与其他容器共享宿主机内核，在用户空间容器以独立的进程运行。docker容器不依赖任何基础架构，可在任何操作系统、任何云平台运行。
 4. docker 仓库 docker 仓库就是存放docker镜像文件的场所。
-5. docker 与虚拟机的区别   docker容器间共享宿主机内核、硬件、操作系统等资源，各容器在用户空间是以分离的进程进行运行； 虚拟机需要模拟一个完整的用户操作系统，包含应用、系统库、依赖项、硬件驱动等。
-  虚拟机有hypervisor层和guestOS层，而容器没有，这样容器就避免了hypervisor和guestOS带来的性能损耗。
-  虚拟机所采用的传统虚拟化技术是对硬件和操作系统的虚拟，而容器化技术是对进程的虚拟。
-  docker隔离性更弱，docker是进程之间的隔离，而虚拟机是系统级别的隔离。
-  docker启动秒级，虚拟机启动分钟级。
-  6. docker容器有几种状态 运行、已停止、重新启动、停止
-7. dockerfile 常见的指令   FROM：指定基础镜像
-  LABEL：为镜像指定标签
-  RUN：运行指定的指令（编译镜像时）
-  CMD：容器启动要执行的命令（容器启动时）
-  8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
-9. docker常用命令   docker pull 从docker仓库拉取镜像
-  docker push 推送本地镜像到docker仓库</div>
+5. docker 与虚拟机的区别 docker容器间共享宿主机内核、硬件、操作系统等资源，各容器在用户空间是以分离的进程进行运行； 虚拟机需要模拟一个完整的用户操作系统，包含应用、系统库、依赖项、硬件驱动等。
+虚拟机有hypervisor层和guestOS层，而容器没有，这样容器就避免了hypervisor和guestOS带来的性能损耗。
+虚拟机所采用的传统虚拟化技术是对硬件和操作系统的虚拟，而容器化技术是对进程的虚拟。
+docker隔离性更弱，docker是进程之间的隔离，而虚拟机是系统级别的隔离。
+docker启动秒级，虚拟机启动分钟级。
+6. docker容器有几种状态 运行、已停止、重新启动、停止
+7. dockerfile 常见的指令 FROM：指定基础镜像
+LABEL：为镜像指定标签
+RUN：运行指定的指令（编译镜像时）
+CMD：容器启动要执行的命令（容器启动时）
+8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
+9. docker常用命令 docker pull 从docker仓库拉取镜像
+docker push 推送本地镜像到docker仓库
+docker rm 删除容器
+docker rmi 删除本地镜像
+docker images 列出本地所有镜像
+docker ps 列出所有容器
+docker cp 从容器拷贝资源到宿主机或从宿主机拷贝资源到容器</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2022-11-24T18:34:38&#43;08:00">2022年11月24日</time>
 	</div>
@@ -191,17 +195,16 @@
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">一致性hash算法原理</a></h1>
-	<div class="entry__content">  应用场景
+	<div class="entry__content">应用场景
 分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
-  原理：
+原理：
 首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
 如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
-    数据倾斜问题（数据在各个redis节点上分布不均匀）
-  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
-  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&hellip;）
-    参考
-https://blog.codinglabs.org/articles/consistent-hashing.html
-  </div>
+数据倾斜问题（数据在各个redis节点上分布不均匀）
+如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
+为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&hellip;）
+参考
+https://blog.codinglabs.org/articles/consistent-hashing.html</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2021-11-24T18:36:47&#43;08:00">2021年11月24日</time>
 	</div>
@@ -211,7 +214,7 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
 				<div class="card card--1col">
 					<article class="entry card__box block">
 	<h1 class="entry__title title-excerpt"><a class="entry__title-link" href="/distributiton/ms/">分布式八股文</a></h1>
-	<div class="entry__content">电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror.</div>
+	<div class="entry__content">电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】 参考一：https://osjobs.net/system/posts/spike-system/ 简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】 参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database 简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】 参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html 什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】 参考一：https://smartkeyerror.</div>
 	<div class="entry__meta meta mt tar">
 	<time class="entry__meta-published meta-published" datetime="2019-01-13T10:58:44&#43;08:00">2019年01月13日</time>
 	</div>

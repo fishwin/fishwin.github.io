@@ -13,9 +13,13 @@
       <pubDate>Sun, 11 Dec 2022 09:51:43 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</guid>
-      <description>innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
- ACID 事务的四大特性，简称ACID
- 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</description>
+      <description>innodb与myisam 区别项 innodb myisam 是否支持事务 支持 不支持 锁粒度 行锁，适合高并发 表锁，不适合高并发 默认 是 否 支持外键 支持 不支持 全文索引 不支持，可通过插件（elasticSearch）实现 支持 聚簇索引 是，主键索引 否 count 速度慢 使用一个变量保存，速度快 事务 事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败； 比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ACID 事务的四大特性，简称ACID
+原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。 事务隔离级别 read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。 从上而下，隔离安全性从低变高，但性能从高变低。
+脏读：一个事务读取到另一个事务还未提交的数据； 如图中，事务2第(3)步读到v=0，事务1执行(3)set=100，事务2第(4)步可读到v=100，那么当事务1回滚后，那么事务2读到的v=100就是脏数据。
+不可重复读：在一个事务内，先后读取同一条数据，但是两次读取到的值不同，叫做不可重复读； 如图中，事务2在前四步读到的都是v=0，在事务1修改并commit之后，第(5)步读到的就是100，重复读取不一致，即不可重复读。
+幻读：在一个事务内，读到的数据可能不是最新的数据，可能已经由其他事务修改了。 如图中，事务2前五步读到的数据都是v=0，但实际已经变成了v=100。还有可能其他事务已经将id=1的数据删除了。
+隔离级别 脏读 不可重复读 幻读 read uncommit yes yes yes read commit no yes yes repeatable read no no yes serializable no no no 读锁、写锁 读锁（并发读，不可并发写） select * from table lock in share mode; 写锁（不可并发读，不可并发写） select * from table for update; serializable实现原理就是在所有读操作加隐式的读锁，写操作数据库会默认加写锁。从而实现顺序执行事务。 read uncommit实现原理就是不加锁，并且没有任何并发控制。</description>
     </item>
     
     <item>
@@ -28,10 +32,10 @@
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</description>
     </item>
     
@@ -41,15 +45,21 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:43:23 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/acid/</guid>
-      <description>ACID
- 原子性  定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。   一致性  定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。   隔离性  定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离   持久性  定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。      实现原理
-  redo log
-  定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
-  流程图
-  作用
- 当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性    什么时候开始写redolog？什么时候释放redolog？
- 当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。    既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
- 直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分      undo log</description>
+      <description> ACID
+原子性 定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。 一致性 定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。 隔离性 定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离 持久性 定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。 实现原理
+redo log
+定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
+流程图
+作用
+当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性 什么时候开始写redolog？什么时候释放redolog？
+当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。 既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
+直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分 undo log
+定义：记录数据被修改前的信息（记录逆操作），用于回滚操作 作用 用于回滚事务的操作 保证事务的原子性 读写锁
+读锁（共享锁） 定义：多个事务可以并发的读同一条数据，但不能同时写同一条数据 写锁（排它锁） 定义：一个事务拿到写锁之后，其他事务不能读也不能写这条数据 MVCC（Multi-Version Concurrency Control）多版本并发控制
+隐藏字段（mysql在创建表时，会为每张表创建几个隐藏字段）
+row_id：行记录的唯一标志 transaction_id：事务id roll_pointer：回滚指针，指向对应的undo log，用于回滚。 作用
+提高并发性能，不需要加锁，处理读写冲突，利于读多写少的场景 原理
+同一份数据为每个事务生成一个版本（由隐藏字段实现），每个事务只能读特定版本的数据（类似快照） 不需要使用锁 读与读之间不影响 </description>
     </item>
     
     <item>
@@ -59,26 +69,35 @@ RDB持久化方式分为手动触发和自动触发。
       
       <guid>https://fishwin.github.io/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
       <description>MyISAM索引实现
-  使用B+树
-  叶子节点的data域存储数据记录的地址（非聚簇索引）
-  主键索引与普通索引结构一样
-  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
-  图示
-    InnoDB的索引实现
-  使用B+树
-  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
-  普通索引叶子节点data域保存着主键值（非聚簇索引）
-  每个表只能有一个聚簇索引
-  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
-  图示
-  主键索引
-  辅助索引
-    聚簇索引与非聚簇索引定义
+使用B+树
+叶子节点的data域存储数据记录的地址（非聚簇索引）
+主键索引与普通索引结构一样
+查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+图示
+InnoDB的索引实现
+使用B+树
+主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+普通索引叶子节点data域保存着主键值（非聚簇索引）
+每个表只能有一个聚簇索引
+主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+图示
+主键索引
+辅助索引
+聚簇索引与非聚簇索引定义
 叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
-  什么是回表
+什么是回表
 通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
-  什么是索引覆盖
- 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</description>
+什么是索引覆盖
+当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。 什么是索引下推
+TODO
+为什么尽量使用短的字段作为索引
+由于每个B+树的节点大小是固定的，过大的字段会导致每个节点存储的key数量表少，从而使树的层级变高，增加IO消耗 如果使用长的字段作为主键，则也会使辅助索引占用空间变大，因为辅助索引叶子节点data域存储的是主键值 为什么尽量使用单调递增的字段作为主键
+非单调的主键会使在插入新数据时，为了维护B+树的特性而频繁的分裂调整，十分低效。
+如果没有设置主键，innodb会怎么处理？
+如果表定义了主键，则会以这个主键作为key，进行构建聚簇索引 如果没有定义主键，则会选择一个唯一索引作为key，进行构建聚簇索引 如果没有主键也没有唯一索引，那么就会创建一个隐藏的row-id作为key，进行构建聚簇索引。 参考
+https://blog.codinglabs.org/articles/theory-of-mysql-index.html
+https://draveness.me/whys-the-design-mysql-b-plus-tree/
+https://www.jianshu.com/p/bdc9e57ccf8b</description>
     </item>
     
     <item>
@@ -88,15 +107,27 @@ RDB持久化方式分为手动触发和自动触发。
       
       <guid>https://fishwin.github.io/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
       <description>B树（平衡多路搜索树）
-  图示
-  特征
- 每个节点可有多棵子树 每个非叶子节点有n个key，并有n+1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
-BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &amp;gt; key) return BTree_Search(point[i]-&amp;gt;node); } return BTree_Search(point[i+1]-&amp;gt;node); } data = BTree_Search(root, my_key);   时间复杂度
+图示
+特征
+每个节点可有多棵子树 每个非叶子节点有n个key，并有n+1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度 查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &amp;gt; key) return BTree_Search(point[i]-&amp;gt;node); } return BTree_Search(point[i+1]-&amp;gt;node); } data = BTree_Search(root, my_key); 时间复杂度
 O(log n)
-    B+树
-  图示
-  特征
- 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度</description>
+B+树
+图示
+特征
+子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表 时间复杂度
+O(log n)
+局部性原理与磁盘预读
+局部性原理
+当一个数据被用到时，其附近的数据通常也会被用到
+磁盘预读
+磁盘不是按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置向后读取一定长度放到内存。 预读的长度一般为页（页的大小通常为4k）的整数倍 mysql为什么使用B+树而不是B树作为索引？
+由于mysql通常将数据存放在磁盘中，读取数据就会产生磁盘IO消耗。而B+树的非叶子节点中不保存数据，B树中非叶子节点会保存数据，通常一个节点大小会设置为磁盘页大小，这样B+树每个节点可放更多的key，B树则更少。这样就造成了，B树的高度会比B+树更高，从而会产生更多的磁盘IO消耗。 B+树叶子节点构成链表，更利用范围查找和排序。而B树进行范围查找和排序则要对树进行递归遍历 B树与B+树比较
+B+树层级更少，查找更快 B+树查询速度稳定：由于B+树所有数据都存储在叶子节点，所以查询任意数据的次数都是树的高度h B+树有利于范围查找 B+树全节点遍历更快：所有叶子节点构成链表，全节点扫描，只需遍历这个链表即可 B树优点：如果在B树中查找的数据离根节点近，由于B树节点中保存有数据，那么这时查询速度比B+树快。 为什么不使用红黑树（自平衡二叉搜索树）？
+如果使用红黑树，会使树的高度更高，增加IO消耗
+为什么不使用哈希表
+哈希表对于范围查找和排序效率低，但对于单个数据的查询效率很高。
+参考</description>
     </item>
     
     <item>
@@ -106,24 +137,24 @@ O(log n)
       
       <guid>https://fishwin.github.io/db/%E5%A4%96%E9%94%AE/</guid>
       <description>常用的外键类型：
-  RESTRICT：会触发一致性检查
+RESTRICT：会触发一致性检查
 例如： cities表中字段有id、name两个字段
 ​	buildings表有id、name、city_id三个字段。
 ​ 这时city_id就是关联到cities表的RESTRICT外键。
 ​	当向buildings表中新插入一条记录（88, &amp;ldquo;故宫&amp;rdquo;, 9）时，就需要去cities表中检测是否有id=9的城市，如果没有则会报错。
 ​ 当修噶buildings表中city_id的值时，需要检查cities表中是否存在这个id，如果没有则会报错。
 ​	当删除cities表中的id=7的城市时，需要检测buildings表中是否有引用city_id=7的记录，如果有则会报错。
-  CASCADE：会触发级联操作
+CASCADE：会触发级联操作
 例如：
 ​	cities表中字段有id、name两个字段
 ​	buildings表有id、name、city_id三个字段。
 ​ 这时city_id就是关联到cities表的CASCADE外键。
 ​	当删除cities表中的id=7的城市，那么会去检查buildings表中是否有引用city_id=7的记录，如果有则会将他们也删除。
 ​	当修改cities表中的id=8的城市，将它的id修改为11时，buildings表中引用city_id=8的记录，也会被修改为11
-  总结
-  使用外键：
- 可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。    不使用外键：
- 对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负    </description>
+总结
+使用外键：
+可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。 不使用外键：
+对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负 </description>
     </item>
     
     <item>
@@ -132,11 +163,10 @@ O(log n)
       <pubDate>Wed, 24 Nov 2021 19:34:55 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</guid>
-      <description>  (a,b)联合索引会触发filesort
-  (a,b,c)联合索引会触发filesort
-  (a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
-  所以结论是：建立(a,c)联合索引为最优解
-  </description>
+      <description>(a,b)联合索引会触发filesort
+(a,b,c)联合索引会触发filesort
+(a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
+所以结论是：建立(a,c)联合索引为最优解</description>
     </item>
     
     <item>
@@ -146,8 +176,12 @@ O(log n)
       
       <guid>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
       <description>事务隔离级别主要有四种
- 读未提交 (READ UNCOMMITED)  定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题  脏读 不可重复读 幻读     读已提交 (READ COMMITED)  定义：一个事务只能读取另一个事务已经提交的数据 存在的问题  不可重复读 幻读     可重复读 (REPEATABLE READ)（Mysql 默认隔离级别）  定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题  幻读     串行 (SERIALIZABLE)  定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题      释义
- 脏读  定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据   不可重复读  定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致   幻读  定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。      优缺点</description>
+读未提交 (READ UNCOMMITED) 定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题 脏读 不可重复读 幻读 读已提交 (READ COMMITED) 定义：一个事务只能读取另一个事务已经提交的数据 存在的问题 不可重复读 幻读 可重复读 (REPEATABLE READ)（Mysql 默认隔离级别） 定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题 幻读 串行 (SERIALIZABLE) 定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题 释义
+脏读 定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据 不可重复读 定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致 幻读 定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。 优缺点
+隔离级别从上到下，并发性能越来越差，但对于数据的隔离性一致性保证程度越好
+参考
+https://blog.csdn.net/qq_41907991/article/details/107717419?utm_source=app
+https://blog.csdn.net/u013256816/article/details/103966510?utm_source=app</description>
     </item>
     
     <item>
@@ -156,7 +190,7 @@ O(log n)
       <pubDate>Sun, 13 Jan 2019 10:59:27 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/ms/</guid>
-      <description>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev.</description>
+      <description>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】 参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes. 数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959 简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】 参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096 Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】 参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html 聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265 简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】 参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8 简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773 简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】 参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831 Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】 参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf 什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-model.html#:~:text=The%20InnoDB%20transaction%20model%20aims,with%20traditional%20two%2Dphase%20locking.&amp;amp;text=Typically%2C%20several%20users%20are%20permitted,without%20causing%20InnoDB%20memory%20exhaustion. 参考二：https://draveness.me/mysql-transaction/ 简述什么是最左匹配原则 【[阿里,字节跳动,美团,京东,百度,快手]，简单，146次】 为什么 Redis 在单线程下能如此快？ 【[阿里,美团,京东,快手,拼多多]，中等，144次】 参考一：https://redis.io/topics/benchmarks 简述 Redis 中常见类型的底层数据结构 【[字节跳动,美团,京东,滴滴]，，122次】 参考一：https://redis.</description>
     </item>
     
   </channel>

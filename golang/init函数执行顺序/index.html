@@ -9,21 +9,20 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="Init函数执行顺序" />
-<meta property="og:description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：" />
+<meta property="og:description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init() 下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" /><meta property="article:section" content="golang" />
 <meta property="article:published_time" content="2020-11-24T17:04:48+08:00" />
 <meta property="article:modified_time" content="2020-11-24T17:04:48+08:00" />
 
-
 		<meta itemprop="name" content="Init函数执行顺序">
-<meta itemprop="description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行："><meta itemprop="datePublished" content="2020-11-24T17:04:48+08:00" />
+<meta itemprop="description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init() 下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行："><meta itemprop="datePublished" content="2020-11-24T17:04:48+08:00" />
 <meta itemprop="dateModified" content="2020-11-24T17:04:48+08:00" />
 <meta itemprop="wordCount" content="4">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Init函数执行顺序"/>
-<meta name="twitter:description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行："/>
+<meta name="twitter:description" content="在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init() 下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行："/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
 	<link rel="stylesheet" href="/css/custom.css">

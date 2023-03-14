@@ -6,18 +6,54 @@
     <description>Recent content on 张海余的主页</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 08 Jan 2023 18:27:55 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 14 Mar 2023 08:24:22 +0800</lastBuildDate><atom:link href="https://fishwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vitualmemory</title>
+      <link>https://fishwin.github.io/os/vitualmemory/</link>
+      <pubDate>Tue, 14 Mar 2023 08:24:22 +0800</pubDate>
+      
+      <guid>https://fishwin.github.io/os/vitualmemory/</guid>
+      <description>4.1 为什么要有虚拟内存？ 本篇跟大家说说内存管理，内存管理还是比较重要的一个环节，理解了它，至少对整个操作系统的工作会有一个初步的轮廓，这也难怪面试的时候常问内存管理。
+干就完事，本文的提纲：
+虚拟内存 如果你是电子相关专业的，肯定在大学里捣鼓过单片机。
+单片机是没有操作系统的，所以每次写完代码，都需要借助工具把程序烧录进去，这样程序才能跑起来。
+另外，单片机的 CPU 是直接操作内存的「物理地址」。
+在这种情况下，要想在内存中同时运行两个程序是不可能的。如果第一个程序在 2000 的位置写入一个新的值，将会擦掉第二个程序存放在相同位置上的所有内容，所以同时运行两个程序是根本行不通的，这两个程序会立刻崩溃。
+操作系统是如何解决这个问题呢？
+这里关键的问题是这两个程序都引用了绝对物理地址，而这正是我们最需要避免的。
+我们可以把进程所使用的地址「隔离」开来，即让操作系统为每个进程分配独立的一套「虚拟地址」，人人都有，大家自己玩自己的地址就行，互不干涉。但是有个前提每个进程都不能访问物理地址，至于虚拟地址最终怎么落到物理内存里，对进程来说是透明的，操作系统已经把这些都安排的明明白白了。
+操作系统会提供一种机制，将不同进程的虚拟地址和不同内存的物理地址映射起来。
+如果程序要访问虚拟地址的时候，由操作系统转换成不同的物理地址，这样不同的进程运行的时候，写入的是不同的物理地址，这样就不会冲突了。
+于是，这里就引出了两种地址的概念：
+我们程序所使用的内存地址叫做虚拟内存地址（Virtual Memory Address） 实际存在硬件里面的空间地址叫物理内存地址（Physical Memory Address）。 操作系统引入了虚拟内存，进程持有的虚拟地址会通过 CPU 芯片中的内存管理单元（MMU）的映射关系，来转换变成物理地址，然后再通过物理地址访问内存，如下图所示：
+操作系统是如何管理虚拟地址与物理地址之间的关系？
+主要有两种方式，分别是内存分段和内存分页，分段是比较早提出的，我们先来看看内存分段。
+内存分段 程序是由若干个逻辑分段组成的，如可由代码分段、数据分段、栈段、堆段组成。不同的段是有不同的属性的，所以就用分段（Segmentation）的形式把这些段分离出来。
+分段机制下，虚拟地址和物理地址是如何映射的？
+分段机制下的虚拟地址由两部分组成，段选择因子和段内偏移量。
+段选择因子和段内偏移量：
+段选择因子就保存在段寄存器里面。段选择子里面最重要的是段号，用作段表的索引。段表里面保存的是这个段的基地址、段的界限和特权等级等。
+虚拟地址中的段内偏移量应该位于 0 和段界限之间，如果段内偏移量是合法的，就将段基地址加上段内偏移量得到物理内存地址。
+在上面，知道了虚拟地址是通过段表与物理地址进行映射的，分段机制会把程序的虚拟地址分成 4 个段，每个段在段表中有一个项，在这一项找到段的基地址，再加上偏移量，于是就能找到物理内存中的地址，如下图：
+如果要访问段 3 中偏移量 500 的虚拟地址，我们可以计算出物理地址为，段 3 基地址 7000 + 偏移量 500 = 7500。
+分段的办法很好，解决了程序本身不需要关心具体的物理内存地址的问题，但它也有一些不足之处：
+第一个就是内存碎片的问题。 第二个就是内存交换的效率低的问题。 接下来，说说为什么会有这两个问题。
+我们先来看看，分段为什么会产生内存碎片的问题？
+我们来看看这样一个例子。假设有 1G 的物理内存，用户执行了多个程序，其中：
+游戏占用了 512MB 内存 浏览器占用了 128MB 内存 音乐占用了 256 MB 内存。 这个时候，如果我们关闭了浏览器，则空闲内存还有 1024 - 512 - 256 = 256MB。</description>
+    </item>
+    
     <item>
       <title>Channel实现原理</title>
       <link>https://fishwin.github.io/golang/channel/</link>
       <pubDate>Sun, 08 Jan 2023 18:27:55 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/channel/</guid>
-      <description>Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
+      <description>Go语言并发哲学 Do not communicate by sharing memory; instead, share memory by communicating.
 不要通过共享内存来通信，而要通过通信来实现内存共享。
- channel 的底层就是通过 mutex 来控制并发的。
+channel 的底层就是通过 mutex 来控制并发的。
 只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
- 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</description>
+数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 循环队列中每个数组元素的大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 循环队列中每个数组元素的类型 sendx uint // 记录循环队列中发送操作处理到的位置下标 recvx uint // 记录循环队列中接收操作处理到的位置下标 recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine next *sudog // 指向双向链表的下一个节点 prev *sudog // 指向双向链表的前一个节点 elem unsafe.</description>
     </item>
     
     <item>
@@ -26,11 +62,11 @@
       <pubDate>Sun, 08 Jan 2023 18:27:55 +0800</pubDate>
       
       <guid>https://fishwin.github.io/selected/channel/</guid>
-      <description>Go语言并发哲学  Do not communicate by sharing memory; instead, share memory by communicating.
+      <description>Go语言并发哲学 Do not communicate by sharing memory; instead, share memory by communicating.
 不要通过共享内存来通信，而要通过通信来实现内存共享。
- channel 的底层就是通过 mutex 来控制并发的。
+channel 的底层就是通过 mutex 来控制并发的。
 只是 channel 是更高一层次的并发编程原语，封装了更多的功能。
- 数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 循环队列中每个数组元素的大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 循环队列中每个数组元素的类型 	sendx uint // 记录循环队列中发送操作处理到的位置下标 	recvx uint // 记录循环队列中接收操作处理到的位置下标 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 	last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine  next *sudog // 指向双向链表的下一个节点  prev *sudog // 指向双向链表的前一个节点  elem unsafe.</description>
+数据结构 type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 循环队列中每个数组元素的大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 循环队列中每个数组元素的类型 sendx uint // 记录循环队列中发送操作处理到的位置下标 recvx uint // 记录循环队列中接收操作处理到的位置下标 recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥锁，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 等待队列中的头节点 last *sudog // 等待队列中的尾节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g // goroutine next *sudog // 指向双向链表的下一个节点 prev *sudog // 指向双向链表的前一个节点 elem unsafe.</description>
     </item>
     
     <item>
@@ -40,7 +76,7 @@
       
       <guid>https://fishwin.github.io/golang/sync.map/</guid>
       <description>Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
- 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &amp;lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &amp;lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &amp;lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&amp;#34;goroutine[%d] read m[%d]: %d\n&amp;#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</description>
+原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &amp;lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &amp;lt; 10; i++ { // 并发读 go func(i int) { for j := 0; j &amp;lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&amp;#34;goroutine[%d] read m[%d]: %d\n&amp;#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</description>
     </item>
     
     <item>
@@ -50,7 +86,7 @@
       
       <guid>https://fishwin.github.io/selected/sync.map/</guid>
       <description>Go语言中有两个map，一个是Go语言原生的map类型，而另外一种则是在Go 1.9版本新增到标准库中的sync.Map。
- 原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &amp;lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &amp;lt; 10; i++ { // 并发读  go func(i int) { for j := 0; j &amp;lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&amp;#34;goroutine[%d] read m[%d]: %d\n&amp;#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</description>
+原生map的“先天不足” func main() { var wg sync.WaitGroup var m = make(map[int]int, 100) for i := 0; i &amp;lt; 100; i++ { m[i] = i } wg.Add(10) for i := 0; i &amp;lt; 10; i++ { // 并发读 go func(i int) { for j := 0; j &amp;lt; 100; j++ { n := rand.Intn(100) fmt.Printf(&amp;#34;goroutine[%d] read m[%d]: %d\n&amp;#34;, i, n, m[n]) } wg.Done() }(i) } wg.Wait() } 但原生map一个最大的问题就是不支持多goroutine并发写。Go runtime内置对原生map并发写的检测，一旦检测到就会以panic的形式阻止程序继续运行，比如下面这个例子：</description>
     </item>
     
     <item>
@@ -59,9 +95,13 @@
       <pubDate>Sun, 11 Dec 2022 09:51:43 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</guid>
-      <description>innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
- ACID 事务的四大特性，简称ACID
- 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</description>
+      <description>innodb与myisam 区别项 innodb myisam 是否支持事务 支持 不支持 锁粒度 行锁，适合高并发 表锁，不适合高并发 默认 是 否 支持外键 支持 不支持 全文索引 不支持，可通过插件（elasticSearch）实现 支持 聚簇索引 是，主键索引 否 count 速度慢 使用一个变量保存，速度快 事务 事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败； 比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ACID 事务的四大特性，简称ACID
+原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。 事务隔离级别 read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。 从上而下，隔离安全性从低变高，但性能从高变低。
+脏读：一个事务读取到另一个事务还未提交的数据； 如图中，事务2第(3)步读到v=0，事务1执行(3)set=100，事务2第(4)步可读到v=100，那么当事务1回滚后，那么事务2读到的v=100就是脏数据。
+不可重复读：在一个事务内，先后读取同一条数据，但是两次读取到的值不同，叫做不可重复读； 如图中，事务2在前四步读到的都是v=0，在事务1修改并commit之后，第(5)步读到的就是100，重复读取不一致，即不可重复读。
+幻读：在一个事务内，读到的数据可能不是最新的数据，可能已经由其他事务修改了。 如图中，事务2前五步读到的数据都是v=0，但实际已经变成了v=100。还有可能其他事务已经将id=1的数据删除了。
+隔离级别 脏读 不可重复读 幻读 read uncommit yes yes yes read commit no yes yes repeatable read no no yes serializable no no no 读锁、写锁 读锁（并发读，不可并发写） select * from table lock in share mode; 写锁（不可并发读，不可并发写） select * from table for update; serializable实现原理就是在所有读操作加隐式的读锁，写操作数据库会默认加写锁。从而实现顺序执行事务。 read uncommit实现原理就是不加锁，并且没有任何并发控制。</description>
     </item>
     
     <item>
@@ -70,9 +110,13 @@
       <pubDate>Sun, 11 Dec 2022 09:51:43 +0800</pubDate>
       
       <guid>https://fishwin.github.io/selected/mysql%E4%BA%8B%E5%8A%A1%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/</guid>
-      <description>innodb与myisam    区别项 innodb myisam     是否支持事务 支持 不支持   锁粒度 行锁，适合高并发 表锁，不适合高并发   默认 是 否   支持外键 支持 不支持   全文索引 不支持，可通过插件（elasticSearch）实现 支持   聚簇索引 是，主键索引 否   count 速度慢 使用一个变量保存，速度快    事务  事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败；   比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
- ACID 事务的四大特性，简称ACID
- 原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。  事务隔离级别  read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。   从上而下，隔离安全性从低变高，但性能从高变低。</description>
+      <description>innodb与myisam 区别项 innodb myisam 是否支持事务 支持 不支持 锁粒度 行锁，适合高并发 表锁，不适合高并发 默认 是 否 支持外键 支持 不支持 全文索引 不支持，可通过插件（elasticSearch）实现 支持 聚簇索引 是，主键索引 否 count 速度慢 使用一个变量保存，速度快 事务 事务 是一组操作集合，一个不可分割的工作单位； 事务会将所有操作作为一个整体，一起向系统提交或撤销操作请求，这些操作要么同时成功，要么同时失败； 比如 : 张三给李四转账1000块钱，张三银行账户减少1000元，而李四银行账户的钱要增加1000元。 这一组操作就必须在一个事务的范围内，要么都成功，要么都失败。
+ACID 事务的四大特性，简称ACID
+原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；通过undo log实现回滚保证。 一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态；由业务代码保证正确的逻辑；+1000不能减500。 隔离性（Isolation）：在事务并发执行时，它们内部的操作不能互相打扰；通过锁&amp;amp;MVCC实现。四种事务隔离级别。 持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；持久性由redo log来保证。 事务隔离级别 read uncommit(读未提交)：可以读取其他事务未提交的数据。有脏读、不可重复读、幻读问题，因为未提交的数据有可能被回滚。 read commit(读已提交)：在一个事务内，只能读取其他事务已经提交的数据。oracle默认。 repeatable read(可重复读)：在一个事务内，读取同一条记录，任何时刻都是一致的。无论其他事务是否对数据有修改。mysql默认。 serializable(串行)：所有事务顺序执行。 从上而下，隔离安全性从低变高，但性能从高变低。
+脏读：一个事务读取到另一个事务还未提交的数据； 如图中，事务2第(3)步读到v=0，事务1执行(3)set=100，事务2第(4)步可读到v=100，那么当事务1回滚后，那么事务2读到的v=100就是脏数据。
+不可重复读：在一个事务内，先后读取同一条数据，但是两次读取到的值不同，叫做不可重复读； 如图中，事务2在前四步读到的都是v=0，在事务1修改并commit之后，第(5)步读到的就是100，重复读取不一致，即不可重复读。
+幻读：在一个事务内，读到的数据可能不是最新的数据，可能已经由其他事务修改了。 如图中，事务2前五步读到的数据都是v=0，但实际已经变成了v=100。还有可能其他事务已经将id=1的数据删除了。
+隔离级别 脏读 不可重复读 幻读 read uncommit yes yes yes read commit no yes yes repeatable read no no yes serializable no no no 读锁、写锁 读锁（并发读，不可并发写） select * from table lock in share mode; 写锁（不可并发读，不可并发写） select * from table for update; serializable实现原理就是在所有读操作加隐式的读锁，写操作数据库会默认加写锁。从而实现顺序执行事务。 read uncommit实现原理就是不加锁，并且没有任何并发控制。</description>
     </item>
     
     <item>
@@ -85,10 +129,10 @@
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</description>
     </item>
     
@@ -102,10 +146,10 @@ RDB持久化方式分为手动触发和自动触发。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line.</description>
     </item>
     
@@ -115,15 +159,21 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:43:23 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/acid/</guid>
-      <description>ACID
- 原子性  定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。   一致性  定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。   隔离性  定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离   持久性  定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。      实现原理
-  redo log
-  定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
-  流程图
-  作用
- 当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性    什么时候开始写redolog？什么时候释放redolog？
- 当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。    既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
- 直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分      undo log</description>
+      <description> ACID
+原子性 定义：每个事务都是不可分割的最小工作单元，事务中的所有操作要么全成功，要么全失败。使用undo log实现回滚。 一致性 定义：比如A向B转账，A减少1000，B就得增加1000，两人的余额总和不能变。 隔离性 定义：各个事务之间相互隔离，互不干扰。通过锁和MVCC实现隔离 持久性 定义：事务一旦提交，数据会永久的存储在数据库中。使用redo log实现故障恢复。 实现原理
+redo log
+定义： 包含redo log buffer（内存）和redo log file（磁盘），记录事务执行过程中数据修改后物理数据页面的信息。后台线程会将buffer中的数据同步到磁盘。
+流程图
+作用
+当mysql宕机时，如果buffer中还有数据没有同步到磁盘，可通过redo log 进行恢复（所以叫重做日志）。 确保事务的持久性 什么时候开始写redolog？什么时候释放redolog？
+当事务开始时就会写redolog 当buffer中的数据页同步到磁盘后，redolog就会被释放重用。 既然写redolog也有磁盘IO消耗，为什么不直接将数据写入磁盘呢？
+直接写磁盘是随机IO，写redolog是顺序IO，顺序IO比随机IO性能好。 因为mysql加载数据到内存，最小单位是页，所以即使有很小的改动，也会将整页更新，造成大量无效IO。而redolog只包含真正要写入的部分 undo log
+定义：记录数据被修改前的信息（记录逆操作），用于回滚操作 作用 用于回滚事务的操作 保证事务的原子性 读写锁
+读锁（共享锁） 定义：多个事务可以并发的读同一条数据，但不能同时写同一条数据 写锁（排它锁） 定义：一个事务拿到写锁之后，其他事务不能读也不能写这条数据 MVCC（Multi-Version Concurrency Control）多版本并发控制
+隐藏字段（mysql在创建表时，会为每张表创建几个隐藏字段）
+row_id：行记录的唯一标志 transaction_id：事务id roll_pointer：回滚指针，指向对应的undo log，用于回滚。 作用
+提高并发性能，不需要加锁，处理读写冲突，利于读多写少的场景 原理
+同一份数据为每个事务生成一个版本（由隐藏字段实现），每个事务只能读特定版本的数据（类似快照） 不需要使用锁 读与读之间不影响 </description>
     </item>
     
     <item>
@@ -133,26 +183,35 @@ RDB持久化方式分为手动触发和自动触发。
       
       <guid>https://fishwin.github.io/db/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
       <description>MyISAM索引实现
-  使用B+树
-  叶子节点的data域存储数据记录的地址（非聚簇索引）
-  主键索引与普通索引结构一样
-  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
-  图示
-    InnoDB的索引实现
-  使用B+树
-  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
-  普通索引叶子节点data域保存着主键值（非聚簇索引）
-  每个表只能有一个聚簇索引
-  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
-  图示
-  主键索引
-  辅助索引
-    聚簇索引与非聚簇索引定义
+使用B+树
+叶子节点的data域存储数据记录的地址（非聚簇索引）
+主键索引与普通索引结构一样
+查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+图示
+InnoDB的索引实现
+使用B+树
+主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+普通索引叶子节点data域保存着主键值（非聚簇索引）
+每个表只能有一个聚簇索引
+主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+图示
+主键索引
+辅助索引
+聚簇索引与非聚簇索引定义
 叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
-  什么是回表
+什么是回表
 通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
-  什么是索引覆盖
- 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</description>
+什么是索引覆盖
+当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。 什么是索引下推
+TODO
+为什么尽量使用短的字段作为索引
+由于每个B+树的节点大小是固定的，过大的字段会导致每个节点存储的key数量表少，从而使树的层级变高，增加IO消耗 如果使用长的字段作为主键，则也会使辅助索引占用空间变大，因为辅助索引叶子节点data域存储的是主键值 为什么尽量使用单调递增的字段作为主键
+非单调的主键会使在插入新数据时，为了维护B+树的特性而频繁的分裂调整，十分低效。
+如果没有设置主键，innodb会怎么处理？
+如果表定义了主键，则会以这个主键作为key，进行构建聚簇索引 如果没有定义主键，则会选择一个唯一索引作为key，进行构建聚簇索引 如果没有主键也没有唯一索引，那么就会创建一个隐藏的row-id作为key，进行构建聚簇索引。 参考
+https://blog.codinglabs.org/articles/theory-of-mysql-index.html
+https://draveness.me/whys-the-design-mysql-b-plus-tree/
+https://www.jianshu.com/p/bdc9e57ccf8b</description>
     </item>
     
     <item>
@@ -162,26 +221,35 @@ RDB持久化方式分为手动触发和自动触发。
       
       <guid>https://fishwin.github.io/selected/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95/</guid>
       <description>MyISAM索引实现
-  使用B+树
-  叶子节点的data域存储数据记录的地址（非聚簇索引）
-  主键索引与普通索引结构一样
-  查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
-  图示
-    InnoDB的索引实现
-  使用B+树
-  主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
-  普通索引叶子节点data域保存着主键值（非聚簇索引）
-  每个表只能有一个聚簇索引
-  主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
-  图示
-  主键索引
-  辅助索引
-    聚簇索引与非聚簇索引定义
+使用B+树
+叶子节点的data域存储数据记录的地址（非聚簇索引）
+主键索引与普通索引结构一样
+查询数据时，首先找到data域中的地址，然后再根据地址去磁盘中读数据
+图示
+InnoDB的索引实现
+使用B+树
+主键索引叶子节点data域保存着完整的数据记录（聚簇索引）
+普通索引叶子节点data域保存着主键值（非聚簇索引）
+每个表只能有一个聚簇索引
+主键索引查询数据，只需根据主键值拿到叶子节点中data域的数据即可。而对于普通索引查询数据时，首先找到叶子节点data域中的主键值，然后再去主键索引中根据主键值去查数据。
+图示
+主键索引
+辅助索引
+聚簇索引与非聚簇索引定义
 叶子节点data域保存完整数据记录的就是聚簇索引，叶子节点data域只保存主键值或数据地址的就是非聚簇索引
-  什么是回表
+什么是回表
 通过辅助索引查询到主键值后，再拿主键值去主键索引中查找数据的过程就叫做回表
-  什么是索引覆盖
- 当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。    什么是索引下推</description>
+什么是索引覆盖
+当sql语句中的select列（查询的字段）和where列（条件字段）都在一个索引中，则不需要进行回表，这就是索引覆盖。 例如：select id, name from users where name = &amp;lsquo;jack&amp;rsquo;; (对name建立辅助索引)。这个示例中由于对name字段建立辅助索引，而辅助索引每个叶子节点的data域保存主键值，则不需要进行回表操作，即可拿到id和name。 所有不需要回表的查询操作都是索引覆盖。 可利用索引覆盖来减少IO操作，从而提高查询效率。比如select id, name,age from users where name = &amp;lsquo;jack&amp;rsquo;; 可对name和age建立联合索引，从而避免回表。 什么是索引下推
+TODO
+为什么尽量使用短的字段作为索引
+由于每个B+树的节点大小是固定的，过大的字段会导致每个节点存储的key数量表少，从而使树的层级变高，增加IO消耗 如果使用长的字段作为主键，则也会使辅助索引占用空间变大，因为辅助索引叶子节点data域存储的是主键值 为什么尽量使用单调递增的字段作为主键
+非单调的主键会使在插入新数据时，为了维护B+树的特性而频繁的分裂调整，十分低效。
+如果没有设置主键，innodb会怎么处理？
+如果表定义了主键，则会以这个主键作为key，进行构建聚簇索引 如果没有定义主键，则会选择一个唯一索引作为key，进行构建聚簇索引 如果没有主键也没有唯一索引，那么就会创建一个隐藏的row-id作为key，进行构建聚簇索引。 参考
+https://blog.codinglabs.org/articles/theory-of-mysql-index.html
+https://draveness.me/whys-the-design-mysql-b-plus-tree/
+https://www.jianshu.com/p/bdc9e57ccf8b</description>
     </item>
     
     <item>
@@ -190,7 +258,7 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:39:37 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF2/</guid>
-      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] }  如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚  </description>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、推送钱包微服务扣款消息(推送消息) 3、更新订单状态为扣款成功 [提交事务] } 如果mq异常则一段时间内所有事务都会被回滚 如果由于网络波动或网路阻塞写入mq超时，那么事务回滚，但是等网络恢复后，消息可能已经写入成功了，造成数据不一致 如果3失败，则2无法回滚 </description>
     </item>
     
     <item>
@@ -199,7 +267,7 @@ RDB持久化方式分为手动触发和自动触发。
       <pubDate>Thu, 24 Nov 2022 19:38:37 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF1/</guid>
-      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] }  整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。  </description>
+      <description>[订单微服务请求钱包微服务进行扣款并更新订单状态] 处理订单微服务请求钱包微服务进行扣款并更新订单状态方法(){ [开启事务] 1、查询订单 2、HTTP调用钱包微服务扣款 3、更新订单状态为扣款成功 [提交事务] } 整个流程可分为三步：(1)订单服务发起请求到钱包服务，(2)钱包服务收到请求开始处理，(3)钱包服务响应数据给订单服务 如果(1)由于网络波动超时，本地事务回滚没有问题 如果(2)由于数据库慢查询处理超时，订单服务也会收到超时的错误，此时本地事务回滚，可能会有问题，因为钱包服务有可能处理成功 如果(3)由于网络波动超时，则订单服务会发生本地事务回滚，但实际钱包服务已处理成功，造成数据不一致。 </description>
     </item>
     
     <item>
@@ -209,15 +277,27 @@ RDB持久化方式分为手动触发和自动触发。
       
       <guid>https://fishwin.github.io/db/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8b&#43;%E6%A0%91%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
       <description>B树（平衡多路搜索树）
-  图示
-  特征
- 每个节点可有多棵子树 每个非叶子节点有n个key，并有n+1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度    查询伪代码
-BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &amp;gt; key) return BTree_Search(point[i]-&amp;gt;node); } return BTree_Search(point[i+1]-&amp;gt;node); } data = BTree_Search(root, my_key);   时间复杂度
+图示
+特征
+每个节点可有多棵子树 每个非叶子节点有n个key，并有n+1棵子树（子树数量比key数量多1） 每个节点中key都是从小到大排序的 最左子树上的值都小于最左key的值，最右子树上的值都小于最右key的值，中间子树的值则位于相邻两个节点的值之间 所有叶子节点都具有相同的深度 查询伪代码
+BTree_Search(node, key) { if(node == null) return null; foreach(node.key) { if(node.key[i] == key) return node.data[i]; if(node.key[i] &amp;gt; key) return BTree_Search(point[i]-&amp;gt;node); } return BTree_Search(point[i+1]-&amp;gt;node); } data = BTree_Search(root, my_key); 时间复杂度
 O(log n)
-    B+树
-  图示
-  特征
- 子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表    时间复杂度</description>
+B+树
+图示
+特征
+子树与key的数量相同，节点的关键字为子树中的最大值 非叶子节点不保存数据，仅用作索引，叶子节点保存全部数据 所有叶子节点构成一个链表 时间复杂度
+O(log n)
+局部性原理与磁盘预读
+局部性原理
+当一个数据被用到时，其附近的数据通常也会被用到
+磁盘预读
+磁盘不是按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置向后读取一定长度放到内存。 预读的长度一般为页（页的大小通常为4k）的整数倍 mysql为什么使用B+树而不是B树作为索引？
+由于mysql通常将数据存放在磁盘中，读取数据就会产生磁盘IO消耗。而B+树的非叶子节点中不保存数据，B树中非叶子节点会保存数据，通常一个节点大小会设置为磁盘页大小，这样B+树每个节点可放更多的key，B树则更少。这样就造成了，B树的高度会比B+树更高，从而会产生更多的磁盘IO消耗。 B+树叶子节点构成链表，更利用范围查找和排序。而B树进行范围查找和排序则要对树进行递归遍历 B树与B+树比较
+B+树层级更少，查找更快 B+树查询速度稳定：由于B+树所有数据都存储在叶子节点，所以查询任意数据的次数都是树的高度h B+树有利于范围查找 B+树全节点遍历更快：所有叶子节点构成链表，全节点扫描，只需遍历这个链表即可 B树优点：如果在B树中查找的数据离根节点近，由于B树节点中保存有数据，那么这时查询速度比B+树快。 为什么不使用红黑树（自平衡二叉搜索树）？
+如果使用红黑树，会使树的高度更高，增加IO消耗
+为什么不使用哈希表
+哈希表对于范围查找和排序效率低，但对于单个数据的查询效率很高。
+参考</description>
     </item>
     
     <item>
@@ -227,24 +307,24 @@ O(log n)
       
       <guid>https://fishwin.github.io/db/%E5%A4%96%E9%94%AE/</guid>
       <description>常用的外键类型：
-  RESTRICT：会触发一致性检查
+RESTRICT：会触发一致性检查
 例如： cities表中字段有id、name两个字段
 ​	buildings表有id、name、city_id三个字段。
 ​ 这时city_id就是关联到cities表的RESTRICT外键。
 ​	当向buildings表中新插入一条记录（88, &amp;ldquo;故宫&amp;rdquo;, 9）时，就需要去cities表中检测是否有id=9的城市，如果没有则会报错。
 ​ 当修噶buildings表中city_id的值时，需要检查cities表中是否存在这个id，如果没有则会报错。
 ​	当删除cities表中的id=7的城市时，需要检测buildings表中是否有引用city_id=7的记录，如果有则会报错。
-  CASCADE：会触发级联操作
+CASCADE：会触发级联操作
 例如：
 ​	cities表中字段有id、name两个字段
 ​	buildings表有id、name、city_id三个字段。
 ​ 这时city_id就是关联到cities表的CASCADE外键。
 ​	当删除cities表中的id=7的城市，那么会去检查buildings表中是否有引用city_id=7的记录，如果有则会将他们也删除。
 ​	当修改cities表中的id=8的城市，将它的id修改为11时，buildings表中引用city_id=8的记录，也会被修改为11
-  总结
-  使用外键：
- 可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。    不使用外键：
- 对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负    </description>
+总结
+使用外键：
+可通过数据库外键特性保证数据一致性，但是可能会给数据库增加负载。 不使用外键：
+对于高并发的系统，使用外键会给数据库带来巨大的压力，所以生产环境一般不会使用外键 一致性检查、级联操作，由代码实现，会牺牲掉一部分一致性，但是可以给数据库减负 </description>
     </item>
     
     <item>
@@ -253,11 +333,10 @@ O(log n)
       <pubDate>Thu, 24 Nov 2022 19:31:18 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/io%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8Ecpu%E5%AF%86%E9%9B%86%E5%9E%8B%E5%8C%BA%E5%88%AB/</guid>
-      <description>  IO密集型
+      <description>IO密集型
 大部分时间是CPU在等待IO的读写操作（磁盘IO、网络IO），使用运行效率高的语言开发，无法明显提高性能
-  CPU密集型
-大部分时间执行计算、逻辑判断等CPU动作的程序称为CPU密集型，比如计算圆周率。CPU密集型程序适合用运行效率高的编程语言进行开发，如C语言
-  </description>
+CPU密集型
+大部分时间执行计算、逻辑判断等CPU动作的程序称为CPU密集型，比如计算圆周率。CPU密集型程序适合用运行效率高的编程语言进行开发，如C语言</description>
     </item>
     
     <item>
@@ -278,11 +357,16 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       <guid>https://fishwin.github.io/os/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</guid>
       <description>DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-  传统文件传输过程
- 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap+write实现零拷贝
- 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
-  函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程</description>
+传统文件传输过程
+应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap+write实现零拷贝
+应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
+函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
+应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
+前提
+网卡支持SG-DMA技术
+执行过程
+应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术</description>
     </item>
     
     <item>
@@ -293,11 +377,16 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       <guid>https://fishwin.github.io/selected/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</guid>
       <description>DMA (Direct Memory Access) 直接内存访问
 负责数据搬运,解放CPU (CPU可以去处理别的事务,在DMA出现之前,数据搬运工作由CPU完成)
-  传统文件传输过程
- 应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中   总结  上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能      使用mmap+write实现零拷贝
- 应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡   总结  共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝      sendfile实现零拷贝(linux 2.1版本)
-  函数原型
-// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);   执行过程</description>
+传统文件传输过程
+应用程序调用read系统调用函数,切换到内核空间,并向内核发起读文件的指令 内核收到读指令后,接着向磁盘控制器发出读指令,然后通过DMA将数据拷贝到内核空间 内核将文件数据再拷贝到用户空间,read函数返回,完成一次用户空间与内核空间的切换 应用程序调用write系统调用函数,切换到内核空间,并将数据拷贝到内核的socket缓冲区中 write函数返回,完成一次用户空间与内核空间的切换 DMA将内核socket缓冲区中的数据拷贝到网卡中 总结 上述过程共发生了4次用户空间与内核空间的切换,read和write系统调用的调用和返回都会发生一次切换 共发生了4次数据拷贝,其中步骤2和6是DMA拷贝,步骤3和4是CPU拷贝 数据没必要拷贝到用户空间,浪费性能 使用mmap+write实现零拷贝
+应用程序调用mmap系统调用函数,切换到内核空间,并向内核发起读文件指令 内核向磁盘控制器发送读指令,DMA将文件数据拷贝到内核缓冲区中 mmap函数返回,切换回用户空间,并与用户空间共享内核缓冲区 应用程序调用write()系统调用函数,切换到内核空间,并将内核缓冲区中的数据拷贝到内核socket缓冲区 write函数返回,切换回用户空间 DMA将数据拷贝到网卡 总结 共发生了4次用户与内核空间的切换 共发生了3次拷贝,其中步骤4为CPU拷贝,步骤2和6为DMA拷贝 数据不会拷贝到用户空间,减少了一次CPU拷贝 sendfile实现零拷贝(linux 2.1版本)
+函数原型
+// out_fd 目的端 // in_fd 源端 // offset 源端的偏移 // count 源端需要复制数据的长度 ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count); 执行过程
+应用程序调用sendfile系统调用函数,切换到内核空间,并向内核发起读文件指令 内核收到读指令,向磁盘控制器发起读指令,DMA将数据拷贝到内核缓冲区中 内核缓冲区中的数据被拷贝到内核socket缓冲区 sendfile函数返回,切换回用户空间 DMA将socket缓冲区中的数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生3次数据拷贝,其中步骤3为CPU拷贝,步骤2和5为DMA拷贝 sendfile优化(linux 2.4版本)
+前提
+网卡支持SG-DMA技术
+执行过程
+应用程序调用sendfile系统函数调用,切换到内核空间,并向内核发送读指令 内核收到读指令,向磁盘控制器发送读指令,DMA将数据拷贝到内核缓冲区中 将内核缓冲区关于数据位置和长度的描述符传到内核socket缓冲区 sendfile函数返回,切换回用户空间 SG-DMA将内核缓冲区中数据拷贝到网卡 总结 共发生2次用户与内核空间的切换 共发生2次数据拷贝,并且都是DMA拷贝,无CPU拷贝 哪些项目使用了零拷贝技术</description>
     </item>
     
     <item>
@@ -307,12 +396,16 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       
       <guid>https://fishwin.github.io/os/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
       <description>IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-  select
- fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif  } fd_set;   执行过程
+select
+fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif } fd_set; 执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-  优点
- 所有平台都支持，良好的跨平台性    缺点</description>
+优点
+所有平台都支持，良好的跨平台性 缺点
+每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
+数据结构
+数据结构定义如下，链表存储
+/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll.</description>
     </item>
     
     <item>
@@ -322,12 +415,16 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       
       <guid>https://fishwin.github.io/selected/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
       <description>IO多路复用是一种同步IO模型，一个线程监听多个IO事件，当有IO事件就绪时，就会通知线程去执行相应的读写操作，没有就绪事件时，就会阻塞交出cpu。多路是指网络链接，复用指的是复用同一线程。
-  select
- fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符  typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN  __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else  __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif  } fd_set;   执行过程
+select
+fd_set数据结构定义如下，可以看出fd_set是一个整型数组，用于保存socket文件描述符 typedef long int __fd_mask; /* fd_set for select and pselect. */ typedef struct { #ifdef __USE_XOPEN __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;fds_bits) #else __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS]; # define __FDS_BITS(set) ((set)-&amp;gt;__fds_bits) #endif } fd_set; 执行过程
 流程：
 1. 用户线程调用select，将fd_set从用户空间拷贝到内核空间 2. 内核在内核空间对fd_set遍历一遍，检查是否有就绪的socket描述符，如果没有的话，就会进入休眠，直到有就绪的socket描述符 3. 内核返回select的结果给用户线程，即就绪的文件描述符数量 4. 用户拿到就绪文件描述符数量后，再次对fd_set进行遍历，找出就绪的文件描述符 5. 用户线程对就绪的文件描述符进行读写操作
-  优点
- 所有平台都支持，良好的跨平台性    缺点</description>
+优点
+所有平台都支持，良好的跨平台性 缺点
+每次调用select，都需要将fd_set从用户空间拷贝到内核空间，当fd很多时，这个开销很大 最大连接数（支持的最大文件描述符数量）有限制，一般为1024 每次有活跃的socket描述符时，都需要遍历一次fd_set，造成大量的时间开销，时间复杂度是O(n) 将fd_set从用户空间拷贝到内核空间，内核空间也需要对fd_set遍历一遍 poll
+数据结构
+数据结构定义如下，链表存储
+/* Data structure describing a polling request. */ struct pollfd { int fd;	/* File descriptor to poll.</description>
     </item>
     
     <item>
@@ -336,9 +433,9 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       <pubDate>Thu, 24 Nov 2022 19:24:35 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/%E7%88%B6%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%90%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/</guid>
-      <description>  fork函数
-#include &amp;lt;unistd.h&amp;gt;#include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } }  fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定    父进程与子进程之间的关系
- 子进程是父进程的副本，子进程获得父进程数据空间、堆栈的副本（注意，这里是副本，与父进程不共享） 父子进程都有自己独立的地址空间，两进程独立运行。 子进程继承父进程的属性（几乎继承了所有）  环境变量 堆栈 当前工作目录 根目录 打开的文件描述符 用户和用户组 进程组 资源限制 等等   子进程独有  进程pid 父进程pid 记录锁 等等      孤儿进程，僵尸进程  孤儿进程  父进程执行结束后先退出，子进程仍然运行，这类子进程就被称为孤儿进程（父亲死了，但是儿子还在，自然称为孤儿） 对系统没有危害 孤儿进程会被init进程接管，进行资源回收，善后等操作（init可以理解为是孤儿院）   僵尸进程  子进程退出（exit或者异常等）父进程没有对其进行资源回收，改子进程仍然占据系统进程表，这类子进程称为僵尸进程（儿子死了，父亲不给他收尸） 因为其占据系统进程表，无法回收，一旦僵尸进程数量巨大，则系统无法创建新进程，所以对系统有危害 杀死父进程，该僵尸进程会被init进程接管，变为孤儿进程，init进程可对其进行资源回收善后    </description>
+      <description> fork函数
+#include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; int main() { int pid = fork(); if (pid == -1) return -1; if (pid) { printf(&amp;#34;I am father, my pid is %d\n&amp;#34;, getpid()); return 0; } else { printf(&amp;#34;I am child, my pid is %d\n&amp;#34;, getpid()); return 0; } } fork函数调用一次返回两次 pid &amp;lt; 0 表示fork函数出错，位于父进程上下文 pid == 0 表示子进程，位于子进程上下文 pid &amp;gt; 0 表示父进程，pid为子进程的id，位于父进程上下文 父子进程执行顺序不确定，由内核调度算法决定 父进程与子进程之间的关系
+子进程是父进程的副本，子进程获得父进程数据空间、堆栈的副本（注意，这里是副本，与父进程不共享） 父子进程都有自己独立的地址空间，两进程独立运行。 子进程继承父进程的属性（几乎继承了所有） 环境变量 堆栈 当前工作目录 根目录 打开的文件描述符 用户和用户组 进程组 资源限制 等等 子进程独有 进程pid 父进程pid 记录锁 等等 孤儿进程，僵尸进程 孤儿进程 父进程执行结束后先退出，子进程仍然运行，这类子进程就被称为孤儿进程（父亲死了，但是儿子还在，自然称为孤儿） 对系统没有危害 孤儿进程会被init进程接管，进行资源回收，善后等操作（init可以理解为是孤儿院） 僵尸进程 子进程退出（exit或者异常等）父进程没有对其进行资源回收，改子进程仍然占据系统进程表，这类子进程称为僵尸进程（儿子死了，父亲不给他收尸） 因为其占据系统进程表，无法回收，一旦僵尸进程数量巨大，则系统无法创建新进程，所以对系统有危害 杀死父进程，该僵尸进程会被init进程接管，变为孤儿进程，init进程可对其进行资源回收善后 </description>
     </item>
     
     <item>
@@ -347,7 +444,7 @@ https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
       <pubDate>Thu, 24 Nov 2022 19:24:11 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B/</guid>
-      <description> 进程  操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信   线程  CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信   协程  用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度    </description>
+      <description> 进程 操作系统进行资源分配和调度的基本单位 有独立的地址空间（一般为4G，地址空间又分为3G用户空间和1G内核空间） 进程间切换开销大 进程间是隔离的 进程之间使用IPC通信 线程 CPU调度的基本单元，一个进程至少包含一个线程 与同一进程的其他线程共享进程地址空间和资源 拥有自己的堆栈，寄存器和局部变量等 线程切换相对进程开销较小 线程间通过共享内存通信 协程 用户态的轻量级线程 调度由用户控制，避免了内核级别的上下文切换，如Goroutine由go运行时进行调度 </description>
     </item>
     
     <item>
@@ -369,30 +466,42 @@ https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.ht
       
       <guid>https://fishwin.github.io/algorithm/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
       <description>冒泡排序
-  思路
+思路
 设对长度为n的数组进行排序，则需要进行n-1次循环，并且每次循环两两比较相邻的两个数字，将较大的数字移动到后面。
-  算法复杂度
-  优缺点
-    选择排序
-  思路
+算法复杂度
+优缺点
+选择排序
+思路
 设对长度为n的数组进行排序，首先在所有元素中选择一个最小的元素，交换到最前面，然后在剩下的元素中选出一个最小的，交换到第二位，依次类推，所有元素有序
-  算法复杂度
-  优缺点
-    插入排序
-  思路
+算法复杂度
+优缺点
+插入排序
+思路
 设对长度为n的数组进行排序，初始时将整个数组划分为两块，第一个元素为有序序列，第二个元素为无序序列。然后遍历无序序列，并将其插入到有序序列的合适位置
-  算法复杂度
-  优缺点
-    希尔排序
-  思路
+算法复杂度
+优缺点
+希尔排序
+思路
 设对长度为n的数组进行排序，初始设置gap=n/2，并依据gap将所有元素分组，并对每个组进行插入排序。然后gap=gap/2，
 再分组，再插入排序，直到gap=1，进行最后一次插入排序即可。
-  算法复杂度
-  优缺点
-    归并排序
-  思路
+算法复杂度
+优缺点
+归并排序
+思路
 设对长度为n的数组进行排序，递归每次将数组分成等长的两部分，并每次合并两个有序的序列
-  算法复杂度</description>
+算法复杂度
+优缺点
+快速排序
+思路
+设对长度为n的数组进行排序，首先遍历查找所有比第一个元素小的元素，并放到第一个元素的左边，这样比这个元素大的元素全在右边，然后再对左右两侧递归执行相同的操作。
+堆排序
+思路
+设对长度为n的数组进行升序排序，首先对所有元素构造大顶堆，然后将堆的顶点与数组最后一个元素进行交换。然后再对剩下的n-1个元素，重复以上操作，构造大顶堆，与末尾元素交换，依此类推，可实现升序排列。
+大顶堆
+一棵完全二叉树(除了最下层外都是满的)，并且每个节点都大于等于左右子节点的值 小顶堆
+一棵完全二叉树，并且每个节点都小于等于左右子树。 参考
+https://www.cnblogs.com/onepixel/articles/7674659.html
+https://www.cnblogs.com/chengxiao/p/6104371.html</description>
     </item>
     
     <item>
@@ -405,19 +514,24 @@ https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/06.07.ht
 2. docker 镜像 docker镜像是docker容器的静态模板，用于创建容器。
 3. docker 容器 docker 容器包含应用程序及其所有的依赖项，与其他容器共享宿主机内核，在用户空间容器以独立的进程运行。docker容器不依赖任何基础架构，可在任何操作系统、任何云平台运行。
 4. docker 仓库 docker 仓库就是存放docker镜像文件的场所。
-5. docker 与虚拟机的区别   docker容器间共享宿主机内核、硬件、操作系统等资源，各容器在用户空间是以分离的进程进行运行； 虚拟机需要模拟一个完整的用户操作系统，包含应用、系统库、依赖项、硬件驱动等。
-  虚拟机有hypervisor层和guestOS层，而容器没有，这样容器就避免了hypervisor和guestOS带来的性能损耗。
-  虚拟机所采用的传统虚拟化技术是对硬件和操作系统的虚拟，而容器化技术是对进程的虚拟。
-  docker隔离性更弱，docker是进程之间的隔离，而虚拟机是系统级别的隔离。
-  docker启动秒级，虚拟机启动分钟级。
-  6. docker容器有几种状态 运行、已停止、重新启动、停止
-7. dockerfile 常见的指令   FROM：指定基础镜像
-  LABEL：为镜像指定标签
-  RUN：运行指定的指令（编译镜像时）
-  CMD：容器启动要执行的命令（容器启动时）
-  8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
-9. docker常用命令   docker pull 从docker仓库拉取镜像
-  docker push 推送本地镜像到docker仓库</description>
+5. docker 与虚拟机的区别 docker容器间共享宿主机内核、硬件、操作系统等资源，各容器在用户空间是以分离的进程进行运行； 虚拟机需要模拟一个完整的用户操作系统，包含应用、系统库、依赖项、硬件驱动等。
+虚拟机有hypervisor层和guestOS层，而容器没有，这样容器就避免了hypervisor和guestOS带来的性能损耗。
+虚拟机所采用的传统虚拟化技术是对硬件和操作系统的虚拟，而容器化技术是对进程的虚拟。
+docker隔离性更弱，docker是进程之间的隔离，而虚拟机是系统级别的隔离。
+docker启动秒级，虚拟机启动分钟级。
+6. docker容器有几种状态 运行、已停止、重新启动、停止
+7. dockerfile 常见的指令 FROM：指定基础镜像
+LABEL：为镜像指定标签
+RUN：运行指定的指令（编译镜像时）
+CMD：容器启动要执行的命令（容器启动时）
+8. COPY与ADD的区别 COPY和ADD的唯一区别是ADD支持从远程URL获取资源，COPY只能从docker build所在的上下文目录中读取资源到镜像中，COPY是ADD的子集。
+9. docker常用命令 docker pull 从docker仓库拉取镜像
+docker push 推送本地镜像到docker仓库
+docker rm 删除容器
+docker rmi 删除本地镜像
+docker images 列出本地所有镜像
+docker ps 列出所有容器
+docker cp 从容器拷贝资源到宿主机或从宿主机拷贝资源到容器</description>
     </item>
     
     <item>
@@ -462,15 +576,15 @@ TCP/IP协议 应用层、传输层、网络层、网络接口层</description>
       
       <guid>https://fishwin.github.io/net/tcp%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E5%92%8C%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/</guid>
       <description>滑动窗口
- 为了解决发送一个分组必须等待确认才能发送下一个分组的性能不高的问题 引入窗口的概念，一次可发送多个数组，累计确认，提高通信效率 窗口大小由接收端决定，接收端通过tcp头部的window字段告知发送端还有多大缓冲区可以接收数据 发送方和接收方都有窗口，并且不断向前滑动    流量控制
-  接收方通过TCP头部的window字段，来不断告知还可以接收的数据量，来控制发送数据量，这期间发送窗口的大小会随接收窗口大小不断变化
-  窗口关闭问题
+为了解决发送一个分组必须等待确认才能发送下一个分组的性能不高的问题 引入窗口的概念，一次可发送多个数组，累计确认，提高通信效率 窗口大小由接收端决定，接收端通过tcp头部的window字段告知发送端还有多大缓冲区可以接收数据 发送方和接收方都有窗口，并且不断向前滑动 流量控制
+接收方通过TCP头部的window字段，来不断告知还可以接收的数据量，来控制发送数据量，这期间发送窗口的大小会随接收窗口大小不断变化
+窗口关闭问题
 窗口关闭问题即发送窗口为0，这时发送窗口不会再发送数据，但是当接收窗口变大可接收数据时，发送方并不知道，为解决这一问题，发送方会定时进行窗口探测，接收方在收到探测报文之后，会告知自己的窗口大小。
-    拥塞控制
- 避免大数量数据传输导致网络拥堵，进而导致数据报丢失 拥塞窗口：为了实现拥塞控制，在发送端设置的窗口，发送窗口大小=min(拥塞窗口大小，接收窗口大小) 如果发送方在规定时间内没有收到接收方的确认消息，就认为网络拥堵 控制算法  慢启动：tcp刚建立连接时，发送方每收到一个ack，拥塞窗口就乘2，直到增加到ssthresh（慢启动门限）&amp;mdash;-指数增长 拥塞避免算法：当拥塞窗口大小超过ssthresh（慢启动门限）时，就会进入拥塞避免，即每当收到一个ack，拥塞窗口大小增加1/拥塞窗口大小&amp;mdash;-线性增长，窗口大小增速减缓 拥塞发生&amp;mdash;变化拥塞窗口大小  发生超时重传的拥塞发生算法：慢启动门限设置为拥塞窗口的一半，拥塞窗口大小设置为1 发生快速重传的拥塞发生算法：拥塞窗口大小减半，慢启动门限设置为原拥塞窗口大小，快速恢复算法   快速恢复：当发送端连续收到三个连续确认，执行快速重传，并进入快速恢复阶段，慢启动门限和拥塞窗口大小都减为当前拥塞窗口的一半。      流量控制与拥塞控制比较
- 流量控制是发送方根据接收方窗口大小来变化发送窗口大小 拥塞控制是针对整个网络拥堵情况，进行调整拥塞窗口的大小    参考
+拥塞控制
+避免大数量数据传输导致网络拥堵，进而导致数据报丢失 拥塞窗口：为了实现拥塞控制，在发送端设置的窗口，发送窗口大小=min(拥塞窗口大小，接收窗口大小) 如果发送方在规定时间内没有收到接收方的确认消息，就认为网络拥堵 控制算法 慢启动：tcp刚建立连接时，发送方每收到一个ack，拥塞窗口就乘2，直到增加到ssthresh（慢启动门限）&amp;mdash;-指数增长 拥塞避免算法：当拥塞窗口大小超过ssthresh（慢启动门限）时，就会进入拥塞避免，即每当收到一个ack，拥塞窗口大小增加1/拥塞窗口大小&amp;mdash;-线性增长，窗口大小增速减缓 拥塞发生&amp;mdash;变化拥塞窗口大小 发生超时重传的拥塞发生算法：慢启动门限设置为拥塞窗口的一半，拥塞窗口大小设置为1 发生快速重传的拥塞发生算法：拥塞窗口大小减半，慢启动门限设置为原拥塞窗口大小，快速恢复算法 快速恢复：当发送端连续收到三个连续确认，执行快速重传，并进入快速恢复阶段，慢启动门限和拥塞窗口大小都减为当前拥塞窗口的一半。 流量控制与拥塞控制比较
+流量控制是发送方根据接收方窗口大小来变化发送窗口大小 拥塞控制是针对整个网络拥堵情况，进行调整拥塞窗口的大小 参考
 https://www.cnblogs.com/xiaolincoding/p/12732052.html
-  TCP 累计确认 ack=n表示n之前的数据已经正确收到
+TCP 累计确认 ack=n表示n之前的数据已经正确收到
 TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这个时候就会重发这个序列号之后的数据，不需要等待超时，提高效率</description>
     </item>
     
@@ -480,12 +594,14 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
       <pubDate>Thu, 24 Nov 2022 17:41:15 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/tcp%E4%B8%8Eudp%E5%A4%B4%E9%83%A8/</guid>
-      <description>UDP头部   示意图
-  数据字典
- 目标和源端口：标识进程 包长度：UDP头部和数据的长度之和 校验和：提供可靠的UDP头部和数据(相当于对数据进行签名，发送端计算一个校验和，再接收端再计算一次，并与头部的校验和进行比对)    代码定义
-/*UDP头定义，共8个字节*/ typedef struct _UDP_HEADER { unsigned short m_usSourPort; // 源端口号16bit  unsigned short m_usDestPort; // 目的端口号16bit  unsigned short m_usLength; // 数据包长度16bit  unsigned short m_usCheckSum; // 校验和16bit }__attribute__((packed))UDP_HEADER, *PUDP_HEADER;     TCP头部   示意图
-  词典
- 序列号：随机生成，用来解决包重复、乱序、重传等问题 确认应答号：解决不丢包的问题 控制位  ACK：确认应答，该位为1时，确认应答号字段有效 RST：该位为1时，表示TCP连接异常必须强制断开连接 SYN：该位为1时，表示希望建立连接，并完成序列号的初始化 FIN：该位为1时，表示希望断开连接      校验和：类似于对数据进行签名，在接收端进行校验</description>
+      <description>UDP头部 示意图
+数据字典
+目标和源端口：标识进程 包长度：UDP头部和数据的长度之和 校验和：提供可靠的UDP头部和数据(相当于对数据进行签名，发送端计算一个校验和，再接收端再计算一次，并与头部的校验和进行比对) 代码定义
+/*UDP头定义，共8个字节*/ typedef struct _UDP_HEADER { unsigned short m_usSourPort; // 源端口号16bit unsigned short m_usDestPort; // 目的端口号16bit unsigned short m_usLength; // 数据包长度16bit unsigned short m_usCheckSum; // 校验和16bit }__attribute__((packed))UDP_HEADER, *PUDP_HEADER; TCP头部 示意图
+词典
+序列号：随机生成，用来解决包重复、乱序、重传等问题 确认应答号：解决不丢包的问题 控制位 ACK：确认应答，该位为1时，确认应答号字段有效 RST：该位为1时，表示TCP连接异常必须强制断开连接 SYN：该位为1时，表示希望建立连接，并完成序列号的初始化 FIN：该位为1时，表示希望断开连接 校验和：类似于对数据进行签名，在接收端进行校验
+代码定义
+/*TCP头定义，共20个字节*/ typedef struct _TCP_HEADER { short m_sSourPort; // 源端口号16bit short m_sDestPort; // 目的端口号16bit unsigned int m_uiSequNum; // 序列号32bit unsigned int m_uiAcknowledgeNum; // 确认号32bit short m_sHeaderLenAndFlag; // 前4位：TCP头长度；中6位：保留；后6位：标志位 short m_sWindowSize; // 窗口大小16bit short m_sCheckSum; // 检验和16bit short m_surgentPointer; // 紧急数据偏移量16bit }__attribute__((packed))TCP_HEADER, *PTCP_HEADER; 为什么UDP头部结构没有首部长度，而TCP头部有首部长度字段 因为TCP头部中有选项字段，头部大小不固定，而UDP头部大小是固定的</description>
     </item>
     
     <item>
@@ -503,12 +619,12 @@ TCP 快速重传 当发送方收到连续三个相同序列号的ack，那么这
       <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</guid>
-      <description>TCP四次挥手过程   执行流程图
- 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+      <description>TCP四次挥手过程 执行流程图
+执行过程 客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态 参考：
 https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
-线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
+线上出现大量CLOSE_WAIT原因 原因 被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙 危害 资源占用（文件描述符，端口等），无法响应建立新连接 解决方法 排查代码，是否能正常close连接 TIME_WAIT原因，为什么要等待2MSL 为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文 线上出现很多TIME_WAIT为什么？ 原因 服务端主动关闭连接，tcp连接进入TIME_WAIT状态 解决方法 内核参数调优（修改TIME_WAIT等待时间），但只治标不治本 </description>
     </item>
     
     <item>
@@ -517,12 +633,12 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
       <pubDate>Thu, 24 Nov 2022 17:38:54 +0800</pubDate>
       
       <guid>https://fishwin.github.io/selected/tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</guid>
-      <description>TCP四次挥手过程   执行流程图
- 执行过程  客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态      参考：
+      <description>TCP四次挥手过程 执行流程图
+执行过程 客户端向服务端发送FIN报文（FIN=1，seq=u），并进入FIN_WAIT_1状态 服务端收到FIN报文后，向客户端回复确认报文（ACK=1,seq=v,ack=u+1），并进入到CLOSE_WAIT状态 当前处于半关闭状态，客户端不能向服务端发送数据报文，但是服务端可以向客户端发送数据报文 服务端向客户端发送FIN报文(FIN=1,ACK=1,seq=w,ack=u+1),并进入到LAST_ACK状态 客户端收到FIN报文后，向服务端回复确认报文（ACK=1,seq=u+1,ack=w+1）并进入到TIME_WAIT状态 服务端收到之后进入到CLOSED状态 客户端等待2MSL（MSL表示最大报文生存时间，任何报文超过这个时间都会被丢弃）后也进入到CLOSED状态 参考：
 https://blog.csdn.net/qzcsu/article/details/72861891
 为什么TCP断开链接需要4次挥手 因为TCP连接是全双工的，两个方向都需要单独关闭。
 TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手头剩余的工作即发送完需要发送的所有数据（协议层需要等待应用层主动调用close才会进行关闭操作），然后向服务端发送FIN包
-线上出现大量CLOSE_WAIT原因  原因  被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙   危害  资源占用（文件描述符，端口等），无法响应建立新连接   解决方法  排查代码，是否能正常close连接    TIME_WAIT原因，为什么要等待2MSL  为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文  线上出现很多TIME_WAIT为什么？  原因  服务端主动关闭连接，tcp连接进入TIME_WAIT状态   解决方法  内核参数调优（修改TIME_WAIT等待时间），但只治标不治本    </description>
+线上出现大量CLOSE_WAIT原因 原因 被动关闭方应用层没有正确调用close方法关闭连接 cpu繁忙 危害 资源占用（文件描述符，端口等），无法响应建立新连接 解决方法 排查代码，是否能正常close连接 TIME_WAIT原因，为什么要等待2MSL 为了保证客户端发给服务端的最后一个ACK报文到达服务端，如果服务端没收到的话，会重传FIN包，这时客户端需要重新发送ACK包（重新计时2MSL）。否则，如果ACK包丢失的话，服务端无法进入CLOSED状态。TIME_WAIT状态就是用来重传可能丢失的ACK包 使本链接中产生的所有的请求报文从网络中消失（MSL为最大报文生存时间），防止在相同四元组建立新连接时，其中再出现这些旧报文 线上出现很多TIME_WAIT为什么？ 原因 服务端主动关闭连接，tcp连接进入TIME_WAIT状态 解决方法 内核参数调优（修改TIME_WAIT等待时间），但只治标不治本 </description>
     </item>
     
     <item>
@@ -533,28 +649,27 @@ TCP四次挥手中出现CLOSE_WAIT状态的原因？ 服务端需要处理完手
       <guid>https://fishwin.github.io/net/tcp/</guid>
       <description>1. TCP定义 TCP是面向连接的、可靠的、基于字节流的传输层通信协议 。
 2. 什么是TCP连接 用于保证可靠性和流量控制的某些状态信息的组合，包括socket、序列号、窗口大小等
-3. TCP与UDP区别，UDP优点，适用场景   区别
-  连接
+3. TCP与UDP区别，UDP优点，适用场景 区别
+连接
 TCP是面向连接的传输层协议，通信之前需要建立连接
 UDP传输时不需要建立连接
-  服务对象
+服务对象
 TCP只能一对一通信
 UDP支持一对一、一对多、多对多
-  可靠性
+可靠性
 TCP保证数据传输的可靠性
 UDP不保证传输的可靠性
-  拥塞控制、流量控制
+拥塞控制、流量控制
 TCP有拥塞控制和流量控制的机制
 UDP没有
-  首部开销
+首部开销
 TCP首部20个字节（不使用选项字段20字节、使用时更长），UDP首部只有8个字节，长度固定
-    应用案例
- TCP  FTP文件传输 HTTP/HTTPS   UDP  DNS 视频、音频等多媒体通信      参考：
+应用案例
+TCP FTP文件传输 HTTP/HTTPS UDP DNS 视频、音频等多媒体通信 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
-4. Linux查看TCP连接状态   命令
+4. Linux查看TCP连接状态 命令
 netstat -napt
-  图
-  </description>
+图</description>
     </item>
     
     <item>
@@ -563,16 +678,15 @@ netstat -napt
       <pubDate>Thu, 24 Nov 2022 17:33:44 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/https%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B/</guid>
-      <description>  原理
+      <description>原理
 https本质是在原http与tcp之间加入了SSL/TLS协议
 https = http + ssl/tls
-  https七次握手过程
- 客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输  注意：主密钥由双方产生的随机数和预主密钥生成
-master_secret = PRF(pre_master_secret,&amp;#34;master secret&amp;#34;,ClientHello.random+ServerHello.random)   参考
+https七次握手过程
+客户端向服务端发送SYN消息，并进入SYN_SENT状态 服务端收到SYN报文后，回复SYN+ACK报文，并进入SYN_RECV状态 客户端回复ACK，双方进入ESTABLISHED状态，建立TCP连接 客户端向服务端发送Client Hello消息，并携带客户端支持的协议版本号、加密算法、随机数（32位）等信息。 服务端收到之后，向客户端发送Server Hello消息，并携带证书（包含公钥等信息）、服务端生成的随机数、会话ID、协议版本等信息。 客户端收到服务端消息后，验证证书，向服务端发送Client key exchange消息，客户端再生成一个随机数，并使用服务端传过来的证书公钥对其进行加密作为预主密钥（pre master key），并通知服务端之后加密传输，并发送finished消息。 服务端收到消息之后，回复finished消息，并通知客户端之后数据加密传输 注意：主密钥由双方产生的随机数和预主密钥生成
+master_secret = PRF(pre_master_secret,&amp;#34;master secret&amp;#34;,ClientHello.random+ServerHello.random) 参考
 https://draveness.me/whys-the-design-https-latency/
 https://razeencheng.com/post/ssl-handshake-detail
-https://segmentfault.com/a/1190000021494676
-  </description>
+https://segmentfault.com/a/1190000021494676</description>
     </item>
     
     <item>
@@ -582,7 +696,7 @@ https://segmentfault.com/a/1190000021494676
       
       <guid>https://fishwin.github.io/net/%E5%B8%B8%E8%A7%81httpheader/</guid>
       <description>常见的http请求头
-   协议头 说明 示例     Accept 可接受的响应内容类型（Content-Types） Accept:text/plain   Accept-Charset 可接受的字符集 Accept-Charset:utf-8   Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate   Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US   Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE==   Cache-Control 是否使用缓存机制 Cache-Control: no-cache   Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade   Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new;   Content-Length 以8进制表示的请求体的长度 Content-Length: 348   Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded   Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT   Host 服务器域名 Host: www.</description>
+协议头 说明 示例 Accept 可接受的响应内容类型（Content-Types） Accept:text/plain Accept-Charset 可接受的字符集 Accept-Charset:utf-8 Accept-Encoding 可接受的响应内容编码方式 Accept-Encoding: gzip, deflate Accept-Language 可接受的响应内容的语言列表 Accept-Language: en-US Authorization 认证信息 Authorization: Basic OSdjJGRpbjpvcGVuIANlc2SdDE== Cache-Control 是否使用缓存机制 Cache-Control: no-cache Connection 客户端（浏览器）想要优先使用的连接类型 Connection: keep-alive Connection: Upgrade Cookie 由之前服务器设置的一个Cookie Cookie: $Version=1; Skin=new; Content-Length 以8进制表示的请求体的长度 Content-Length: 348 Content-Type 请求体的MIME类型，用于POST和PUT Content-Type: application/x-www-form-urlencoded Date 日期时间 Date: Dec, 26 Dec 2015 17:30:00 GMT Host 服务器域名 Host: www.itbilu.com:80 Host: www.itbilu.com Origin 发起一个针对跨域资源共享的请求 Origin: http://www.itbilu.com Referer 表示浏览器所访问的前一个页面 Referer: http://itbilu.</description>
     </item>
     
     <item>
@@ -596,8 +710,14 @@ https://segmentfault.com/a/1190000021494676
 请求头
 空行
 请求体
- get请求示例  GET请求： GET /562f25980001b1b106000338.jpg HTTP/1.1 Host img.mukewang.com User-Agent Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 Accept image/webp,image/*,*/*;q=0.8 Referer http://www.imooc.com/ Accept-Encoding gzip, deflate, sdch Accept-Language zh-CN,zh;q=0.8   post请求示例
-POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022) Content-Type:application/x-www-form-urlencoded Content-Length:40 Connection: Keep-Alive name=Professional%20Ajax&amp;amp;publisher=Wiley     HTTP响应（Response）格式</description>
+get请求示例 GET请求： GET /562f25980001b1b106000338.jpg HTTP/1.1 Host img.mukewang.com User-Agent Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 Accept image/webp,image/*,*/*;q=0.8 Referer http://www.imooc.com/ Accept-Encoding gzip, deflate, sdch Accept-Language zh-CN,zh;q=0.8 post请求示例
+POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022) Content-Type:application/x-www-form-urlencoded Content-Length:40 Connection: Keep-Alive name=Professional%20Ajax&amp;amp;publisher=Wiley HTTP响应（Response）格式
+响应行
+响应头
+空行
+响应体
+示例
+HTTP/1.1 200 OK Date: Fri, 22 May 2009 06:07:21 GMT Content-Type: text/html; charset=UTF-8 &amp;lt;html&amp;gt; &amp;lt;head&amp;gt;&amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; &amp;lt;!</description>
     </item>
     
     <item>
@@ -608,29 +728,43 @@ POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatibl
       <guid>https://fishwin.github.io/net/http%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%A0%81/</guid>
       <description>1xx
 ​	1xx类状态码属于提示消息，是协议处理的一种中间状态，实际用到的比较少。
-  2xx
+2xx
 ​	2xx类状态码表示服务器成功处理了客户端的请求
-  200 ok
+200 ok
 表示一切正常，如果是非HEAD请求，服务器返回的响应头中都会有body数据
-  204 no content
+204 no content
 与200基本基本相同，但响应头没有body数据
-  206 partial content
+206 partial content
 一般应用于http分块下载或断点续传，表示响应返回的body中并不是全部数据，而是一部分。
-    3xx
+3xx
 ​	3xx表示重定向
-  301 moved permanently
+301 moved permanently
 永久重定向，表示请求的资源不存在了，需要使用另一个url进行访问
-  302 found
+302 found
 临时重定向，表示请求的资源还在，但是暂时需要另一个url来访问
-  304 not modified
+304 not modified
 不具有跳转的含义，表示资源未修改，重定向已存在的缓存文件，也称缓存重定向，用于缓存控制。
-    4xx
+4xx
 ​	4xx表示客户端发送的报文有误，服务端无法处理
-  400 bad request
+400 bad request
 表示客户端请求的报文有错误,是一个笼统的错误
-  401 Unauthorized
+401 Unauthorized
 请求未经授权
-  403 forbidden</description>
+403 forbidden
+服务器禁止客户端访问相应的资源
+404 not found
+请求的资源不存在
+5xx
+​	5xx表示服务端错误
+500 internal server error
+服务器内部错误，和400一样是一个笼统的错误
+501 not implemented
+表示客户端的请求服务端还不支持
+502 bad gateway
+一般是服务端进程异常或挂掉
+503 service unavailable
+表示服务器当前繁忙，无法响应
+参考</description>
     </item>
     
     <item>
@@ -648,13 +782,12 @@ POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatibl
       <pubDate>Thu, 24 Nov 2022 17:10:57 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/</guid>
-      <description>  定义
+      <description>定义
 逃逸分析就是由编译器决定内存分配的位置，栈还是堆，在编译阶段完成。
-  栈与堆的区别
- 栈上分配内存效率更高 栈上分配的内存不需要GC处理，堆上的内存使用完毕后需要GC处理    逃逸场景
- 返回局部变量的指针 栈空间不足（空间开辟过大） 动态类型逃逸比如interface 闭包引用对象逃逸    函数传递指针真的比传值效率高吗
-不一定，因为指针传递会产生逃逸，会给GC带来压力。
-  </description>
+栈与堆的区别
+栈上分配内存效率更高 栈上分配的内存不需要GC处理，堆上的内存使用完毕后需要GC处理 逃逸场景
+返回局部变量的指针 栈空间不足（空间开辟过大） 动态类型逃逸比如interface 闭包引用对象逃逸 函数传递指针真的比传值效率高吗
+不一定，因为指针传递会产生逃逸，会给GC带来压力。</description>
     </item>
     
     <item>
@@ -663,7 +796,7 @@ POST请求： POST / HTTP1.1 Host:www.wrox.com User-Agent:Mozilla/4.0 (compatibl
       <pubDate>Thu, 24 Nov 2022 17:10:09 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/select/</guid>
-      <description>select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。  参考：
+      <description>select中每个case必须是一个channel操作（读或写） 当select中不含有任何case时，会阻塞当前goroutine 当select中含有多个case时，并且没有default，这时会阻塞等待直到有case被触发，如果有多个case同时满足触发条件，那么select会随机选取一个case执行，其他的不执行。 当select中含有多个case并且含有default语句时，如果没有case触发，那么就会执行default语句，如果有case触发则执行case。 如果select中含有读取nil channel的case，则永远不会走这个case。 参考：
 https://wudaijun.com/2017/10/go-select/</description>
     </item>
     
@@ -674,11 +807,11 @@ https://wudaijun.com/2017/10/go-select/</description>
       
       <guid>https://fishwin.github.io/golang/defer/</guid>
       <description>数据结构
-type _defer struct { siz int32 started bool sp uintptr pc uintptr fn *funcval _panic *_panic link *_defer // 链表指针 }   多个defer会形成一个链表，后面声明的defer会放到链表的头部,运行时，从前向后运行。
- defer 一般用于资源释放，如下  f,err := os.Open(filename) if err != nil { panic(err) } defer f.Close()   多个defer，执行顺序类似于栈（后进先出），下面的先执行
-  defer 与 return的执行顺序
- 返回值=x 执行defer语句 空的return  如以下几个例子
-// 例1 func f() (result int) { defer func() { result++ }() return 0 } // 可改写为 func f() (result int) { result = 0 defer func() { result++ }() return } // 所以例1返回1  //============================================================  // 例2 func f() (r int) { t := 5 defer func() { t = t + 5 }() return t } // 可改写为 func f() (r int) { t := 5 r = t defer func() { t = t + 5 }() return } // 因为t赋值给r后，defer语句中并不会改变r的值，所以返回5  //============================================================  // 例3 func f() (r int) { defer func(r int) { r = r + 5 }(r) return 1 } // 可改写为 func f() (r int) { r = 1 defer func(r int) { r = r + 5 }(r) return } // 因为r被赋值为1后，defer语句是用的是r的拷贝（值传递），所以r的值不会发生变化，返回值为1    被deferred的函数的参数在defer时确定</description>
+type _defer struct { siz int32 started bool sp uintptr pc uintptr fn *funcval _panic *_panic link *_defer // 链表指针 } 多个defer会形成一个链表，后面声明的defer会放到链表的头部,运行时，从前向后运行。
+defer 一般用于资源释放，如下 f,err := os.Open(filename) if err != nil { panic(err) } defer f.Close() 多个defer，执行顺序类似于栈（后进先出），下面的先执行
+defer 与 return的执行顺序
+返回值=x 执行defer语句 空的return 如以下几个例子
+// 例1 func f() (result int) { defer func() { result++ }() return 0 } // 可改写为 func f() (result int) { result = 0 defer func() { result++ }() return } // 所以例1返回1 //============================================================ // 例2 func f() (r int) { t := 5 defer func() { t = t + 5 }() return t } // 可改写为 func f() (r int) { t := 5 r = t defer func() { t = t + 5 }() return } // 因为t赋值给r后，defer语句中并不会改变r的值，所以返回5 //============================================================ // 例3 func f() (r int) { defer func(r int) { r = r + 5 }(r) return 1 } // 可改写为 func f() (r int) { r = 1 defer func(r int) { r = r + 5 }(r) return } // 因为r被赋值为1后，defer语句是用的是r的拷贝（值传递），所以r的值不会发生变化，返回值为1 被deferred的函数的参数在defer时确定</description>
     </item>
     
     <item>
@@ -688,7 +821,7 @@ type _defer struct { siz int32 started bool sp uintptr pc uintptr fn *funcval _p
       
       <guid>https://fishwin.github.io/golang/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</guid>
       <description>数据结构
-type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 元素大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 元素类型 	sendx uint // 记录循环队列中发送操作处理到的位置（索引） 	recvx uint // 记录循环队列中接收操作处理到的位置（索引） 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 	last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 	prev *sudog // 双向链表前指针 	elem unsafe.</description>
+type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 元素大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 元素类型 sendx uint // 记录循环队列中发送操作处理到的位置（索引） recvx uint // 记录循环队列中接收操作处理到的位置（索引） recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 prev *sudog // 双向链表前指针 elem unsafe.</description>
     </item>
     
     <item>
@@ -698,7 +831,7 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
       
       <guid>https://fishwin.github.io/selected/chanel%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</guid>
       <description>数据结构
-type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint // 循环队列的长度 	buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel 	elemsize uint16 // 元素大小 	closed uint32 // channel是否关闭的标志 	elemtype *_type // 元素类型 	sendx uint // 记录循环队列中发送操作处理到的位置（索引） 	recvx uint // 记录循环队列中接收操作处理到的位置（索引） 	recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） 	sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） 	lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 	last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 	prev *sudog // 双向链表前指针 	elem unsafe.</description>
+type hchan struct { qcount uint // 循环队列中的元素数量 dataqsiz uint // 循环队列的长度 buf unsafe.Pointer // 指向循环队列（循环数组）的指针，只针对有缓冲的channel elemsize uint16 // 元素大小 closed uint32 // channel是否关闭的标志 elemtype *_type // 元素类型 sendx uint // 记录循环队列中发送操作处理到的位置（索引） recvx uint // 记录循环队列中接收操作处理到的位置（索引） recvq waitq // 存储了当前channel读阻塞的goroutine列表（双向链表） sendq waitq // 存储了当前channel写阻塞的goroutine列表（双向链表） lock mutex // 互斥所，保护channel中所有字段，还有一些阻塞在当前channel上sudogs中的一些字段 } type waitq struct { first *sudog // 指向双向链表第一个节点 last *sudog // 指向双向链表最后一个节点 } // sudog代表一个在等待队列中的goroutine type sudog struct { g *g next *sudog // 双向链表后指针 prev *sudog // 双向链表前指针 elem unsafe.</description>
     </item>
     
     <item>
@@ -708,7 +841,9 @@ type hchan struct { qcount uint // 循环队列中的元素数量 	dataqsiz uint
       
       <guid>https://fishwin.github.io/golang/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
       <description>数据结构
-type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</description>
+type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
+sync.Map 的实现原理可概括为：
+两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考：</description>
     </item>
     
     <item>
@@ -718,7 +853,9 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
       
       <guid>https://fishwin.github.io/selected/sync.map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
       <description>数据结构
-type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作  read atomic.Value // dirty是一个当前最新的map，允许读写  dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read  misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据  m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识  amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil  // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty  // 其他: 表示存着真正的数据  p unsafe.</description>
+type Map struct { //互斥锁，用于锁定dirty map mu Mutex //优先读map,支持原子操作，注释中有readOnly不是说read是只读，而是它的结构体。read实际上有写的操作 read atomic.Value // dirty是一个当前最新的map，允许读写 dirty map[interface{}]*entry // 主要记录read读取不到数据加锁读取read map以及dirty map的次数，当misses等于dirty的长度时，会将dirty复制到read misses int } // readOnly 主要用于存储，通过原子操作存储在 Map.read 中元素。 type readOnly struct { // read的map, 用于存储所有read数据 m map[interface{}]*entry // 如果数据在dirty中但没有在read中，该值为true,作为修改标识 amended bool } // entry 为 Map.dirty 的具体map值 type entry struct { // nil: 表示为被删除，调用Delete()可以将read map中的元素置为nil // expunged: 也是表示被删除，但是该键只在read而没有在dirty中，这种情况出现在将read复制到dirty中，即复制的过程会先将nil标记为expunged，然后不将其复制到dirty // 其他: 表示存着真正的数据 p unsafe.Pointer // *interface{} } 逻辑流程图
+sync.Map 的实现原理可概括为：
+两个map一个read一个dirty 读取时优先从read map中读取，如果读取不到则去dirty map中读取（dirty map中也不一定存在），并记录miss次数，如果miss次数等于dirty map 长度，则将dirty map的数据覆盖read map的数据（dirty map 提升为read map），同时dirty map置空，miss次数置0。 写入数据时，如果read map中存在写入键，则直接更新read map中的键值。如果不存在，则去检查dirty map中是否存在，如果存在则更新，如果不存在，则写入dirtymap，如果这时dirty map为nil，会将read map中的数据复制到dirtymap 注意read map也会有写操作（不会加锁），并不是只读。 如果dirty map和read map中含有相同的key，那么修改其中一个map中这个key的值，另一个map中这个key的值也会发生变化，因为value存的是指针。 对于删除数据则直接通过标记来延迟删除 参考：</description>
     </item>
     
     <item>
@@ -727,7 +864,7 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
       <pubDate>Thu, 24 Nov 2022 17:02:53 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstruct/</guid>
-      <description> 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行  </description>
+      <description> 同一struct类型的两个实例，当结构体中不包含不可比较的类型（切片、map）时，可以使用==比较，否则不能使用==比较 不同struct类型的两个实例不能用==比较，因为编译报错 如果struct类型中只包含可比较类型则可以用作map的key，否则不行 </description>
     </item>
     
     <item>
@@ -737,16 +874,26 @@ type Map struct { //互斥锁，用于锁定dirty map  mu Mutex //优先读map,�
       
       <guid>https://fishwin.github.io/golang/map%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
       <description>hash函数往往存在输入范围大于输出范围的问题，所以会出现哈希冲突（哈希碰撞的问题），通常有以下解决方法
-  哈希冲突（哈希碰撞）
- 开放寻址  如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
- 拉链法（golang map使用拉链法解决hash冲突）
+哈希冲突（哈希碰撞）
+开放寻址 如上图，写如key3时，当hash函数命中key1时，就要线性往后查找第一个为空的位置，并存储key3。读取keys时，hash函数命中key1，此时就需要往后线性查找key3，直到找到或遇到空。
+拉链法（golang map使用拉链法解决hash冲突）
 链表的数组
-  如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
- 再hash法
+如上图，key11经过hash函数命中2的位置，然后依次遍历此桶中的链表，如果找到key11，则对其进行更新操作，否则将key11添加到链表尾部。
+再hash法
 当发生冲突时，使用第二个、第三个、哈希函数计算地址，直到无冲突。
-    golang map数据结构
+golang map数据结构
 golang map的底层实现是哈希表，并采用拉链法解决哈希冲突
-type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) 	noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用  buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets 	nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) }   hash表扩容</description>
+type hmap struct { count int // 记录当前hash表元素数量 flags uint8 B uint8 // 记录当前hash表中buckets的数量，由于hash表每次扩容2倍，所以存储的是对数形式，2^B = len(buckets) noverflow uint16 hash0 uint32 // 传入hash函数，hash计算时使用 buckets unsafe.Pointer oldbuckets unsafe.Pointer // 用于hash扩容时，保存之前的buckets nevacuate uintptr extra *mapextra // 保存溢出数据的桶，数量是2 ^ (B-4) } hash表扩容
+当hash表中的元素越来越多时，hash冲突的概率就会越来越高，hash表中桶的链表会越来越长，导致遍历链表耗时变长，这时就需要hash表扩容，一般每次扩容两倍。
+渐进式rehash
+map在rehash时，和redis一样采用渐进式rehash，使用oldbuckets字段保存旧的hash表，不一次性迁移完所有的buckets，而是把key的迁移分摊到每次的插入和删除操作中，在全部迁移完成后，释放oldbuckets。
+读取数据
+在扩容期间会发生读oldbuckets的情况，如果oldbuckets还未迁移完成则读oldbuckets
+触发扩容时机
+装载因子大于6.5（即每个桶平均存储6.5个key，通常每个桶最大为8）（装载因子：元素数量/桶数量） 哈希使用了太多的溢出桶（当hash冲突数超过桶最大数量时，会存储在溢出桶中，并形成一个链表） 参考：
+https://juejin.im/entry/6844903793927143438
+https://juejin.im/post/6844903940866179079#heading-3
+https://juejin.im/post/6844904078636482574#heading-15</description>
     </item>
     
     <item>
@@ -800,8 +947,8 @@ type hmap struct { count int // 记录当前hash表元素数量 	flags uint8 B u
       <pubDate>Mon, 24 Oct 2022 17:48:11 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/</guid>
-      <description>示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+      <description>示意图 代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位) char m_cTypeOfService; // 服务类型8位 short m_sTotalLenOfPacket; //数据包长度 short m_sPacketID; //数据包标识 short m_sSliceinfo; //分片使用 char m_cTTL; //存活时间 char m_cTypeOfProtocol; //协议类型 short m_sCheckSum; //校验和 unsigned int m_uiSourIp; //源ip unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ; 参考
 https://blog.csdn.net/mrwangwang/article/details/8537775</description>
     </item>
     
@@ -811,11 +958,10 @@ https://blog.csdn.net/mrwangwang/article/details/8537775</description>
       <pubDate>Wed, 24 Nov 2021 19:34:55 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95/</guid>
-      <description>  (a,b)联合索引会触发filesort
-  (a,b,c)联合索引会触发filesort
-  (a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
-  所以结论是：建立(a,c)联合索引为最优解
-  </description>
+      <description>(a,b)联合索引会触发filesort
+(a,b,c)联合索引会触发filesort
+(a,c,b)联合索引无filesort，但b无法使用索引（如果target_id用上索引，rows应为51，由于sql执行顺序）
+所以结论是：建立(a,c)联合索引为最优解</description>
     </item>
     
     <item>
@@ -831,26 +977,37 @@ https://blog.csdn.net/mrwangwang/article/details/8537775</description>
 1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
 总结：
 ​	上述整个过程，当前用户线程是阻塞等待的。
-  非阻塞I/O
+非阻塞I/O
 当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
 执行过程：
-  应用程序发起系统调用，进入到内核空间
-  如果内核空间数据还没准备好，则直接返回error。
-  应用程序会定时轮询，数据是否准备好了
-  数据准备好之后，则将数据从内核空间拷贝到用户空间
-  应用程序拿到数据之后，进行后续处理
+应用程序发起系统调用，进入到内核空间
+如果内核空间数据还没准备好，则直接返回error。
+应用程序会定时轮询，数据是否准备好了
+数据准备好之后，则将数据从内核空间拷贝到用户空间
+应用程序拿到数据之后，进行后续处理
 总结：
 不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
-    IO多路复用
+IO多路复用
 一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
 执行过程：
 1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
 总结：
 ​	多路复用本质也是同步I/O
-  信号驱动I/O
+信号驱动I/O
 用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
 执行过程：
-1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</description>
+1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4. 内核将数据拷贝到用户空间，进行后续处理
+异步I/O
+用户调用aio_read系统调用之后，无论内核是否准备好数据，都直接返回，当内核数据准备好之后，内核直接将数据拷贝到用户空间。
+执行过程：
+1. 用户进程调用aio_read系统调用 2. 内核无论是否准备好数据直接返回 3. 当内核数据准备好后，直接将数据拷贝到用户空间
+总结：
+​	异步I/O每个阶段都是非阻塞的
+总结
+参考：
+https://www.cnblogs.com/sheng-jie/p/how-much-you-know-about-io-models.html
+https://tutorial.linux.doc.embedfire.com/zh_CN/latest/system_programing/socket_io.html
+https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
@@ -866,26 +1023,37 @@ https://blog.csdn.net/mrwangwang/article/details/8537775</description>
 1. 应用程序调用recvform()系统调用函数，进入内核空间 2. 内核空间等待数据准备好 3. 内核空间将数据从内核空间拷贝到用户空间 4. 应用程序拿到数据进行后续处理
 总结：
 ​	上述整个过程，当前用户线程是阻塞等待的。
-  非阻塞I/O
+非阻塞I/O
 当应用程序调用系统调用函数，进入到内核空间后，如果内核空间数据没有准备好，那么此时内核空间之间返回给用户空间一个错误，此时用户空间不需要等待内核空间数据准备好，而可以去执行其他工作代码，然后定期轮询，查看内核空间是否准备好了，如果准备好，将内核空间中的数据拷贝到用户空间，应用收到数据后，继续执行后续的工作。
 执行过程：
-  应用程序发起系统调用，进入到内核空间
-  如果内核空间数据还没准备好，则直接返回error。
-  应用程序会定时轮询，数据是否准备好了
-  数据准备好之后，则将数据从内核空间拷贝到用户空间
-  应用程序拿到数据之后，进行后续处理
+应用程序发起系统调用，进入到内核空间
+如果内核空间数据还没准备好，则直接返回error。
+应用程序会定时轮询，数据是否准备好了
+数据准备好之后，则将数据从内核空间拷贝到用户空间
+应用程序拿到数据之后，进行后续处理
 总结：
 不管内核空间数据是否准备好，都直接返回，然后应用程序定时轮询内核空间，数据是否准备好，准备好之后则将数据从内核空间拷贝到用户空间。
-    IO多路复用
+IO多路复用
 一个线程可以监听多个I/O事件，当有事件就绪时，可以通知线程执行响应的工作代码。
 执行过程：
 1. 应用程序调用select系统调用函数，并将fd_set从用户空间拷贝到内核空间，然后在内核空间中对fd_se遍历一遍，如果没有就绪的I/O事件，则内核进行休	眠，当有就绪的事件时，则唤醒内核 2. 通知用户线程就绪事件的数量 3. 就绪数量大于0时，select再遍历一次fd_set，找出就绪的事件 4. 然后再执行相应的操作。比如：应用程序调用recvfrom系统调用，进入内核空间，内核将数据拷贝到用户空间进行后续处理
 总结：
 ​	多路复用本质也是同步I/O
-  信号驱动I/O
+信号驱动I/O
 用户进程向内核发送一个信号，告诉内核需要什么样的数据，然后用户进程就可以去干其他工作了，当内核数据准备好后，就会给用户进程发送一个信号，去执行相应的读写操作。
 执行过程：
-1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4.</description>
+1. 首先用户进程调用sigaction系统调用，告知内核需要什么数据，并返回一个sigio handler，用户进程就可以接着去干其他事儿了 2. 当内核数据准备好后，会给用户进程发送一个信号 3. 用户进程收到信号后，接着调用recvfrom系统调用，进入内核空间 4. 内核将数据拷贝到用户空间，进行后续处理
+异步I/O
+用户调用aio_read系统调用之后，无论内核是否准备好数据，都直接返回，当内核数据准备好之后，内核直接将数据拷贝到用户空间。
+执行过程：
+1. 用户进程调用aio_read系统调用 2. 内核无论是否准备好数据直接返回 3. 当内核数据准备好后，直接将数据拷贝到用户空间
+总结：
+​	异步I/O每个阶段都是非阻塞的
+总结
+参考：
+https://www.cnblogs.com/sheng-jie/p/how-much-you-know-about-io-models.html
+https://tutorial.linux.doc.embedfire.com/zh_CN/latest/system_programing/socket_io.html
+https://www.cnblogs.com/f-ck-need-u/p/7624733.html</description>
     </item>
     
     <item>
@@ -894,17 +1062,16 @@ https://blog.csdn.net/mrwangwang/article/details/8537775</description>
       <pubDate>Wed, 24 Nov 2021 18:36:47 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</guid>
-      <description>  应用场景
+      <description>应用场景
 分布式redis集群中，如果利用一般hash算法，增删节点都会造成大量缓存失效，为了解决这一问题，可使用一致性hash算法，减少因为增删节点而带来的缓存失效的情况。
-  原理：
+原理：
 首先构造一个hash环空间，值域为[0,2^32-1]，然后以redis每个节点的ip或者名字，利用函数H(x)计算一个hash值，落在环上不同位置。当有查询缓存的请求时，则将key使用相同的函数H(x)对key进行计算一个hash值，落在环上，然后沿环顺时针查找第一个redis节点，则key的值应存储在这个节点上，即可读写值。
 如下图，A数据落在server1上，D数据落在server3上，B、C落在server2上，如果删除server3，则受影响的只有D数据，其他数据不受影响，如果在B和C之间增加server4，则受影响的只有B，其他数据不受影响。
-    数据倾斜问题（数据在各个redis节点上分布不均匀）
-  如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
-  为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
-    参考
-https://blog.codinglabs.org/articles/consistent-hashing.html
-  </description>
+数据倾斜问题（数据在各个redis节点上分布不均匀）
+如果共有两个redis节点，并且计算出的hash值比较接近，那么根据一致性hash算法，大部分数据会落到一个节点上，数据就会在两个节点上分布不均。
+为了解决以上问题，通常会为同一个节点计算多个hash值(32或者更大)，作为虚拟节点，落在环上，以使数据尽可能的分布均匀。比如，可对name+编号，然后进行hash计算（redis server #1,redis server #2,redis server #3&amp;hellip;）
+参考
+https://blog.codinglabs.org/articles/consistent-hashing.html</description>
     </item>
     
     <item>
@@ -913,7 +1080,7 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
       <pubDate>Wed, 24 Nov 2021 17:42:07 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/tcp%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/</guid>
-      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制  </description>
+      <description> 校验和：校验数据的正确性（类似于签名） 序列号：去重、重新排序、重传 确认应答 拥塞控制 流量控制 </description>
     </item>
     
     <item>
@@ -922,7 +1089,7 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
       <pubDate>Wed, 24 Nov 2021 17:06:14 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/nil%E5%8F%AF%E4%B8%8E%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/</guid>
-      <description>引用类型：channel、slice、map、接口、函数、指针  只有引用类型才可以与nil进行比较</description>
+      <description>引用类型：channel、slice、map、接口、函数、指针 只有引用类型才可以与nil进行比较</description>
     </item>
     
     <item>
@@ -936,26 +1103,29 @@ https://blog.codinglabs.org/articles/consistent-hashing.html
 一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
 一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
 gorutine 与 内核线程 N:M映射
-  全局运行队列
+全局运行队列
 go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
 全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
-  本地运行队列
+本地运行队列
 每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
-  netpoll（网络轮询器）
+netpoll（网络轮询器）
 比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
-  调度过程
+调度过程
 p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
-  sysmon
+sysmon
 go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
- 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P； 抢占式调度
 当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
 基于协作的抢占式调度器 - 1.2 ~ 1.13
 基于信号的抢占式调度器 - 1.14 ~ 至今
-  channel
+channel
 试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
-  总结
+总结
 goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
-  参考：</description>
+参考：
+https://tonybai.com/2020/03/21/illustrated-tales-of-go-runtime-scheduler/
+https://tonybai.com/2017/06/23/an-intro-about-goroutine-scheduler/
+https://wudaijun.com/2018/01/go-scheduler/</description>
     </item>
     
     <item>
@@ -969,26 +1139,29 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
 一个P对应一个逻辑处理器，并维护一个G的本地运行队列，数量与GOMAXPROCS数量一致，指最大并行数
 一个M对应一个内核线程，数量不固定，由go运行时指定，默认设置为最大10000.
 gorutine 与 内核线程 N:M映射
-  全局运行队列
+全局运行队列
 go运行时会维护一个G的全局运行队列，p会在一定条件下，来全局运行队列中拿G放到自己的本地运行队列中。全局运行队列会使用mutex来控制多个p的并发访问。
 全局运行对列使用mutex来实现多个p的并发访问，由于锁的竞争太严重，所以每个p中引入了本地运行队列，以减少锁的竞争。
-  本地运行队列
+本地运行队列
 每一个p都会维护一个G的本地运行队列，p会不断的在本地运行队列中取出G挂载到内核线程上去运行。当通过 go 关键字创建一个新的 goroutine 的时候，它会优先被放入 P 的本地队列。
-  netpoll（网络轮询器）
+netpoll（网络轮询器）
 比如select/poll/epoll等IO多路复用，goroutine将被挂起，直到IO事件触发，这是将goroutine重新放回运行队列中。
-  调度过程
+调度过程
 p首先检查本地运行队列，如果本地运行队列为空，首先会去检查全局运行队列（需要加锁），如果全局运行队列也为空，然后去检查网络轮询器(network poller)中是否有IO事件被触发，如果还没有，这时会进行”窃取“，即去其他p的本地运行队列中拿一部分G放到自己的本地运行队列中。
-  sysmon
+sysmon
 go程序在启动时，会启动一个sysmon（系统监视器）的m，这个m无须与p绑定即可运行，每20us~10ms启动一次,它完成的工作主要有：
- 释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P；    抢占式调度
+释放闲置超过5分钟的span物理内存； 如果超过2分钟没有垃圾回收，强制执行； 将长时间未处理的netpoll结果添加到任务队列； 向长时间运行的G任务发出抢占调度； 收回因syscall长时间阻塞的P； 抢占式调度
 当某个goroutine执行超过10ms，sysmon会向其发起抢占调度请求，goroutine调度没有时间片的概念，通过设置标记来进行抢占式操作。
 基于协作的抢占式调度器 - 1.2 ~ 1.13
 基于信号的抢占式调度器 - 1.14 ~ 至今
-  channel
+channel
 试图写入或读取channel而被阻塞的gorutine会被阻塞到channel中的sendq或recvq（写/读队列中），不会放到全局运行队列，或者p的本地运行队列中
-  总结
+总结
 goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种实现方式相比内核级线程可以做的很轻量级，对系统资源的消耗会小很多
-  参考：</description>
+参考：
+https://tonybai.com/2020/03/21/illustrated-tales-of-go-runtime-scheduler/
+https://tonybai.com/2017/06/23/an-intro-about-goroutine-scheduler/
+https://wudaijun.com/2018/01/go-scheduler/</description>
     </item>
     
     <item>
@@ -998,8 +1171,12 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       
       <guid>https://fishwin.github.io/db/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
       <description>事务隔离级别主要有四种
- 读未提交 (READ UNCOMMITED)  定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题  脏读 不可重复读 幻读     读已提交 (READ COMMITED)  定义：一个事务只能读取另一个事务已经提交的数据 存在的问题  不可重复读 幻读     可重复读 (REPEATABLE READ)（Mysql 默认隔离级别）  定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题  幻读     串行 (SERIALIZABLE)  定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题      释义
- 脏读  定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据   不可重复读  定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致   幻读  定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。      优缺点</description>
+读未提交 (READ UNCOMMITED) 定义：一个事务可以读取另一个事务已修改但未提交的数据 存在的问题 脏读 不可重复读 幻读 读已提交 (READ COMMITED) 定义：一个事务只能读取另一个事务已经提交的数据 存在的问题 不可重复读 幻读 可重复读 (REPEATABLE READ)（Mysql 默认隔离级别） 定义：在一个事务中多次读取同一条记录，结果一致，无论其他事务是否对这条记录做了修改 存在的问题 幻读 串行 (SERIALIZABLE) 定义：所有事务顺序执行 不存在脏读、不可重复读、幻读等问题 释义
+脏读 定义： 一个事务读到另一个事务已修改未提交的数据，如果前一个事务回滚，这个数据是错误的。或者在前一个事务修改之前读到了数据 不可重复读 定义：一个事务修改某一条数据，另一个事务在前一个事务提交之前读到的是修改前的数据，等前一个事务提交之后，读到的又是修改后的数据，造成两次读取同一条数据不一致 幻读 定义：某个表初始有三条数据，在一个事务中插入一条数据，另一个事务读到的也是三条数据，但是在前一个事务提交后，读到的应是4条。 优缺点
+隔离级别从上到下，并发性能越来越差，但对于数据的隔离性一致性保证程度越好
+参考
+https://blog.csdn.net/qq_41907991/article/details/107717419?utm_source=app
+https://blog.csdn.net/u013256816/article/details/103966510?utm_source=app</description>
     </item>
     
     <item>
@@ -1009,26 +1186,34 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       
       <guid>https://fishwin.github.io/os/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
       <description>个人理解
-  执行过程
+执行过程
 在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
-  如果保证进程地址空间隔离
+如果保证进程地址空间隔离
 逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
-  内存存储方式
- 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
-  定义
+内存存储方式
+段式存储 段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块 页式存储 页号 页偏移 页表 将内存空间分为相同长度的区间块 内存碎片
+定义
 由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
-  解决方案
- 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
+解决方案
+压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起 注意
 系统公用函数可在物理内存中只存储一份，供多个进程使用
-    进程逻辑地址空间划分
+进程逻辑地址空间划分
 一般1/4是内核地址空间，3/4是用户地址空间
-  虚拟内存解决了什么问题？
+虚拟内存解决了什么问题？
 可以使每个进程有独立的内存空间，相互隔离
-  进程地址空间划分
+进程地址空间划分
 一般1/4是内核地址空间，3/4是用户地址空间
-  页表
+页表
 建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
-每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
+每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）
+缺页
+当前页不存在于物理内存，此时会发生缺页中断，并将磁盘中的数据交换到物理内存中
+总结
+进程被创建后，内核首先为进程分配逻辑地址空间，并建立逻辑地址空间和物理内存、磁盘的页映射 访问逻辑地址空间某个数据时，首先通过MMU转化为物理地址，并校验合法性 然后去查看页表，查看当前页是否在物理内存中，如果在的话，则去物理内存中拿数据 如果不在物理内存，那么就会发生缺页异常，这时需要将磁盘中的数据交换到物理内存中，并更新页表 一句话简述
+虚拟内存就是只加载需要的数据到物理内存，其他的先放到磁盘，需要的时候再放到物理内存。
+参考：
+https://www.jianshu.com/p/4f5f18077890
+https://www.cnblogs.com/klb561/p/11062166.html</description>
     </item>
     
     <item>
@@ -1038,26 +1223,34 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       
       <guid>https://fishwin.github.io/selected/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
       <description>个人理解
-  执行过程
+执行过程
 在执行一个可执行文件时，内核首先为这个进程创建一份逻辑地址空间，进程看到的逻辑地址空间是线性连续的（一般为4G）逻辑地址空间到物理地址空间，逻辑地址空间到磁盘地址空间都会会做一个页映射，程序运行时，并不会把所有数据都加载到物理内存中，而只是将必须的加载到物理内存，当通过逻辑地址查找物理地址时，首先通过MMU将逻辑地址转化为物理内存地址并校验合法性，然后查看页表，发现在页表中不存在该数据，就会发生页中断，这时就把数据从磁盘交换到物理内存，如果当前物理内存已没有额外的空间，那么就会产生页覆盖，具体覆盖哪些页，由操作系统决定，一般采用LRU算法进行页淘汰。
-  如果保证进程地址空间隔离
+如果保证进程地址空间隔离
 逻辑地址与物理内存中间有一层MMU（内存管理单元），它会将逻辑地址转换为物理地址，会对每个进程的地址进行检查，每个进程会被限制只能访问物理内存中某一段的地址空间，如果不在这个区间内，那么就认为地址非法。
-  内存存储方式
- 段式存储  段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块   页式存储  页号 页偏移 页表 将内存空间分为相同长度的区间块      内存碎片
-  定义
+内存存储方式
+段式存储 段号 段偏移 堆段、栈段、数据段、代码段等 将内存空间分为不同长度的区间块 页式存储 页号 页偏移 页表 将内存空间分为相同长度的区间块 内存碎片
+定义
 由于内存不断分配，而造成的，一些极小的内存块，不能满足新的内存分配需求大小，从而导致这些内存不能被利用。
-  解决方案
- 压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起      注意
+解决方案
+压缩法：将所有已分配的内存块，通过移动，紧凑的放到一起 注意
 系统公用函数可在物理内存中只存储一份，供多个进程使用
-    进程逻辑地址空间划分
+进程逻辑地址空间划分
 一般1/4是内核地址空间，3/4是用户地址空间
-  虚拟内存解决了什么问题？
+虚拟内存解决了什么问题？
 可以使每个进程有独立的内存空间，相互隔离
-  进程地址空间划分
+进程地址空间划分
 一般1/4是内核地址空间，3/4是用户地址空间
-  页表
+页表
 建立逻辑地址空间与物理内存地址空间的映射，建立逻辑地址空间与磁盘地址空间的映射
-每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）</description>
+每个页表项都分为两部分，第一部分记录此页是否在物理内存中，第二部分记录物理内存页的地址（如果存在）
+缺页
+当前页不存在于物理内存，此时会发生缺页中断，并将磁盘中的数据交换到物理内存中
+总结
+进程被创建后，内核首先为进程分配逻辑地址空间，并建立逻辑地址空间和物理内存、磁盘的页映射 访问逻辑地址空间某个数据时，首先通过MMU转化为物理地址，并校验合法性 然后去查看页表，查看当前页是否在物理内存中，如果在的话，则去物理内存中拿数据 如果不在物理内存，那么就会发生缺页异常，这时需要将磁盘中的数据交换到物理内存中，并更新页表 一句话简述
+虚拟内存就是只加载需要的数据到物理内存，其他的先放到磁盘，需要的时候再放到物理内存。
+参考：
+https://www.jianshu.com/p/4f5f18077890
+https://www.cnblogs.com/klb561/p/11062166.html</description>
     </item>
     
     <item>
@@ -1066,7 +1259,7 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       <pubDate>Tue, 24 Nov 2020 17:40:08 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE/</guid>
-      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低  </description>
+      <description> 发送完一个分组数据后，只有等到对方确认才继续发送下一个分组数据 如果等待超时或数据出错时，没有收到确认，则重新发送 信道利用率太低 </description>
     </item>
     
     <item>
@@ -1075,18 +1268,18 @@ goroutine的调度不需要让 CPU 在用户态和内核态之间切换，这种
       <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
-      <description>TCP 三次握手过程及中间状态   执行流程图
- 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+      <description>TCP 三次握手过程及中间状态 执行流程图
+过程描述 客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
-TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+TCP为什么需要三次握手 防止过期的连接请求发送到服务端，造成错误
 比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
-  初始化并交换序列号
+初始化并交换序列号
 序列号发挥着非常重要的作用
- 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
 https://segmentfault.com/a/1190000020610336
-TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
-SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+TCP半连接队列 服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。 三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击 概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范 缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数 </description>
     </item>
     
     <item>
@@ -1095,18 +1288,18 @@ SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回
       <pubDate>Tue, 24 Nov 2020 17:37:02 +0800</pubDate>
       
       <guid>https://fishwin.github.io/selected/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E5%8F%8A%E4%B8%AD%E9%97%B4%E7%8A%B6%E6%80%81/</guid>
-      <description>TCP 三次握手过程及中间状态   执行流程图
- 过程描述  客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态      参考：
+      <description>TCP 三次握手过程及中间状态 执行流程图
+过程描述 客户端向服务端发送SYN=1（同步位），ACK=0（确认位），seq=x（随机序号）的包，并进入SYN_SENT状态（TCP规定报文段SYN=1且ACK=0表明这是一个请求建立链接的报文，不能携带数据） 服务端收到连接请求后向客户端发送SYN=1（同步位），ACK=1（确认位），seq=y（序号），ack=x+1（确认号）,并进入SYN_RECV状态（TCP规定SYN=1且ACK=1的报文段为同意建立链接的响应报文，不能携带数据） 客户端收到响应报文后，向服务端回复确认ACK=1（确认位），seq=x+1（序号），ack=y+1（确认号），客户端进入ESTABLISHED状态（这个ACK报文可以携带数据，如果不携带数据则不消耗序号） 服务端进入ESTABLISHED状态 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
-TCP为什么需要三次握手   防止过期的连接请求发送到服务端，造成错误
+TCP为什么需要三次握手 防止过期的连接请求发送到服务端，造成错误
 比如客户端向服务端发送一条连接请求，但由于网络等原因，服务端一直没有回应SYN+ACK响应报文，这时客户端多次重试发送连接请求，直到服务端回复SYN+ACK报文，一段时间后，网络恢复，客户端的连接请求全部到达服务端，如果采用“两次握手”则服务端一旦收到连接请求就回复SYN+ACK报文进行连接建立，就会建立很多条连接，但是客户端目的只是建立一条连接，这样必然造成了资源浪费。所以当服务端收到连接请求后，还需要让客户端确认一下，让客户端决定建立哪个连接。
-  初始化并交换序列号
+初始化并交换序列号
 序列号发挥着非常重要的作用
- 对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序    参考：
+对数据包进行去重 超时重传（ack=n表示前n个数据包已接收成功） 接收方对数据包进行排序 参考：
 https://www.cnblogs.com/xiaolincoding/p/12638546.html
 https://segmentfault.com/a/1190000020610336
-TCP半连接队列  服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。  三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
-SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范  缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数    </description>
+TCP半连接队列 服务端收到客户端FIN包后，会回复FIN+ACK报文，并进入SYN_RECV状态，此时双方并没有完全建立链接，服务器会把这种状态的连接放到一个队列中，这个队列称为半连接队列。 当服务端回复FIN+ACK报文后，未收到客户端的ACK，那么服务端会重试几次，如果还不能收到，则将这个链接从半连接队列中删除。 三次握手过程中可以携带数据吗 第一次和第二次不可以携带数据，第三次可以携带数据，如果携带则消耗序列号，如果不携带则不消耗序列号。
+SYN洪泛攻击 概念：攻击者向服务器发送大量SYN包，服务端回复SYN+ACK后，攻击者不回复ACK。由于服务端会将这样的链接请求放入半连接队列中，当这种请求非常多时，服务器资源就会耗尽，无法响应正常的连接请求，甚至可能导致宕机。 防范 缩短半连接超时时间 预警并屏蔽重复IP的大量SYN请求 SYN cookies（使攻击者不能伪造，并在服务端验证） 增加最大半连接数 </description>
     </item>
     
     <item>
@@ -1115,7 +1308,7 @@ SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回
       <pubDate>Tue, 24 Nov 2020 17:04:48 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/init%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</guid>
-      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init()  下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
+      <description>在同一个go文件中，可以定义多个init方法，按照在代码中编写的顺序依次执行不同的init方法 在同一个package中，可以多个文件中定义init方法，不同文件中的init方法的执行按照文件名先后执行各个文件中的init方法 对不同package，如果没有依赖关系，则按照main包中import的顺序执行init()，如果存在依赖关系，则最早被依赖的包最早执行init() 下图为常量、全局变量、init函数、main函数的执行顺序图，main函数最后执行：</description>
     </item>
     
     <item>
@@ -1126,8 +1319,8 @@ SYN洪泛攻击  概念：攻击者向服务器发送大量SYN包，服务端回
       <guid>https://fishwin.github.io/golang/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86/</guid>
       <description>使用算法：三色标记+混合写屏障+辅助gc
 触发时机：
- 定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()）  执行流程：
- gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行）  辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
+定时触发（每2分钟内未执行过gc） 分配内存时触发（当前内存是上一次gc执行完内存的两倍） 手动触发（runtime.GC()） 执行流程：
+gc初始化：收集根节点（全局对象、G Stack），开启写屏障，开启辅助GC（需要stw，但1.9版本之后已优化，不需要stw） 标记：初始时节点都为白色，从根节点出发，标记为灰色，然后放入灰色集合，然后从灰色集合拿出来一个将其标记为黑色，并将其引用的对象标记为灰色，并放入灰色集合，然后重复以上操作，直到灰色集合为空，此时要么是黑节点要么是白节点，白节点即为要清理的对象。（此阶段与用户代码并行） 标记结束：关闭写屏障和辅助GC（需要stw） 清理：清理白色节点（此阶段与用户代码并行） 辅助GC：当用户程序分配内存的速度比回收速度快时，辅助gc会执行stw停掉用户程序，用更多的cpu来跑垃圾回收程序。如果不这样，那么gc会一直卡在标记阶段，无法正常执行。
 写屏障: 由于标记阶段,与用户代码并行,所以可能出现被引用的对象被标记为白色的问题。例如以下场景：
 A首先被标记为黑色，B引用C，用户代码将B标记为黑色之前将引用给了C，这时B被标记为黑色，但是由于A已经被扫描过，所以A引用C不会再此被扫描，所以C会被标记成白色，但是应为黑色。
 写屏障就是在标记阶段，与用户代码并行时，监控对象的状态，并重新标记。
@@ -1144,7 +1337,7 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
       <pubDate>Sun, 24 Nov 2019 19:23:36 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91/</guid>
-      <description> 并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行  </description>
+      <description> 并行：同一时刻多个任务同时执行 并发：一个时间段内执行多个任务，不一定同一时刻执行，一般是交替执行 </description>
     </item>
     
     <item>
@@ -1154,24 +1347,25 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
       
       <guid>https://fishwin.github.io/net/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</guid>
       <description>强缓存：浏览器直接从内存或磁盘中读取缓存数据，不与服务器交互
-  相关header
-  Expires（http1.0）
+相关header
+Expires（http1.0）
 设置缓存失效时间（绝对时间，当客户端与服务端时间不一致，并且相差很大时，缓存失效时间不准确）
-  Cache-Control（http1.1，优先级高于Expires）
- max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等      状态码
- 200 OK (from disk cache) 200 OK (from memory cache)      协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
-  相关header
-  Last-Modified
+Cache-Control（http1.1，优先级高于Expires）
+max-age：设置缓存过期时间，单位秒，例如max-age=300 no-cache：每次需要进行缓存协商，向服务器验证缓存是否可用。（注意，no-cache会缓存，只是每次需要向服务器验证缓存是否可用） no-store：禁止缓存 等等 状态码
+200 OK (from disk cache) 200 OK (from memory cache) 协商缓存：当强缓存失效后，浏览器携带缓存标识询问服务器缓存是否可用的过程
+相关header
+Last-Modified
 服务器在给浏览器下发资源时，会携带Last-Modified，表示资源最后修改时间
-  If-Modified-Since
+If-Modified-Since
 在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带If-Modified-Since，值为Last-Modified的值，表示在此时间后资源是否被修改过。如果没修改过，则返回304，浏览器使用缓存，否则，从服务器重新加载资源
-  Etag
+Etag
 服务器在给浏览器下发资源时，会携带Etag，表示当前资源在服务器的唯一标识
-  If-None-Match
+If-None-Match
 在本地缓存失效后，浏览器向服务器进行缓存协商，确认缓存是否可用，携带ETag，服务器在收到之后，会对资源重新计算ETag，如果与浏览器传过来的Etag一致，则说明资源没有被修改过，返回304，浏览器使用缓存，否则，从服务器重新加载资源。
-  Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
-    为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
- Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到      比较</description>
+Last-Modified与If-Modified-Since一起使用。Etag与If-None-Match一起使用
+为什么有了Last-Modified与If-Modified-Since，还要出现Etag与If-None-Match？
+Last-Modified与If-Modified-Since不够灵敏：因为If-Modified-Since是以秒为单位，如果某个文件在1秒内被修改多次，它是检测不到的，而ETag可以检测到 比较
+类别 获取资源形式 状态码 与服务器交互 强缓存 读缓存 200（from memory cache/from disk cache） 否 协商缓存 读缓存 304（not modified） 是，需要向服务器确认缓存是否可用 流程图</description>
     </item>
     
     <item>
@@ -1180,7 +1374,7 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
       <pubDate>Sun, 24 Nov 2019 17:05:42 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/new%E5%92%8Cmake%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
-      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map  </description>
+      <description> new(T)返回T类型的指针，make(T)返回T类型 new只分配内存，make分配内存并初始化 new可用于任意类型，make仅用于slice、channel、map </description>
     </item>
     
     <item>
@@ -1189,17 +1383,21 @@ http://yangxikun.github.io/golang/2019/12/22/golang-gc.html</description>
       <pubDate>Sat, 23 Nov 2019 21:36:33 +0800</pubDate>
       
       <guid>https://fishwin.github.io/golang/slice%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
-      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组）  len int // 长度  cap int // 容量 }   切片长度
+      <description>// runtime/slice.go type slice struct { array unsafe.Pointer // 元素指针（底层数组） len int // 长度 cap int // 容量 } 切片长度
 切片长度是切片引用的元素数目
-  切片容量
+切片容量
 容量是底层数组的长度
-  slice作为参数传递
+slice作为参数传递
 当slice类型作为函数参数传递时，是以slice结构进行值拷贝进行传递（64位机器上为24个字节，32位机器上为12个字节），由于扩容时底层数组可能变化，即array指针地址会变，所以函数中如果有调用append函数对切片扩容，那么应传递切片指针作为参数。如：
-func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } }   扩容机制
+func appendSlice(s *[]int) { for i := 0; i &amp;lt; 1000; i ++ { *s = append(*s, i) } } 扩容机制
 当切片容量小于1024时，则每次扩容2倍，当大于等于1024时，每次扩容上次的四分之一。扩容过程中底层数组可能发生变化。
-  nil 切片
+nil 切片
 var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
-  空切片</description>
+空切片
+slice2 := make([]int,0) slice2 与 nil比较结果为false，json.Marshal结果为[]
+切片的切片操作
+切片操作并不复制切片指向的元素。它创建一个新的切片并复用原来切片的底层数组。 因此，通过一个新切片修改元素会影响到原始切片的对应元素。如下：
+func doAppend(a []int) { _ = append(a, 0) } func main() { s := []int{1,2,3,4,5,6,7,8,9} s2 := s[2:5] fmt.</description>
     </item>
     
     <item>
@@ -1209,17 +1407,20 @@ var slice1 []int slice1 与 nil 比较结果为true，json.Marshal结果为null
       
       <guid>https://fishwin.github.io/net/http2.0%E4%B8%8Ehttp3.0/</guid>
       <description>http1.0
- 连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输    http1.1
-  连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
-  pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
-请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3   明文传输
-  无状态：导致每次都需要传递重复的header，协议开销大
-    http2.0
- 二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端    http3.0
- 基于QUIC协议（QUIC协议基于UDP实现）  实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题      http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
+连接无法复用：每次发起一个请求都需要建立新的tcp链接，完成请求后断开链接 由于tcp慢启动机制，大文件请求效率低 队头阻塞：只有当前请求返回后，才能发送一个请求，如果当前请求一直阻塞的话，后面的请求都会陷入阻塞 无状态：导致每次都需要传递重复的header，协议开销大 明文传输 http1.1
+连接复用：Connection:keep-alive 可以实现连接的复用，不必每次请求都建立一个新连接
+pipeline：可多次发送多个请求，不需要等待当前请求返回，即可发送下一个请求，但响应必须按序返回，所以还是没有解决队头阻塞的问题
+请求1 --&amp;gt; 请求2 --&amp;gt; 请求3 &amp;gt; 响应1 --&amp;gt; 响应2 --&amp;gt; 响应3 明文传输
+无状态：导致每次都需要传递重复的header，协议开销大
+http2.0
+二进制分帧：将请求和响应的数据分割为更小的帧，并用二进制进行编码，解析效率更高。多个帧可以乱序发送，根据帧首部的流标识可以重新组装 多路复用：多个请求公用一个tcp连接，可并行交错的发送多个请求/响应（基于二进制分帧，可乱序发送，并可根据帧首部标识进行重新组装），它们之间互不影响。 头部压缩：采用HPACK算法，不发送重复的header，减少协议开销 server push：服务端可主动推送消息给客户端 http3.0
+基于QUIC协议（QUIC协议基于UDP实现） 实现了类似TCP的流量控制、传输可靠性的功能 快速握手：基于udp，可实现0-rtt或1-rtt建立连接 集成tls 多路复用：彻底解决队头阻塞问题 http1.1中的connection:keep-alive复用tcp连接与http2.0中的多路复用有什么区别
 http1.1中的pipeline可同时发送多个请求，但响应必须按序返回，当一个请求阻塞后，后面的请求也会阻塞，无法解决队头阻塞的问题。http2.0多路复用，由于数据被分为多个帧，多个请求与响应可以并行交错的进行，相互之间不会影响，在一定程度上解决了队头阻塞的问题（并没有彻底解决）。
-  为什么说http2.0没有彻底解决队头阻塞的问题
-由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。</description>
+为什么说http2.0没有彻底解决队头阻塞的问题
+由于多个请求复用一个tcp连接，当网络不稳定出现丢包时，tcp的重传机制会导致数据包重传并等待确认，这时，这个链接上的数据包都需要等待，就会阻塞这个链接上的所有请求。这时，http2的性能可能不如http1，因为http1建立多个tcp链接，相互之间不会产生影响。
+参考
+https://www.infoq.cn/article/kU4OkqR8vH123a8dLCCJ
+https://my729.github.io/blog/internetwork/http%E7%89%88%E6%9C%AC%E5%8C%BA%E5%88%AB.html#http2-0%E7%89%B9%E6%80%A7</description>
     </item>
     
     <item>
@@ -1237,7 +1438,7 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
       <pubDate>Sun, 13 Jan 2019 10:59:27 +0800</pubDate>
       
       <guid>https://fishwin.github.io/db/ms/</guid>
-      <description>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes.  数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959  简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】  参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096  Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】  参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html  聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265  简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】  参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8  简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】  参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773  简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】  参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831  Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】  参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf  什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】  参考一：https://dev.</description>
+      <description>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，604次】 参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/%E4%B8%BA%E4%BB%80%E4%B9%88MySQL%E4%BD%BF%E7%94%A8B%2BTree.pdf 参考二：https://www.vertabelo.com/blog/all-about-indexes-part-2-mysql-index-structure-and-performance/#:~:text=The%20B%2DTree%20is%20the,to%202d%2B1%20child%20nodes. 数据库的事务隔离级别有哪些？各有哪些优缺点？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，412次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://zhuanlan.zhihu.com/p/117476959 简述乐观锁以及悲观锁的区别以及使用场景 【[腾讯,阿里,字节跳动,美团,京东,百度,快手]，简单，304次】 参考一：https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking 参考二：https://juejin.cn/post/6844903639207641096 Redis 如何实现分布式锁？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，困难，234次】 参考一：https://redis.io/topics/distlock 参考二：https://www.redis.com.cn/topics/distlock.html 聚簇索引和非聚簇索引有什么区别？ 【[腾讯,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，220次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-index-types.html 参考二：https://cloud.tencent.com/developer/article/1541265 简述 Redis 持久化中 RDB 以及 AOF 方案的优缺点 【[腾讯,阿里,字节跳动,美团,京东,拼多多]，困难，218次】 参考一：https://redis.io/topics/persistence 参考二：https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html#aof-%E5%92%8C-rdb-%E7%9A%84%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8 简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？ 【[腾讯,阿里,字节跳动,美团,滴滴]，中等，182次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html 参考二：https://cloud.tencent.com/developer/article/1450773 简述 Redis 中如何防止缓存雪崩和缓存击穿 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴]，中等，180次】 参考一：https://www.pixelstech.net/article/1586522853-What-is-cache-penetration-cache-breakdown-and-cache-avalanche 参考二：https://zhuanlan.zhihu.com/p/346651831 Redis 有几种数据结构？Zset 是如何实现的？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手]，中等，170次】 参考一：https://redis.io/topics/data-types 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/database/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.pdf 什么是数据库事务，MySQL 为什么会使用 InnoDB 作为默认选项 【[腾讯,字节跳动,美团,百度,拼多多]，中等，158次】 参考一：https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-model.html#:~:text=The%20InnoDB%20transaction%20model%20aims,with%20traditional%20two%2Dphase%20locking.&amp;amp;text=Typically%2C%20several%20users%20are%20permitted,without%20causing%20InnoDB%20memory%20exhaustion. 参考二：https://draveness.me/mysql-transaction/ 简述什么是最左匹配原则 【[阿里,字节跳动,美团,京东,百度,快手]，简单，146次】 为什么 Redis 在单线程下能如此快？ 【[阿里,美团,京东,快手,拼多多]，中等，144次】 参考一：https://redis.io/topics/benchmarks 简述 Redis 中常见类型的底层数据结构 【[字节跳动,美团,京东,滴滴]，，122次】 参考一：https://redis.</description>
     </item>
     
     <item>
@@ -1246,7 +1447,7 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
       <pubDate>Sun, 13 Jan 2019 10:58:44 +0800</pubDate>
       
       <guid>https://fishwin.github.io/distributiton/ms/</guid>
-      <description>电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】  参考一：https://osjobs.net/system/posts/spike-system/  简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】  参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database  简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】  参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html  什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】  参考一：https://smartkeyerror.</description>
+      <description>电商系统中，如何实现秒杀功能？如何解决商品的超卖问题？ 【[腾讯,阿里,美团,滴滴,快手]，困难，156次】 参考一：https://osjobs.net/system/posts/spike-system/ 简述 CAP 理论 【[腾讯,字节跳动,美团,百度]，简单，118次】 简述一致性哈希算法的实现方式及原理 【[腾讯,美团,滴滴,阿里,快手]，困难，114次】 如何解决缓存与数据库不一致的问题？ 【[快手,阿里,京东,拼多多]，中等，74次】 参考一：https://www.pixelstech.net/article/1562504974-Consistency-between-Redis-Cache-and-SQL-Database 简述 Zookeeper 基础原理以及使用场景 【[腾讯,阿里,京东]，中等，58次】 参考一：https://www.guru99.com/zookeeper-tutorial.html 参考二：https://zhenye-na.github.io/2020/12/03/intro-to-zookeeper.html 什么是设计模式，描述几个常用的设计模式 【[腾讯,百度,滴滴,快手]，中等，58次】 简述生产者消费者模型 【[字节跳动,百度,字节跳动]，简单，46次】 什么是 CAP ？什么是最终一致性？什么是幂等操作？ 【[阿里]，中等，44次】 项目上有什么技术难点？ 【[快手,拼多多]，，44次】 如何设计一个线程池 【[腾讯,拼多多]，中等，44次】 简述中间件削峰和限流的使用场景 【[美团,快手]，，38次】 简述 Kafka 的基本架构，如何用 Kafka 保证消息的有序性？ 【[美团,京东]，，36次】 设计一个阻塞队列 【[阿里,字节跳动]，中等，34次】 了解高并发的解决方案吗？例如动静分离，缓存，负载均衡 【[拼多多]，简单，24次】 有哪些实现服务发现的方法？ 【[拼多多]，，22次】 阻塞队列都有哪几种，有什么区别？ 【[滴滴,阿里]，中等，22次】 如何实现唯一的分布式 ID 【[美团]，中等，22次】 ZooKeeper 的 ZAB 算法与 Paxos 的区别是什么？ 【[阿里]，困难，18次】 如何实现百度搜索功能？ 【[阿里]，困难，18次】 简述什么是两阶段提交？ 【[腾讯]，简单，18次】 微服务中如何实现服务发现 【[滴滴]，，16次】 简述 Nginx 的工作模型，为什么 Nginx 性能如此高？ 【[滴滴]，中等，16次】 熔断与限流是如何实现的？ 【[滴滴]，，16次】 高并发情景下，核心线程池该如何设置参数？ 【[阿里]，中等，16次】 如何测试应用的 QPS？ 【[腾讯]，中等，16次】 简述 ZooKeeper 选举机制 【[腾讯]，中等，14次】 如何设计一个消息队列 【[腾讯]，中等，14次】 简述 Dubbo 服务注册与发现的过程 【[美团]，简单，14次】 如何阅读大型项目的源码？ 【[拼多多]，，12次】 设计 Tiny URL 系统 【[字节跳动]，中等，12次】 kafka 如何保证消息一致性？ 【[字节跳动]，中等，12次】 简述 MapReduce 的原理 【[字节跳动]，中等，12次】 简述 Git 的工作流 【[腾讯]，简单，12次】 假如明天是活动高峰？QPS 预计会翻10倍，你要怎么做？ 【[腾讯]，中等，12次】 停车场有有限个车位，有多个车来抢车位，设计一个系统需要根据车辆进入和离开停车场的时间进行计费 【[字节跳动]，困难，10次】 容器化了解吗？它的基本原理是什么？ 【[阿里]，中等，10次】 参考一：https://smartkeyerror.</description>
     </item>
     
     <item>
@@ -1255,7 +1456,7 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
       <pubDate>Sun, 13 Jan 2019 10:56:51 +0800</pubDate>
       
       <guid>https://fishwin.github.io/net/ms/</guid>
-      <description>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，476次】  参考一：https://hit-alibaba.github.io/interview/basic/network/TCP.html 参考二：https://zhuanlan.zhihu.com/p/53374516  HTTP 与 HTTPS 有哪些区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,拼多多]，中等，363次】  参考一：https://www.keycdn.com/blog/difference-between-http-and-https 参考二：https://www.runoob.com/w3cnote/http-vs-https.html  从输入 URL 到展现页面的全过程 【[腾讯,阿里,字节跳动,美团,京东,百度,快手,拼多多]，困难，362次】  参考一：https://github.com/alex/what-happens-when  TCP 与 UDP 在网络协议中的哪一层，他们之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，简单，305次】  参考一：https://www.guru99.com/tcp-vs-udp-understanding-the-difference.html 参考二：https://developer.aliyun.com/article/454541  TCP 怎么保证可靠传输？ 【[腾讯,阿里,字节跳动,美团,京东,快手,拼多多]，中等，260次】  参考一：https://www.cs.colostate.edu/~christos/cs557s12/Slides/05TCP.pdf 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93  简述 HTTP 1.0，1.1，2.0 的主要区别 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，简单，190次】  参考一：https://www.digitalocean.com/community/tutorials/http-1-1-vs-http-2-what-s-the-difference 参考二：https://juejin.cn/post/6844903489596833800  TCP 中常见的拥塞控制算法有哪些？ 【[腾讯,阿里,字节跳动,百度]，中等，170次】  参考一：https://zh.wikipedia.org/wiki/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93  什么是跨域，什么情况下会发生跨域请求？ 【[阿里,字节跳动,滴滴,腾讯,京东,百度]，中等，164次】  参考一：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS  Cookie 和 Session 的关系和区别是什么？ 【[腾讯,阿里,字节跳动,美团,京东,滴滴]，简单，136次】 HTTP 中 GET 和 POST 区别 【[腾讯,阿里,字节跳动,美团,滴滴,拼多多]，简单，132次】  参考一：https://www.</description>
+      <description>简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，中等，476次】 参考一：https://hit-alibaba.github.io/interview/basic/network/TCP.html 参考二：https://zhuanlan.zhihu.com/p/53374516 HTTP 与 HTTPS 有哪些区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,拼多多]，中等，363次】 参考一：https://www.keycdn.com/blog/difference-between-http-and-https 参考二：https://www.runoob.com/w3cnote/http-vs-https.html 从输入 URL 到展现页面的全过程 【[腾讯,阿里,字节跳动,美团,京东,百度,快手,拼多多]，困难，362次】 参考一：https://github.com/alex/what-happens-when TCP 与 UDP 在网络协议中的哪一层，他们之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，简单，305次】 参考一：https://www.guru99.com/tcp-vs-udp-understanding-the-difference.html 参考二：https://developer.aliyun.com/article/454541 TCP 怎么保证可靠传输？ 【[腾讯,阿里,字节跳动,美团,京东,快手,拼多多]，中等，260次】 参考一：https://www.cs.colostate.edu/~christos/cs557s12/Slides/05TCP.pdf 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93 简述 HTTP 1.0，1.1，2.0 的主要区别 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，简单，190次】 参考一：https://www.digitalocean.com/community/tutorials/http-1-1-vs-http-2-what-s-the-difference 参考二：https://juejin.cn/post/6844903489596833800 TCP 中常见的拥塞控制算法有哪些？ 【[腾讯,阿里,字节跳动,百度]，中等，170次】 参考一：https://zh.wikipedia.org/wiki/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6 参考二：https://snailclimb.gitee.io/javaguide/#/docs/network/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C?id=%e5%9b%9b-tcp-%e5%8d%8f%e8%ae%ae%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93 什么是跨域，什么情况下会发生跨域请求？ 【[阿里,字节跳动,滴滴,腾讯,京东,百度]，中等，164次】 参考一：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS Cookie 和 Session 的关系和区别是什么？ 【[腾讯,阿里,字节跳动,美团,京东,滴滴]，简单，136次】 HTTP 中 GET 和 POST 区别 【[腾讯,阿里,字节跳动,美团,滴滴,拼多多]，简单，132次】 参考一：https://www.runoob.com/tags/html-httpmethods.html 简述 HTTPS 的加密与认证过程 【[腾讯,字节跳动,京东,快手,拼多多]，中等，128次】 参考一：https://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html DNS 查询服务器的基本流程是什么？DNS 劫持是什么？ 【[阿里,字节跳动,百度,滴滴,快手]，中等，126次】 参考一：https://www.cloudflare.com/learning/dns/what-is-dns/ 参考二：https://www.ruanyifeng.com/blog/2016/06/dns.html RestFul 是什么？RestFul 请求的 URL 有什么特点？ 【[腾讯,美团,滴滴]，简单，118次】 参考一：https://www.</description>
     </item>
     
     <item>
@@ -1264,7 +1465,7 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
       <pubDate>Sun, 13 Jan 2019 10:56:13 +0800</pubDate>
       
       <guid>https://fishwin.github.io/os/ms/</guid>
-      <description>进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】  参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】  参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5  简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】  参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&amp;ndash;select&amp;ndash;poll&amp;ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html  简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】  参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf  简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】  参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007  线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】  参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html  什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】  参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters  创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】  参考一：https://www.</description>
+      <description>进程和线程之间有什么区别？ 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手,拼多多]，简单，398次】 参考一：https://www.guru99.com/difference-between-process-and-thread.html 参考二：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf 进程间有哪些通信方式？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,快手,拼多多]，困难，358次】 参考一：https://www.guru99.com/inter-process-communication-ipc.html 参考二：https://www.coursera.org/lecture/os-pku/jin-cheng-jian-tong-xin-ipc-wbxs5 简述 select, poll, epoll 的使用场景以及区别，epoll 中水平触发以及边缘触发有什么不同？ 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，困难，253次】 参考一：https://jvns.ca/blog/2017/06/03/async-io-on-linux&amp;ndash;select&amp;ndash;poll&amp;ndash;and-epoll/ 参考二：https://imageslr.com/2020/02/27/select-poll-epoll.html 简述 Linux 进程调度的算法 【[腾讯,字节跳动,美团,百度,拼多多]，困难，138次】 参考一：https://smartkeyerror.oss-cn-shenzhen.aliyuncs.com/Phyduck/c%2B%2B/concurrent/1.%20Linux%20%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6.pdf 简述几个常用的 Linux 命令以及他们的功能 【[腾讯,阿里,百度,拼多多]，简单，114次】 简述操作系统如何进行内存管理 【[腾讯,腾讯,字节跳动]，中等，110次】 参考一：https://www.guru99.com/os-memory-management.html 参考二：https://zhuanlan.zhihu.com/p/143273007 线程有多少种状态，状态之间如何转换 【[阿里,京东]，简单，60次】 线程间有哪些通信方式？ 【[腾讯,字节跳动]，中等，52次】 简述操作系统中的缺页中断 【[腾讯,字节跳动]，中等，52次】 参考一：https://www.oreilly.com/library/view/understanding-the-linux/0596005652/ch04s02.html 什么时候会由用户态陷入内核态？ 【[腾讯,字节跳动]，简单，48次】 简述自旋锁与互斥锁的使用场景 【[字节跳动,快手]，中等，44次】 进程有多少种状态？ 【[阿里,百度]，简单，44次】 Linux 下如何查看端口被哪个进程占用？ 【[腾讯,字节跳动]，简单，42次】 操作系统中，虚拟地址与物理地址之间如何映射？ 【[字节跳动]，中等，40次】 简述 Linux 系统态与用户态，什么时候会进入系统态？ 【[腾讯]，简单，32次】 参考一：https://www.redhat.com/en/blog/architecting-containers-part-1-why-understanding-user-space-vs-kernel-space-matters 创建线程有多少种方式？ 【[京东]，中等，28次】 简述同步与异步的区别，阻塞与非阻塞的区别 【[腾讯]，困难，26次】 简述 Linux 零拷贝的原理 【[阿里,字节跳动]，中等，26次】 Linux 中虚拟内存和物理内存有什么区别？有什么优点？ 【[腾讯,字节跳动]，中等，26次】 BIO、NIO 有什么区别？怎么判断写文件时 Buffer 已经写满？简述 Linux 的 IO模型 【[腾讯]，困难，22次】 简述 mmap 的使用场景以及原理 【[字节跳动]，中等，20次】 简述操作系统中 malloc 的实现原理 【[腾讯]，中等，18次】 Linux 下如何排查 CPU 以及 内存占用过多？ 【[阿里]，简单，18次】 两个线程交替打印一个共享变量 【[字节跳动]，中等，18次】 多线程和多进程的区别是什么？ 【[美团]，简单，16次】 共享内存是如何实现的？ 【[滴滴]，，16次】 进程通信中的管道实现原理是什么？ 【[阿里]，简单，16次】 Linux 下如何查看 CPU 荷载，正在运行的进程，某个端口对应的进程？ 【[阿里]，简单，16次】 Linux 如何查看实时的滚动日志？ 【[阿里]，简单，14次】 如何调试服务器内存占用过高的问题？ 【[阿里]，中等，14次】 malloc 创建的对象在堆还是栈中？ 【[滴滴]，简单，14次】 为什么进程切换慢，线程切换快？ 【[美团]，简单，14次】 简述创建进程的流程 【[美团]，中等，14次】 简述 Linux 虚拟内存的页面置换算法 【[美团]，中等，14次】 简述 CPU L1, L2, L3 多级缓存的基本作用 【[京东]，简单，14次】 进程空间从高位到低位都有些什么？ 【[腾讯]，简单，12次】 简述 Linux 的 I/O模型 【[滴滴]，，12次】 什么情况下，进程会进行切换？ 【[字节跳动]，简单，12次】 信号量是如何实现的？ 【[滴滴]，，10次】 简述 traceroute 命令的原理 【[字节跳动]，简单，10次】 Linux 页大小是多少？ 【[滴滴]，简单，10次】 进程和线程之间有什么区别？ 【[Shopee]，简单，28次】 参考一：https://www.</description>
     </item>
     
     <item>
@@ -1273,7 +1474,7 @@ http1.1中的pipeline可同时发送多个请求，但响应必须按序返回�
       <pubDate>Sun, 13 Jan 2019 10:55:39 +0800</pubDate>
       
       <guid>https://fishwin.github.io/algorithm/ms/</guid>
-      <description>JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】  参考一：https://zhuanlan.zhihu.com/p/29881777  使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】  链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/  146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】  链接：https://leetcode-cn.com/problems/lru-cache/  206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】  链接：https://leetcode-cn.com/problems/reverse-linked-list/  19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】  链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/  10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】  参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md  141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】  链接：https://leetcode-cn.com/problems/linked-list-cycle/  快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】  参考一：https://zhuanlan.zhihu.com/p/267133203  21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】  链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/  102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】  链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/  112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】  链接：https://leetcode-cn.com/problems/path-sum/  215.</description>
+      <description>JMM 中内存模型是怎样的？什么是指令序列重排序？ 【[京东,腾讯,阿里,字节跳动,美团,百度,百度,滴滴,滴滴,快手]，中等，314次】 参考一：https://zhuanlan.zhihu.com/p/29881777 使用递归及非递归两种方式实现快速排序 【[腾讯,阿里,字节跳动,美团,京东,百度,滴滴,快手]，中等，283次】 链接：https://leetcode-cn.com/problems/sort-an-array/ 参考一：https://leetcode-cn.com/problems/sort-an-array/solution/pai-xu-shu-zu-by-leetcode-solution/ 参考二：https://leetcode-cn.com/problems/sort-an-array/solution/yong-fei-di-gui-de-kuai-su-pai-xu-fang-fa-by-yi-zh/ 146. LRU 缓存机制 【[腾讯,阿里,字节跳动,美团,百度,滴滴,拼多多]，中等，199次】 链接：https://leetcode-cn.com/problems/lru-cache/ 206. 反转链表 【[腾讯,阿里,字节跳动,京东,百度,滴滴,快手,拼多多]，简单，196次】 链接：https://leetcode-cn.com/problems/reverse-linked-list/ 19. 删除链表的倒数第 N 个结点 【[腾讯,阿里,字节跳动,美团,美团,百度,滴滴,快手,拼多多]，中等，193次】 链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/ 10亿个数中如何高效地找到最大的一个数以及最大的第 K 个数 【[腾讯,阿里,字节跳动,百度]，困难，190次】 参考一：https://github.com/weitingyuk/LeetCode-Notes-Waiting/blob/main/2021-02-17/TopK.md 141. 环形链表 【[腾讯,字节跳动,京东,京东,百度,快手]，简单，160次】 链接：https://leetcode-cn.com/problems/linked-list-cycle/ 快速排序的空间复杂度是多少？时间复杂度的最好最坏的情况是多少，有哪些优化方案？ 【[腾讯,字节跳动,美团,京东,滴滴,拼多多]，中等，130次】 参考一：https://zhuanlan.zhihu.com/p/267133203 21. 合并两个有序链表 【[腾讯,字节跳动,百度]，简单，126次】 链接：https://leetcode-cn.com/problems/merge-two-sorted-lists/ 102. 二叉树的层序遍历 【[腾讯,阿里,快手,拼多多]，中等，116次】 链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal/ 112. 路径总和 【[腾讯,字节跳动,美团,百度]，简单，115次】 链接：https://leetcode-cn.com/problems/path-sum/ 215. 数组中的第K个最大元素 【[腾讯,字节跳动,美团,快手]，中等，112次】 链接：https://leetcode-cn.com/problems/kth-largest-element-in-an-array/ 53. 最大子序和 【[腾讯,字节跳动,快手]，简单，108次】 链接：https://leetcode-cn.com/problems/maximum-subarray/ 232. 用栈实现队列 【[腾讯,阿里,美团,百度,滴滴]，简单，104次】 链接：https://leetcode-cn.com/problems/implement-queue-using-stacks/ 300. 最长递增子序列 【[腾讯,字节跳动,美团,百度]，中等，103次】 链接：https://leetcode-cn.com/problems/longest-increasing-subsequence/ 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL 【[字节跳动,百度,拼多多]，困难，92次】 33.</description>
     </item>
     
     <item>

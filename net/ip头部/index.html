@@ -9,26 +9,25 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 		<meta property="og:title" content="IP头部" />
-<meta property="og:description" content="示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+<meta property="og:description" content="示意图 代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位) char m_cTypeOfService; // 服务类型8位 short m_sTotalLenOfPacket; //数据包长度 short m_sPacketID; //数据包标识 short m_sSliceinfo; //分片使用 char m_cTTL; //存活时间 char m_cTypeOfProtocol; //协议类型 short m_sCheckSum; //校验和 unsigned int m_uiSourIp; //源ip unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ; 参考
 https://blog.csdn.net/mrwangwang/article/details/8537775" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/net/ip%E5%A4%B4%E9%83%A8/" /><meta property="article:section" content="net" />
 <meta property="article:published_time" content="2022-10-24T17:48:11+08:00" />
 <meta property="article:modified_time" content="2022-10-24T17:48:11+08:00" />
 
-
 		<meta itemprop="name" content="IP头部">
-<meta itemprop="description" content="示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+<meta itemprop="description" content="示意图 代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位) char m_cTypeOfService; // 服务类型8位 short m_sTotalLenOfPacket; //数据包长度 short m_sPacketID; //数据包标识 short m_sSliceinfo; //分片使用 char m_cTTL; //存活时间 char m_cTypeOfProtocol; //协议类型 short m_sCheckSum; //校验和 unsigned int m_uiSourIp; //源ip unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ; 参考
 https://blog.csdn.net/mrwangwang/article/details/8537775"><meta itemprop="datePublished" content="2022-10-24T17:48:11+08:00" />
 <meta itemprop="dateModified" content="2022-10-24T17:48:11+08:00" />
 <meta itemprop="wordCount" content="46">
 <meta itemprop="keywords" content="" />
 		<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IP头部"/>
-<meta name="twitter:description" content="示意图    代码定义
-/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位)  char m_cTypeOfService; // 服务类型8位  short m_sTotalLenOfPacket; //数据包长度  short m_sPacketID; //数据包标识  short m_sSliceinfo; //分片使用  char m_cTTL; //存活时间  char m_cTypeOfProtocol; //协议类型  short m_sCheckSum; //校验和  unsigned int m_uiSourIp; //源ip  unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ;   参考
+<meta name="twitter:description" content="示意图 代码定义
+/*IP头定义，共20个字节*/ typedef struct _IP_HEADER { char m_cVersionAndHeaderLen; //版本信息(前4位)，头长度(后4位) char m_cTypeOfService; // 服务类型8位 short m_sTotalLenOfPacket; //数据包长度 short m_sPacketID; //数据包标识 short m_sSliceinfo; //分片使用 char m_cTTL; //存活时间 char m_cTypeOfProtocol; //协议类型 short m_sCheckSum; //校验和 unsigned int m_uiSourIp; //源ip unsigned int m_uiDestIp; //目的ip } __attribute__((packed))IP_HEADER, *PIP_HEADER ; 参考
 https://blog.csdn.net/mrwangwang/article/details/8537775"/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
@@ -162,21 +161,21 @@ https://blog.csdn.net/mrwangwang/article/details/8537775"/>
 <ul>
 <li>
 <p>代码定义</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*IP头定义，共20个字节*/</span>
-<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> _IP_HEADER 
-{
- <span style="color:#66d9ef">char</span> m_cVersionAndHeaderLen;     　　<span style="color:#75715e">//版本信息(前4位)，头长度(后4位)
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTypeOfService;      　　　　　 <span style="color:#75715e">// 服务类型8位
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sTotalLenOfPacket;    　　　　<span style="color:#75715e">//数据包长度
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sPacketID;      　　　　　　　 <span style="color:#75715e">//数据包标识
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sSliceinfo;      　　　　　　　  <span style="color:#75715e">//分片使用
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTTL;        　　　　　　　　　　<span style="color:#75715e">//存活时间
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTypeOfProtocol;    　　　　　 <span style="color:#75715e">//协议类型
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sCheckSum;      　　　　　　 <span style="color:#75715e">//校验和
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> m_uiSourIp;     　　　　　<span style="color:#75715e">//源ip
-</span><span style="color:#75715e"></span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> m_uiDestIp;     　　　　　<span style="color:#75715e">//目的ip
-</span><span style="color:#75715e"></span>} __attribute__((packed))IP_HEADER, <span style="color:#f92672">*</span>PIP_HEADER ;
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/*IP头定义，共20个字节*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> _IP_HEADER 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">char</span> m_cVersionAndHeaderLen;     <span style="color:#960050;background-color:#1e0010">　　</span><span style="color:#75715e">//版本信息(前4位)，头长度(后4位)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTypeOfService;      <span style="color:#960050;background-color:#1e0010">　　　　　</span> <span style="color:#75715e">// 服务类型8位
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sTotalLenOfPacket;    <span style="color:#960050;background-color:#1e0010">　　　　</span><span style="color:#75715e">//数据包长度
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sPacketID;      <span style="color:#960050;background-color:#1e0010">　　　　　　　</span> <span style="color:#75715e">//数据包标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sSliceinfo;      <span style="color:#960050;background-color:#1e0010">　　　　　　　</span>  <span style="color:#75715e">//分片使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTTL;        <span style="color:#960050;background-color:#1e0010">　　　　　　　　　　</span><span style="color:#75715e">//存活时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">char</span> m_cTypeOfProtocol;    <span style="color:#960050;background-color:#1e0010">　　　　　</span> <span style="color:#75715e">//协议类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">short</span> m_sCheckSum;      <span style="color:#960050;background-color:#1e0010">　　　　　　</span> <span style="color:#75715e">//校验和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> m_uiSourIp;     <span style="color:#960050;background-color:#1e0010">　　　　　</span><span style="color:#75715e">//源ip
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> m_uiDestIp;     <span style="color:#960050;background-color:#1e0010">　　　　　</span><span style="color:#75715e">//目的ip
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#a6e22e">__attribute__</span>((packed))IP_HEADER, <span style="color:#f92672">*</span>PIP_HEADER ;
+</span></span></code></pre></div></li>
 </ul>
 <p>参考</p>
 <p><a href="https://blog.csdn.net/mrwangwang/article/details/8537775">https://blog.csdn.net/mrwangwang/article/details/8537775</a></p>

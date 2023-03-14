@@ -13,26 +13,25 @@
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fishwin.github.io/db/redis%E6%8C%81%E4%B9%85%E5%8C%96/" /><meta property="article:section" content="db" />
 <meta property="article:published_time" content="2022-12-03T17:02:57+08:00" />
 <meta property="article:modified_time" content="2022-12-03T17:02:57+08:00" />
 
-
 		<meta itemprop="name" content="Redis持久化">
 <meta itemprop="description" content="redis为什么需要持久化？ redis中的数据保存在内存中，如果redis实例突然宕机，数据会全部丢失。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."><meta itemprop="datePublished" content="2022-12-03T17:02:57+08:00" />
 <meta itemprop="dateModified" content="2022-12-03T17:02:57+08:00" />
 <meta itemprop="wordCount" content="358">
@@ -43,10 +42,10 @@ RDB持久化方式分为手动触发和自动触发。
 我们并不总是只拿redis做缓存，所以持久化是必要的。在redis宕机之后，我们依然可以恢复其中的数据。
 redis主要提供了两种持久化的方式RDB(Redis Database)和AOF(Append only File)。
 redis默认采用的使RDB的持久化方式。
-RDB 概念  按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
+RDB 概念 按照一定的规则周期，将redis内存中的数据以二进制的格式（内存快照）保存到磁盘文件中。
 Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小。
 RDB持久化方式分为手动触发和自动触发。
- 配置 满足任一条件都会触发rdb持久化
+配置 满足任一条件都会触发rdb持久化
 # Unless specified otherwise, by default Redis will save the DB: # * After 3600 seconds (an hour) if at least 1 change was performed # * After 300 seconds (5 minutes) if at least 100 changes were performed # * After 60 seconds if at least 10000 changes were performed # # You can set these explicitly by uncommenting the following line."/>
 
 	<link rel="stylesheet" href="/css/bundle.css">
@@ -187,23 +186,23 @@ RDB持久化方式分为手动触发和自动触发。</p>
 </blockquote>
 <h3 id="配置">配置</h3>
 <p>满足任一条件都会触发rdb持久化</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e"># Unless specified otherwise, by default Redis will save the DB:</span>
-<span style="color:#75715e">#   * After 3600 seconds (an hour) if at least 1 change was performed</span>
-<span style="color:#75715e">#   * After 300 seconds (5 minutes) if at least 100 changes were performed</span>
-<span style="color:#75715e">#   * After 60 seconds if at least 10000 changes were performed</span>
-<span style="color:#75715e">#</span>
-<span style="color:#75715e"># You can set these explicitly by uncommenting the following line.</span>
-<span style="color:#75715e">#</span>
-<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">3600</span> <span style="color:#ae81ff">1</span> 
-<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">300</span> <span style="color:#ae81ff">100</span> 
-<span style="color:#a6e22e">save</span> <span style="color:#ae81ff">60</span> <span style="color:#ae81ff">10000</span>
-
-<span style="color:#75715e"># Compress string objects using LZF when dump .rdb databases?</span>
-<span style="color:#75715e"># By default compression is enabled as it&#39;s almost always a win.</span>
-<span style="color:#75715e"># If you want to save some CPU in the saving child set it to &#39;no&#39; but</span>
-<span style="color:#75715e"># the dataset will likely be bigger if you have compressible values or keys.</span>
-<span style="color:#a6e22e">rdbcompression</span> <span style="color:#a6e22e">yes</span>
-</code></pre></div><h3 id="手动触发">手动触发</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#75715e"># Unless specified otherwise, by default Redis will save the DB:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   * After 3600 seconds (an hour) if at least 1 change was performed</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   * After 300 seconds (5 minutes) if at least 100 changes were performed</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   * After 60 seconds if at least 10000 changes were performed</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># You can set these explicitly by uncommenting the following line.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">save</span> <span style="color:#ae81ff">3600</span> <span style="color:#ae81ff">1</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">save</span> <span style="color:#ae81ff">300</span> <span style="color:#ae81ff">100</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">save</span> <span style="color:#ae81ff">60</span> <span style="color:#ae81ff">10000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Compress string objects using LZF when dump .rdb databases?</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># By default compression is enabled as it&#39;s almost always a win.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># If you want to save some CPU in the saving child set it to &#39;no&#39; but</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># the dataset will likely be bigger if you have compressible values or keys.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rdbcompression</span> <span style="color:#a6e22e">yes</span>
+</span></span></code></pre></div><h3 id="手动触发">手动触发</h3>
 <p>手动触发的命令有save和bgsave</p>
 <ul>
 <li>save：该命令会阻塞Redis服务器，直到RDB的过程完成。</li>
@@ -297,18 +296,18 @@ RDB持久化方式分为手动触发和自动触发。</p>
 <p>Redis使用单线程响应命令，如果每次写AOF文件命令都直接追加到硬盘， 那么性能完全取决于当前硬盘负载。先写入缓冲区aof_buf中， 还有另一个好处， Redis可以提供多种缓冲区 同步硬盘的策略，在性能和安全性方面做出平衡。</p>
 </blockquote>
 <h3 id="配置-1">配置</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e">#当appendonly为yes时redis启用aof备份</span>
-<span style="color:#a6e22e">appendonly</span>  <span style="color:#a6e22e">yes</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
-
-<span style="color:#75715e">#指定生成的aof文件的名称</span>
-<span style="color:#a6e22e">appendfilename</span> <span style="color:#a6e22e">filename</span>　　
-
-<span style="color:#75715e">#什么时候把aof文件缓冲区的内容写入的磁盘上.因为缓冲区中的内容实际上还没有写入到磁盘,   </span>
-<span style="color:#75715e">#如果这个时候宕机,那么数据也会丢失,所以这个时间不应该设置的太长,redis提供了三种方案.   </span>
-<span style="color:#75715e">#第一种时每秒中写入一次,这个时最常用的,另外一个是每执行一次命令就写入一次,因为fsync命令非常慢所以这个不推荐使用.</span>
-<span style="color:#75715e">#还有一个是不主动写入到磁盘,而是由系统决定什么时候写入,</span>
-<span style="color:#a6e22e">appendfsync</span>  <span style="color:#a6e22e">always</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">everysec</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
-</code></pre></div><h3 id="重写机制">重写机制</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#75715e">#当appendonly为yes时redis启用aof备份</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">appendonly</span>  <span style="color:#a6e22e">yes</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#指定生成的aof文件的名称</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">appendfilename</span> <span style="color:#a6e22e">filename</span><span style="color:#960050;background-color:#1e0010">　　</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#什么时候把aof文件缓冲区的内容写入的磁盘上.因为缓冲区中的内容实际上还没有写入到磁盘,   </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#如果这个时候宕机,那么数据也会丢失,所以这个时间不应该设置的太长,redis提供了三种方案.   </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#第一种时每秒中写入一次,这个时最常用的,另外一个是每执行一次命令就写入一次,因为fsync命令非常慢所以这个不推荐使用.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#还有一个是不主动写入到磁盘,而是由系统决定什么时候写入,</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">appendfsync</span>  <span style="color:#a6e22e">always</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">everysec</span><span style="color:#960050;background-color:#1e0010">|</span><span style="color:#a6e22e">no</span>
+</span></span></code></pre></div><h3 id="重写机制">重写机制</h3>
 <h4 id="为什么要重写">为什么要重写</h4>
 <blockquote>
 <p>随着命令不断写入AOF， 文件会越来越大， 为了解决这个问题， Redis引入AOF重写机制压缩文件体积。   <br>
@@ -322,14 +321,14 @@ AOF文件重写是把Redis进程内的数据转化为写命令同步到新AOF文
 <li>自动触发：根据auto-aof-rewrite-min-size和auto-aof-rewrite-percentage参数确定自动触发时机。</li>
 </ul>
 <h3 id="自动触发配置">自动触发配置</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e">#aof文件自上一次重写后文件大小增长了100%，则再次触发重写机制，</span>
-<span style="color:#75715e">#比如说，上次AOF文件容量为100M，这次文件已经到200M了，则自动触发重写机制</span>
-<span style="color:#a6e22e">auto-aof-rewrite-percentage</span> <span style="color:#ae81ff">100</span>
-
-<span style="color:#75715e">#aof文件至少要达到64M才会触发自动重写，文件太小，恢复速度很快，重写意义不大</span>
-<span style="color:#a6e22e">auto-aof-rewrite-min-size</span> <span style="color:#ae81ff">64</span><span style="color:#a6e22e">mb</span>
-　
-</code></pre></div><h4 id="那么文件重写后的aof文件为什么会变小呢">那么文件重写后的AOF文件为什么会变小呢？</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#75715e">#aof文件自上一次重写后文件大小增长了100%，则再次触发重写机制，</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#比如说，上次AOF文件容量为100M，这次文件已经到200M了，则自动触发重写机制</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">auto-aof-rewrite-percentage</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#aof文件至少要达到64M才会触发自动重写，文件太小，恢复速度很快，重写意义不大</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">auto-aof-rewrite-min-size</span> <span style="color:#ae81ff">64</span><span style="color:#a6e22e">mb</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">　</span>
+</span></span></code></pre></div><h4 id="那么文件重写后的aof文件为什么会变小呢">那么文件重写后的AOF文件为什么会变小呢？</h4>
 <ol>
 <li>进程内已经过期的数据将不会再次写入AOF文件中。</li>
 <li>旧的AOF文件含有无效命令，如del key1、 hdel key2等。重写使用进程内数据直接生成，这样新的AOF文件只保留最终数据的写入命令。</li>
@@ -411,11 +410,11 @@ AOF持久化方式恢复速度慢，文件体积大，但是相对不易丢数�
 &hellip;&hellip;</p>
 </blockquote>
 </blockquote>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e"># Redis can create append-only base files in either RDB or AOF formats. Using</span>
-<span style="color:#75715e"># the RDB format is always faster and more efficient, and disabling it is only</span>
-<span style="color:#75715e"># supported for backward compatibility purposes.</span>
-<span style="color:#a6e22e">aof-use-rdb-preamble</span> <span style="color:#a6e22e">yes</span>
-</code></pre></div><h3 id="参考">参考</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#75715e"># Redis can create append-only base files in either RDB or AOF formats. Using</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># the RDB format is always faster and more efficient, and disabling it is only</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># supported for backward compatibility purposes.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">aof-use-rdb-preamble</span> <span style="color:#a6e22e">yes</span>
+</span></span></code></pre></div><h3 id="参考">参考</h3>
 <ul>
 <li><a href="https://www.cnblogs.com/monkeydai/p/16120700.html">redis持久化机制</a></li>
 <li><a href="https://blog.csdn.net/weixin_39851872/article/details/113629782">redis rdb bgsave 内存不足_天天用Redis，持久性优化方案你知道多少？</a></li>
